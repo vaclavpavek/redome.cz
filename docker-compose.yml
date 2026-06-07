@@ -1,0 +1,24 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    image: redome-cz-web:dev
+    user: node
+    working_dir: /workspace
+    init: true
+    volumes:
+      - .:/workspace:cached
+      # Anonymní volume drží node_modules uvnitř kontejneru kvůli rychlosti
+      # (jinak je sdílení přes bind mount na macOS/Windows velmi pomalé)
+      - node_modules:/workspace/node_modules
+    ports:
+      - "4321:4321"
+    environment:
+      - HOST=0.0.0.0
+      - IN_CONTAINER=1
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+
+volumes:
+  node_modules:
