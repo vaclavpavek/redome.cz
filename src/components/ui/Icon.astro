@@ -1,0 +1,51 @@
+---
+/**
+ * Wrapper pro inline SVG ikony.
+ * Konkrétní ikony jsou v src/components/ui/icons/* jako jednotlivé .astro
+ * komponenty (každá vrací <svg> s vlastními path).
+ *
+ * Použití:
+ *   <Icon label="Telefon" size={20}><Phone /></Icon>
+ *
+ * Dekorativní ikona (vedle textu): vynech `label`, ikona dostane aria-hidden.
+ * Funkční ikona (ikona-only tlačítko): povinné `label` jako aria-label.
+ */
+interface Props {
+  label?: string;
+  size?: number;
+  class?: string;
+}
+
+const { label, size = 20, class: className = '' } = Astro.props;
+const decorative = !label;
+---
+
+<span
+  class={`icon ${className}`.trim()}
+  role={decorative ? 'presentation' : 'img'}
+  aria-label={label}
+  aria-hidden={decorative ? 'true' : undefined}
+  style={`--icon-size: ${size}px`}
+>
+  <slot />
+</span>
+
+<style>
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size, 20px);
+    height: var(--icon-size, 20px);
+    flex-shrink: 0;
+  }
+  .icon :global(svg) {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
