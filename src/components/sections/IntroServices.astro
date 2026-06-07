@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<section class="intro-services" aria-label="Krátké představení služeb">
+  <div class="container intro-services__grid">
+    {
+      services.map((service) => (
+        <div class="intro-services__item">
+          <p>{service.data.summary}</p>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .intro-services {
+    padding-block: var(--space-4);
+    background: var(--color-bg);
+  }
+  .intro-services__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .intro-services__item p {
+    font-size: var(--text-14);
+    color: var(--color-gray-700);
+    line-height: var(--leading-relaxed);
+    margin: 0;
+  }
+  @media (min-width: 768px) {
+    .intro-services__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

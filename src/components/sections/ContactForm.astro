@@ -1,0 +1,123 @@
+---
+import { CONTACT } from '~/lib/site';
+import TextField from '~/components/ui/TextField.astro';
+import Textarea from '~/components/ui/Textarea.astro';
+import Button from '~/components/ui/Button.astro';
+---
+
+<section class="contact" aria-labelledby="contact-title" id="formular">
+  <div class="container contact__grid">
+    <div class="contact__intro">
+      <h2 id="contact-title">
+        Napište nám krátkou zprávu<br />
+        a domluvte si s námi schůzku!
+      </h2>
+      <p>
+        Stačí pár vět o tom, co u vás teď není v klidu, a vyšlete formulář.
+        Ozveme se telefonicky nebo e-mailem a najdeme společně termín.
+      </p>
+      <p class="contact__direct">
+        Raději přímo? <a href={CONTACT.phoneHref}>{CONTACT.phone}</a> /
+        <a href={CONTACT.emailHref}>{CONTACT.email}</a>
+      </p>
+    </div>
+
+    <form
+      class="contact__form"
+      method="post"
+      action="/api/contact"
+      aria-describedby="contact-privacy"
+      novalidate
+    >
+      <TextField
+        id="contact-name"
+        name="name"
+        label="Jméno"
+        required
+        autocomplete="name"
+      />
+      <TextField
+        id="contact-email"
+        name="email"
+        label="E-mail"
+        type="email"
+        required
+        autocomplete="email"
+      />
+      <TextField
+        id="contact-phone"
+        name="phone"
+        label="Telefon"
+        type="tel"
+        autocomplete="tel"
+        helperText="Nepovinné, ale pomůže se ozvat rychleji."
+      />
+      <Textarea
+        id="contact-message"
+        name="message"
+        label="Zpráva"
+        required
+        rows={5}
+      />
+
+      <!-- Honeypot proti spamu, screenreaderům skryté -->
+      <label class="contact__honeypot" aria-hidden="true">
+        Pokud jste člověk, nevyplňujte:
+        <input type="text" name="website" tabindex="-1" autocomplete="off" />
+      </label>
+
+      <p id="contact-privacy" class="contact__privacy">
+        Odesláním souhlasíte se zpracováním osobních údajů v rozsahu nezbytném
+        k vyřízení vaší zprávy.
+      </p>
+
+      <Button type="submit">Odeslat zprávu</Button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .contact {
+    padding-block: var(--space-6);
+    background: var(--color-gray-100);
+  }
+  .contact__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .contact__intro h2 {
+    color: var(--color-primary-dark);
+  }
+  .contact__direct {
+    font-size: var(--text-14);
+    color: var(--color-gray-700);
+  }
+  .contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    background: var(--color-white);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .contact__privacy {
+    font-size: var(--text-12);
+    color: var(--color-gray-600);
+    margin: 0;
+  }
+  .contact__honeypot {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  @media (min-width: 1024px) {
+    .contact__grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+  }
+</style>

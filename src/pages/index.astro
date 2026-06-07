@@ -1,14 +1,22 @@
 ---
 import BaseLayout from '~/layouts/BaseLayout.astro';
+import Hero from '~/components/sections/Hero.astro';
+import IntroServices from '~/components/sections/IntroServices.astro';
+import Services from '~/components/sections/Services.astro';
+import Masters from '~/components/sections/Masters.astro';
+import Stories from '~/components/sections/Stories.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import { SITE } from '~/lib/site';
 ---
 
 <BaseLayout
-  title="Redome.cz – Reiki a terapeutické služby"
-  description="Reiki, Dornova metoda a Breussova masáž – Kanit Hauel."
+  title={`${SITE.name} – ${SITE.tagline}`}
+  description={SITE.description}
 >
-  <section class="container" style="padding-block: var(--space-8)">
-    <h1>Redome.cz</h1>
-    <p>Najděte rovnováhu těla i mysli.</p>
-    <p>Web se právě staví – brzy se uvidíme.</p>
-  </section>
+  <Hero />
+  <IntroServices />
+  <Services />
+  <Masters />
+  <Stories />
+  <ContactForm />
 </BaseLayout>

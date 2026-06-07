@@ -1,0 +1,62 @@
+---
+import Button from '~/components/ui/Button.astro';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <div class="hero__content">
+      <h1 id="hero-title" class="hero__title">
+        Najděte rovnováhu<br />těla i mysli
+      </h1>
+      <p class="hero__lead">
+        Vítejte na stránkách věnovaných životu v souladu – se sebou samými
+        i s okolním světem.
+      </p>
+      <div class="hero__actions">
+        <Button href="/kontakt#formular">Domluvit setkání</Button>
+        <Button variant="outline" href="/o-nas">O nás</Button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    background:
+      linear-gradient(
+        135deg,
+        var(--color-primary-light) 0%,
+        var(--color-secondary-light) 100%
+      );
+    overflow: hidden;
+  }
+  .hero__inner {
+    display: grid;
+    align-items: center;
+    min-height: 60vh;
+    padding-block: var(--space-6);
+  }
+  .hero__title {
+    font-size: clamp(2rem, 5vw, var(--text-h1));
+    color: var(--color-primary-dark);
+    margin-bottom: var(--space-2);
+  }
+  .hero__lead {
+    font-size: var(--text-18);
+    line-height: var(--leading-relaxed);
+    color: var(--color-gray-800);
+    max-width: 38rem;
+    margin-bottom: var(--space-3);
+  }
+  .hero__actions {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+  @media (min-width: 1024px) {
+    .hero__content {
+      max-width: 36rem;
+    }
+  }
+</style>

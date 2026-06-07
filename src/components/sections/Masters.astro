@@ -1,0 +1,81 @@
+---
+import { getCollection, render } from 'astro:content';
+import Button from '~/components/ui/Button.astro';
+
+const masters = (await getCollection('masters')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const featured = masters[0];
+const { Content } = featured ? await render(featured) : { Content: null };
+---
+
+{
+  featured && Content && (
+    <section class="masters" aria-labelledby="masters-title">
+      <div class="container masters__grid">
+        <div class="masters__content">
+          <h2 id="masters-title">Mistři Reiki</h2>
+          <p class="masters__role">
+            <strong>{featured.data.name}</strong> – {featured.data.role}
+          </p>
+          <div class="masters__bio">
+            <Content />
+          </div>
+          <Button href="/o-nas">Více informací</Button>
+        </div>
+        <div class="masters__photo" aria-hidden="true">
+          <div class="masters__photo-placeholder">
+            <span>Foto</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .masters {
+    padding-block: var(--space-6);
+    background: var(--color-white);
+  }
+  .masters__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    align-items: center;
+  }
+  .masters__role {
+    font-style: italic;
+    color: var(--color-gray-700);
+    margin: 0 0 var(--space-2);
+  }
+  .masters__bio {
+    color: var(--color-gray-800);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-2);
+  }
+  .masters__bio :global(blockquote) {
+    border-left: 3px solid var(--color-primary);
+    padding-left: var(--space-2);
+    margin: var(--space-2) 0;
+    font-style: italic;
+    color: var(--color-gray-700);
+  }
+  .masters__photo-placeholder {
+    aspect-ratio: 3/4;
+    background:
+      linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: var(--text-h3);
+  }
+  @media (min-width: 1024px) {
+    .masters__grid {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+</style>
