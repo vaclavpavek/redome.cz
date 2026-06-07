@@ -1,0 +1,36 @@
+---
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { SITE, CONTACT } from '~/lib/site';
+
+/**
+ * Globální schema.org LocalBusiness (HealthAndBeautyBusiness).
+ * Vykreslit jednou v BaseLayout – ne v každé sekci.
+ */
+
+const data = {
+  '@type': 'HealthAndBeautyBusiness',
+  '@id': `${SITE.url}#business`,
+  name: SITE.name,
+  description: SITE.description,
+  url: SITE.url,
+  telephone: CONTACT.phone,
+  email: CONTACT.email,
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'CZ',
+    addressLocality: 'Praha',
+  },
+  // Provider role pro služby (terapie)
+  makesOffer: [
+    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Reiki' } },
+    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Dornova metoda' } },
+    { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Breussova masáž' } },
+  ],
+  founder: {
+    '@type': 'Person',
+    name: CONTACT.person,
+  },
+};
+---
+
+<JsonLd data={data} />

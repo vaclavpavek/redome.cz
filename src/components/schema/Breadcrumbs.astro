@@ -1,0 +1,27 @@
+---
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { SITE } from '~/lib/site';
+
+interface Crumb {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const { items } = Astro.props;
+
+const data = {
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: new URL(item.url, SITE.url).href.replace(/\/$/, ''),
+  })),
+};
+---
+
+<JsonLd data={data} />

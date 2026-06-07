@@ -1,0 +1,19 @@
+---
+/**
+ * Vykreslí JSON-LD jako <script type="application/ld+json">.
+ * Vstup je libovolný objekt (přidáme @context = schema.org pokud chybí).
+ */
+interface Props {
+  data: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const { data } = Astro.props;
+const normalized = Array.isArray(data) ? data : [data];
+const enriched = normalized.map((item) => ({
+  '@context': 'https://schema.org',
+  ...item,
+}));
+const json = JSON.stringify(enriched.length === 1 ? enriched[0] : enriched);
+---
+
+<script type="application/ld+json" set:html={json} is:inline></script>

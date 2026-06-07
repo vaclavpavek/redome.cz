@@ -1,0 +1,25 @@
+---
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { SITE } from '~/lib/site';
+
+interface Props {
+  name: string;
+  description: string;
+  serviceType?: string;
+  slug?: string;
+}
+
+const { name, description, serviceType, slug } = Astro.props;
+
+const data = {
+  '@type': 'Service',
+  name,
+  description,
+  serviceType: serviceType ?? name,
+  provider: { '@id': `${SITE.url}#business` },
+  areaServed: { '@type': 'Country', name: 'Česká republika' },
+  ...(slug && { url: `${SITE.url}/sluzby/${slug}` }),
+};
+---
+
+<JsonLd data={data} />

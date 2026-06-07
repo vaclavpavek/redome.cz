@@ -1,0 +1,24 @@
+---
+import JsonLd from '~/components/seo/JsonLd.astro';
+import { SITE } from '~/lib/site';
+
+interface Props {
+  name: string;
+  jobTitle: string;
+  description?: string;
+  knowsAbout?: string[];
+}
+
+const { name, jobTitle, description, knowsAbout } = Astro.props;
+
+const data = {
+  '@type': 'Person',
+  name,
+  jobTitle,
+  ...(description && { description }),
+  ...(knowsAbout && { knowsAbout }),
+  worksFor: { '@id': `${SITE.url}#business` },
+};
+---
+
+<JsonLd data={data} />
