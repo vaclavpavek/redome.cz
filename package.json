@@ -1,0 +1,27 @@
+{
+  "name": "redome-cz",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Web Redome.cz – Reiki a terapeutické služby (Kanit Hauel)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check && astro sync",
+    "format": "prettier --write \"**/*.{astro,ts,tsx,js,jsx,md,mdx,json,css}\"",
+    "lint": "prettier --check \"**/*.{astro,ts,tsx,js,jsx,md,mdx,json,css}\"",
+    "test": "echo \"(zatím žádné testy)\" && exit 0"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.7.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.0",
+    "prettier-plugin-astro": "^0.14.1"
+  }
+}
