@@ -1,0 +1,139 @@
+# =====================================================================
+# Redome.cz – Apache konfigurace
+# Tento soubor se kopíruje 1:1 do dist/ a nahrává na hosting.
+# Komentáře česky, ať tomu rozumí kdokoli, kdo se k tomu dostane.
+# =====================================================================
+
+Options -Indexes -MultiViews
+AddDefaultCharset UTF-8
+DirectoryIndex index.html
+ServerSignature Off
+
+# ---------------------------------------------------------------------
+# Přesměrování: https + bez www
+# ---------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # http → https
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+  # www → bez www (kanonická doména: redome.cz)
+  # Pokud bys preferoval www.redome.cz, prohoď podmínku a cílovou doménu.
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+  # -----------------------------------------------------------------
+  # Content negotiation: pokud klient žádá Markdown, podsuneme `.md`
+  # variantu místo HTML. Funguje pro:
+  #   /co-je-reiki        → /co-je-reiki.md   (pokud existuje)
+  #   /sluzby/reiki       → /sluzby/reiki.md
+  # -----------------------------------------------------------------
+  RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME}.md -f
+  RewriteRule ^(.+?)/?$ /$1.md [L]
+
+  # Hezké URL: /o-nas → /o-nas/index.html (Astro generuje s indexem)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !\.(html|md|xml|txt|json|webmanifest|js|css|png|jpe?g|webp|svg|ico|woff2?|ttf|otf|pdf|map)$ [NC]
+  RewriteRule ^(.*?)/?$ /$1.html [L]
+</IfModule>
+
+# ---------------------------------------------------------------------
+# MIME typy (pro jistotu i přes mod_mime)
+# ---------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType text/markdown          .md
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml          .svg
+  AddType font/woff2             .woff2
+  AddType font/woff              .woff
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Bezpečnostní hlavičky
+# ---------------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+
+  # CSP – uvolněno pro Astro (inline styly), zpřísnit po nasazení
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+
+  # Pro MD varianty ať crawleři vidí, že je to alternativa
+  <FilesMatch "\.md$">
+    Header set Vary "Accept"
+    Header set Cache-Control "public, max-age=3600"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Cache – dlouhé pro neměnné assety, krátké pro HTML
+# ---------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                              "access plus 1 hour"
+
+  # HTML – krátká cache, ať uživatel rychle vidí novinky
+  ExpiresByType text/html                     "access plus 5 minutes"
+
+  # Assety s hashem v názvu (Astro je vyrábí) – cache rok
+  ExpiresByType text/css                      "access plus 1 year"
+  ExpiresByType application/javascript        "access plus 1 year"
+  ExpiresByType image/svg+xml                 "access plus 1 year"
+  ExpiresByType image/png                     "access plus 1 year"
+  ExpiresByType image/jpeg                    "access plus 1 year"
+  ExpiresByType image/webp                    "access plus 1 year"
+  ExpiresByType image/avif                    "access plus 1 year"
+  ExpiresByType font/woff2                    "access plus 1 year"
+  ExpiresByType font/woff                     "access plus 1 year"
+
+  # SEO meta – krátká cache
+  ExpiresByType application/xml               "access plus 1 hour"
+  ExpiresByType text/plain                    "access plus 1 hour"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|svg|png|jpe?g|webp|avif|woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Komprese (gzip + brotli, pokud je modul k dispozici)
+# ---------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+  AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+  AddOutputFilterByType DEFLATE application/manifest+json image/svg+xml
+  AddOutputFilterByType DEFLATE text/markdown
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript
+  AddOutputFilterByType BROTLI_COMPRESS application/javascript application/json application/xml
+  AddOutputFilterByType BROTLI_COMPRESS application/manifest+json image/svg+xml
+  AddOutputFilterByType BROTLI_COMPRESS text/markdown
+</IfModule>
+
+# ---------------------------------------------------------------------
+# Skryté soubory (.git, .env, …) raději úplně nedostupné
+# ---------------------------------------------------------------------
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# ---------------------------------------------------------------------
+# 404 stránka (Astro ji generuje jako /404.html)
+# ---------------------------------------------------------------------
+ErrorDocument 404 /404.html
