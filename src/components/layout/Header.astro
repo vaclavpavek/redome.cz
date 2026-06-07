@@ -1,0 +1,222 @@
+---
+import { MAIN_NAV } from '~/lib/site';
+import Logo from '~/components/ui/Logo.astro';
+import Button from '~/components/ui/Button.astro';
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <Logo />
+
+    <nav class="site-nav" aria-label="Hlavní navigace">
+      <ul class="site-nav__list">
+        {
+          MAIN_NAV.map((item) => {
+            const isCurrent = currentPath === item.href;
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  class="site-nav__link"
+                  aria-current={isCurrent ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <Button href="/kontakt#formular" size="sm">Domluvit setkání</Button>
+    </nav>
+
+    <button
+      type="button"
+      class="burger"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      aria-label="Otevřít menu"
+      data-burger
+    >
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div id="mobile-nav" class="mobile-nav" hidden data-mobile-nav>
+    <nav aria-label="Mobilní navigace">
+      <ul class="mobile-nav__list">
+        {
+          MAIN_NAV.map((item) => {
+            const isCurrent = currentPath === item.href;
+            return (
+              <li>
+                <a
+                  href={item.href}
+                  class="mobile-nav__link"
+                  aria-current={isCurrent ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <Button href="/kontakt#formular">Domluvit setkání</Button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-gray-200);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: var(--space-1);
+  }
+
+  .site-nav {
+    display: none;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .site-nav__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav__link {
+    color: var(--color-gray-800);
+    text-decoration: none;
+    font-size: var(--text-14);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition:
+      color var(--duration-fast) var(--easing-base),
+      border-color var(--duration-fast) var(--easing-base);
+  }
+  .site-nav__link:hover,
+  .site-nav__link[aria-current='page'] {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  .burger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .burger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: var(--color-primary-dark);
+    border-radius: 1px;
+    transition: transform var(--duration-base) var(--easing-base);
+  }
+  .burger[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .burger[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .burger[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .mobile-nav {
+    border-top: 1px solid var(--color-gray-200);
+    background: var(--color-white);
+    padding-block: var(--space-2);
+  }
+  .mobile-nav__list {
+    list-style: none;
+    margin: 0 0 var(--space-2);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .mobile-nav__link {
+    display: block;
+    padding: var(--space-1) var(--container-padding-x);
+    color: var(--color-gray-800);
+    text-decoration: none;
+    font-size: var(--text-16);
+    font-weight: 500;
+  }
+  .mobile-nav__link[aria-current='page'] {
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+  }
+  .mobile-nav nav > :global(.btn) {
+    margin-inline: var(--container-padding-x);
+  }
+
+  @media (min-width: 1024px) {
+    .site-nav {
+      display: flex;
+    }
+    .burger {
+      display: none;
+    }
+    .mobile-nav {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Burger menu – přepíná viditelnost mobilní navigace + drží focus uvnitř když je otevřená
+  const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
+  const nav = document.querySelector<HTMLElement>('[data-mobile-nav]');
+
+  if (burger && nav) {
+    const setOpen = (open: boolean) => {
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Zavřít menu' : 'Otevřít menu');
+      nav.hidden = !open;
+      document.body.style.overflow = open ? 'hidden' : '';
+    };
+
+    burger.addEventListener('click', () => {
+      const open = burger.getAttribute('aria-expanded') === 'true';
+      setOpen(!open);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        burger.focus();
+      }
+    });
+
+    // Při změně viewportu nad breakpoint zavře menu
+    const mq = window.matchMedia('(min-width: 1024px)');
+    mq.addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+</script>

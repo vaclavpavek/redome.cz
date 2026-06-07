@@ -1,0 +1,162 @@
+---
+type Variant = 'fill' | 'soft' | 'outline';
+type Color = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
+type Size = 'sm' | 'md';
+
+interface Props {
+  variant?: Variant;
+  color?: Color;
+  size?: Size;
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  disabled?: boolean;
+  'aria-label'?: string;
+}
+
+const {
+  variant = 'fill',
+  color = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className = '',
+  disabled,
+  'aria-label': ariaLabel,
+} = Astro.props;
+
+const classes = [
+  'btn',
+  `btn--${variant}`,
+  `btn--${color}`,
+  `btn--${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const Tag = href ? 'a' : 'button';
+---
+
+<Tag
+  class={classes}
+  href={href}
+  type={!href ? type : undefined}
+  aria-label={ariaLabel}
+  aria-disabled={disabled || undefined}
+  role={href && disabled ? 'link' : undefined}
+>
+  <slot />
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--easing-base),
+      border-color var(--duration-fast) var(--easing-base),
+      color var(--duration-fast) var(--easing-base);
+    white-space: nowrap;
+  }
+
+  /* === Sizes === */
+  .btn--md {
+    font-size: var(--text-button);
+    padding: 0.625rem 1.25rem;
+    min-height: 44px;
+  }
+  .btn--sm {
+    font-size: var(--text-14);
+    padding: 0.4375rem 0.875rem;
+    min-height: 34px;
+  }
+
+  /* === Fill variants === */
+  .btn--fill.btn--primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+  .btn--fill.btn--primary:hover {
+    background: var(--color-primary-dark);
+    color: var(--color-white);
+  }
+  .btn--fill.btn--secondary {
+    background: var(--color-secondary);
+    color: var(--color-secondary-dark);
+  }
+  .btn--fill.btn--secondary:hover {
+    background: var(--color-secondary-dark);
+    color: var(--color-white);
+  }
+  .btn--fill.btn--success {
+    background: var(--color-success);
+    color: var(--color-white);
+  }
+  .btn--fill.btn--danger {
+    background: var(--color-danger);
+    color: var(--color-white);
+  }
+  .btn--fill.btn--warning {
+    background: var(--color-warning);
+    color: var(--color-gray-900);
+  }
+  .btn--fill.btn--info {
+    background: var(--color-info);
+    color: var(--color-white);
+  }
+
+  /* === Outline variants === */
+  .btn--outline {
+    background: transparent;
+  }
+  .btn--outline.btn--primary {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  .btn--outline.btn--primary:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+  .btn--outline.btn--secondary {
+    border-color: var(--color-secondary-dark);
+    color: var(--color-secondary-dark);
+  }
+  .btn--outline.btn--secondary:hover {
+    background: var(--color-secondary-dark);
+    color: var(--color-white);
+  }
+
+  /* === Soft variants === */
+  .btn--soft.btn--primary {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+  }
+  .btn--soft.btn--primary:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+  .btn--soft.btn--secondary {
+    background: var(--color-secondary-light);
+    color: var(--color-secondary-dark);
+  }
+  .btn--soft.btn--secondary:hover {
+    background: var(--color-secondary);
+    color: var(--color-secondary-dark);
+  }
+
+  /* === Disabled === */
+  .btn[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>

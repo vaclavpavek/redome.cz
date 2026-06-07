@@ -1,0 +1,51 @@
+---
+interface Props {
+  variant?: 'default' | 'inverse';
+  href?: string | false;
+  class?: string;
+}
+
+const { variant = 'default', href = '/', class: className = '' } = Astro.props;
+const colorClass = variant === 'inverse' ? 'logo--inverse' : 'logo--default';
+const classes = `logo ${colorClass} ${className}`.trim();
+---
+
+{
+  href === false ? (
+    <span class={classes}>
+      <span class="logo__symbol" aria-hidden="true">❋</span>
+      <span class="logo__wordmark">Redome</span>
+    </span>
+  ) : (
+    <a href={href} class={classes} aria-label="Redome.cz – domů">
+      <span class="logo__symbol" aria-hidden="true">❋</span>
+      <span class="logo__wordmark">Redome</span>
+    </a>
+  )
+}
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+  }
+  .logo__symbol {
+    color: var(--color-primary);
+    font-size: 1.4em;
+  }
+  .logo--default {
+    color: var(--color-primary-dark);
+  }
+  .logo--inverse {
+    color: var(--color-white);
+  }
+  .logo--inverse .logo__symbol {
+    color: var(--color-secondary);
+  }
+</style>
