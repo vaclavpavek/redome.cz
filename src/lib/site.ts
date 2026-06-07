@@ -15,12 +15,29 @@ export const SITE = {
 } as const;
 
 export const CONTACT = {
-  person: 'Kanit Hauel',
+  person: 'Karel Hánl',
   phone: '+420 775 504 175',
   phoneHref: 'tel:+420775504175',
   email: 'redome@redome.cz',
   emailHref: 'mailto:redome@redome.cz',
-  ico: '04210280',
+  address: {
+    street: 'Peciny 196',
+    city: 'Litomyšl',
+    zip: '570 01',
+    country: 'CZ',
+  },
+} as const;
+
+export const CONTACT_SECONDARY = {
+  person: 'Monika Bišická',
+  phone: '+420 739 033 191',
+  phoneHref: 'tel:+420739033191',
+  email: 'redome@redome.cz',
+  emailHref: 'mailto:redome@redome.cz',
+} as const;
+
+export const CREDITS = {
+  by: 'Jan Chalupník & Václav Pávek',
 } as const;
 
 export const SOCIAL = {
@@ -32,8 +49,8 @@ export const SOCIAL = {
 export type NavItem = { href: string; label: string };
 
 export const MAIN_NAV: NavItem[] = [
-  { href: '/o-nas', label: 'O nás' },
-  { href: '/sluzby', label: 'Služby' },
+  { href: '/co-je-reiki', label: 'O Reiki' },
+  { href: '/reiki-mistri', label: 'Reiki mistři' },
   { href: '/dornova-metoda', label: 'Dornova metoda' },
   { href: '/breussova-masaz', label: 'Breussova masáž' },
   { href: '/pribehy-z-praxe', label: 'Příběhy z praxe' },
@@ -41,8 +58,8 @@ export const MAIN_NAV: NavItem[] = [
 ];
 
 export const FOOTER_NAV: NavItem[] = [
-  { href: '/o-nas', label: 'O nás' },
-  { href: '/sluzby', label: 'Služby' },
+  { href: '/co-je-reiki', label: 'O Reiki' },
+  { href: '/reiki-mistri', label: 'Reiki mistři' },
   { href: '/dornova-metoda', label: 'Dornova metoda' },
   { href: '/breussova-masaz', label: 'Breussova masáž' },
   { href: '/pribehy-z-praxe', label: 'Příběhy z praxe' },

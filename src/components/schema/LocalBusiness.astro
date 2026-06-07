@@ -17,8 +17,10 @@ const data = {
   email: CONTACT.email,
   address: {
     '@type': 'PostalAddress',
-    addressCountry: 'CZ',
-    addressLocality: 'Praha',
+    streetAddress: `${CONTACT.address.street}`,
+    addressLocality: CONTACT.address.city,
+    postalCode: CONTACT.address.zip,
+    addressCountry: CONTACT.address.country,
   },
   // Provider role pro služby (terapie)
   makesOffer: [
