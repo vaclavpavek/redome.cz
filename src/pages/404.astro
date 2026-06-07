@@ -1,0 +1,32 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Button from '~/components/ui/Button.astro';
+---
+
+<BaseLayout title="Stránka nenalezena" description="Hledaná stránka nebyla nalezena." noindex>
+  <section class="not-found container">
+    <h1>Tady to není…</h1>
+    <p>Tuhle stránku jsme nenašli. Možná byla přesunuta, nebo má překlep v odkazu.</p>
+    <div class="not-found__actions">
+      <Button href="/">Zpět na úvod</Button>
+      <Button href="/kontakt" variant="outline">Napsat nám</Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-block: var(--space-8);
+    text-align: center;
+  }
+  .not-found h1 {
+    color: var(--color-primary-dark);
+  }
+  .not-found__actions {
+    display: inline-flex;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>

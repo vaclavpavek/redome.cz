@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import FAQPage from '~/components/schema/FAQPage.astro';
+import Person from '~/components/schema/Person.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((page) => ({
+    params: { slug: page.id },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: page.data.title, url: `/${page.id}` },
+];
+
+// Stránkové schema rozšíření
+const isContact = page.id === 'kontakt';
+const isAbout = page.id === 'o-nas';
+const isWhatIsReiki = page.id === 'co-je-reiki';
+
+// Pro „Co je Reiki" načteme FAQ položky
+let faqItems: { question: string; answer: string }[] = [];
+if (isWhatIsReiki) {
+  const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+  faqItems = faqs.map((f) => ({
+    question: f.data.question,
+    answer: (f.body ?? '').trim(),
+  }));
+}
+---
+
+<PageLayout
+  title={page.data.title}
+  description={page.data.description}
+  breadcrumbs={breadcrumbs}
+>
+  <Fragment slot="head">
+    {isAbout && (
+      <Person
+        name="Kanit Hauel"
+        jobTitle="Mistr Reiki, terapeut Dornovy metody a Breussovy masáže"
+        description={page.data.description}
+        knowsAbout={['Reiki', 'Dornova metoda', 'Breussova masáž']}
+      />
+    )}
+    {isWhatIsReiki && faqItems.length > 0 && <FAQPage items={faqItems} />}
+  </Fragment>
+
+  <Content />
+
+  {isContact && <ContactForm />}
+</PageLayout>

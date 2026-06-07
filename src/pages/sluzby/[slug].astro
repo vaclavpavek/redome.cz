@@ -1,0 +1,96 @@
+---
+import { getCollection, render } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import Service from '~/components/schema/Service.astro';
+import Button from '~/components/ui/Button.astro';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services');
+  return services.map((service) => ({
+    params: { slug: service.id },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { Content } = await render(service);
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: 'Služby', url: '/sluzby' },
+  { name: service.data.title, url: `/sluzby/${service.id}` },
+];
+---
+
+<PageLayout
+  title={service.data.title}
+  description={service.data.summary}
+  breadcrumbs={breadcrumbs}
+>
+  <Fragment slot="head">
+    <Service
+      name={service.data.title}
+      description={service.data.summary}
+      slug={service.id}
+    />
+  </Fragment>
+
+  <h1>{service.data.title}</h1>
+  <p class="service-summary">{service.data.summary}</p>
+
+  {
+    (service.data.duration || service.data.price) && (
+      <dl class="service-meta">
+        {service.data.duration && (
+          <>
+            <dt>Délka sezení</dt>
+            <dd>{service.data.duration}</dd>
+          </>
+        )}
+        {service.data.price && (
+          <>
+            <dt>Cena</dt>
+            <dd>{service.data.price}</dd>
+          </>
+        )}
+      </dl>
+    )
+  }
+
+  <Content />
+
+  <div class="service-cta">
+    <Button href="/kontakt#formular">Domluvit setkání</Button>
+    <Button href="/sluzby" variant="outline">Zpět na služby</Button>
+  </div>
+</PageLayout>
+
+<style>
+  .service-summary {
+    font-size: var(--text-18);
+    color: var(--color-gray-700);
+    font-style: italic;
+  }
+  .service-meta {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem var(--space-2);
+    margin: var(--space-3) 0;
+    padding: var(--space-2);
+    background: var(--color-primary-light);
+    border-radius: var(--radius-sm);
+  }
+  .service-meta dt {
+    font-weight: 700;
+    color: var(--color-primary-dark);
+  }
+  .service-meta dd {
+    margin: 0;
+  }
+  .service-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: var(--space-4);
+  }
+</style>

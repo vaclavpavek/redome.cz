@@ -1,0 +1,66 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import BreadcrumbsSchema from '~/components/schema/Breadcrumbs.astro';
+
+interface Crumb {
+  name: string;
+  url: string;
+}
+
+interface Props {
+  title: string;
+  description?: string;
+  breadcrumbs?: Crumb[];
+}
+
+const { title, description, breadcrumbs } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <Fragment slot="head">
+    {breadcrumbs && <BreadcrumbsSchema items={breadcrumbs} />}
+    <slot name="head" />
+  </Fragment>
+
+  <article class="page">
+    <div class="container">
+      {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+      <div class="page__content">
+        <slot />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .page {
+    padding-block: var(--space-4) var(--space-6);
+  }
+  .page__content {
+    max-width: 48rem;
+    margin-top: var(--space-3);
+  }
+  .page__content :global(h1) {
+    color: var(--color-primary-dark);
+    margin-bottom: var(--space-3);
+  }
+  .page__content :global(h2) {
+    margin-top: var(--space-4);
+  }
+  .page__content :global(ul),
+  .page__content :global(ol) {
+    padding-left: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .page__content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+  .page__content :global(blockquote) {
+    border-left: 3px solid var(--color-primary);
+    padding-left: var(--space-2);
+    margin-block: var(--space-3);
+    font-style: italic;
+    color: var(--color-gray-700);
+  }
+</style>

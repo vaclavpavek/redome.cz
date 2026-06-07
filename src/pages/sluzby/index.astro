@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import Icon from '~/components/ui/Icon.astro';
+import Lotus from '~/components/ui/icons/Lotus.astro';
+import ArrowRight from '~/components/ui/icons/ArrowRight.astro';
+
+const services = (await getCollection('services')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: 'Služby', url: '/sluzby' },
+];
+---
+
+<PageLayout
+  title="Služby"
+  description="Reiki, Dornova metoda a Breussova masáž – individuální sezení v Praze."
+  breadcrumbs={breadcrumbs}
+>
+  <h1>Terapeutické služby</h1>
+  <p>
+    Nabízíme tři vzájemně se doplňující metody. Vyberte si, co vás oslovuje –
+    nebo se ozvěte a vyladíme to společně.
+  </p>
+
+  <div class="services-list">
+    {
+      services.map((service) => (
+        <article class="service-row">
+          <Icon size={32} class="service-row__icon">
+            <Lotus />
+          </Icon>
+          <div class="service-row__body">
+            <h2><a href={`/sluzby/${service.id}`}>{service.data.title}</a></h2>
+            <p>{service.data.summary}</p>
+            {service.data.duration && (
+              <p class="service-row__meta">Délka sezení: {service.data.duration}</p>
+            )}
+            <a href={`/sluzby/${service.id}`} class="service-row__link">
+              Více o službě
+              <Icon size={16}><ArrowRight /></Icon>
+            </a>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</PageLayout>
+
+<style>
+  .services-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .service-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-md);
+  }
+  .service-row__icon {
+    color: var(--color-primary);
+  }
+  .service-row h2 {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-h4);
+  }
+  .service-row h2 a {
+    color: var(--color-primary-dark);
+    text-decoration: none;
+  }
+  .service-row h2 a:hover {
+    color: var(--color-primary);
+  }
+  .service-row__meta {
+    font-size: var(--text-14);
+    color: var(--color-gray-600);
+  }
+  .service-row__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .service-row__link:hover {
+    text-decoration: underline;
+  }
+</style>
