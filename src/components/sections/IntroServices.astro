@@ -1,41 +1,39 @@
 ---
-import { getCollection } from 'astro:content';
-
-const services = (await getCollection('services')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+/**
+ * 3 krátké úvodní odstavce pod hero – statické texty z designu.
+ * Nejsou navázané na services collection, jde o claim/poslání.
+ */
+const paragraphs = [
+  'Nabízím jemné a účinné metody, které podporují harmonii těla, mysli i duše. Pracuji hlavně s energií Reiki, využívám Dornovu metodu, Breussovu masáž a také Runy.',
+  'Tyto stránky slouží jako úvod k mému přístupu a metodám, které Vám mohou pomoci na cestě k uzdravení, větší vitalitě, nebo hlubšímu sebepoznání.',
+  'Mnoho z nás dnes hledá rovnováhu, úlevu od vnitřních bloků, nebo jednoduše touží více porozumět sami sobě. Pokud se v tom poznáváte, jste tu správně.',
+];
 ---
 
-<section class="intro-services" aria-label="Krátké představení služeb">
-  <div class="container intro-services__grid">
-    {
-      services.map((service) => (
-        <div class="intro-services__item">
-          <p>{service.data.summary}</p>
-        </div>
-      ))
-    }
+<section class="intro" aria-label="Úvodní představení">
+  <div class="container intro__grid">
+    {paragraphs.map((p) => <p>{p}</p>)}
   </div>
 </section>
 
 <style>
-  .intro-services {
+  .intro {
     padding-block: var(--space-4);
-    background: var(--color-bg);
+    background: var(--color-secondary-light);
   }
-  .intro-services__grid {
+  .intro__grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
-  .intro-services__item p {
+  .intro__grid p {
     font-size: var(--text-14);
-    color: var(--color-gray-700);
+    color: var(--color-gray-800);
     line-height: var(--leading-relaxed);
     margin: 0;
   }
   @media (min-width: 768px) {
-    .intro-services__grid {
+    .intro__grid {
       grid-template-columns: repeat(3, 1fr);
     }
   }

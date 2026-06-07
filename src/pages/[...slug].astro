@@ -81,10 +81,10 @@ const isAbout = props.type === 'page' && props.page.id === 'o-nas';
     )}
     {isAbout && (
       <Person
-        name="Kanit Hauel"
-        jobTitle="Mistr Reiki, terapeut Dornovy metody a Breussovy masáže"
+        name="Karel Hánl"
+        jobTitle="Reiki Mistr/učitel (IV. stupeň), terapeut Dornovy metody a Breussovy masáže"
         description={description}
-        knowsAbout={['Reiki', 'Dornova metoda', 'Breussova masáž']}
+        knowsAbout={['Reiki', 'Dornova metoda', 'Breussova masáž', 'Runy', 'Numerologie']}
       />
     )}
     {faqItems.length > 0 && <FAQPage items={faqItems} />}
