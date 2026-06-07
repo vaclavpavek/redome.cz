@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,6 +23,7 @@ export default defineConfig({
     port: 4321,
   },
   vite: {
+    plugins: [tailwindcss()],
     server: {
       // Polling je potřeba, protože pracujeme přes bind mount v Dockeru
       watch: { usePolling: true, interval: 300 },

@@ -1,19 +1,14 @@
 ---
-const title = 'Redome.cz – brzy spustíme';
+import BaseLayout from '~/layouts/BaseLayout.astro';
 ---
 
-<!doctype html>
-<html lang="cs">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content="Reiki a terapeutické služby – Kanit Hauel." />
-  </head>
-  <body>
-    <main>
-      <h1>Redome.cz</h1>
-      <p>Web se právě staví. Brzy se uvidíme.</p>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title="Redome.cz – Reiki a terapeutické služby"
+  description="Reiki, Dornova metoda a Breussova masáž – Kanit Hauel."
+>
+  <section class="container" style="padding-block: var(--space-8)">
+    <h1>Redome.cz</h1>
+    <p>Najděte rovnováhu těla i mysli.</p>
+    <p>Web se právě staví – brzy se uvidíme.</p>
+  </section>
+</BaseLayout>
