@@ -1,0 +1,74 @@
+---
+import Button from '~/components/ui/Button.astro';
+---
+
+<section class="what-is" aria-labelledby="what-is-title">
+  <div class="container what-is__grid">
+    <div class="what-is__content">
+      <h2 id="what-is-title">Co je Reiki?</h2>
+      <p>
+        Reiki je jemná, ale velmi účinná metoda energetického léčení, která
+        harmonizuje tělo, mysl i duši. Pochází z Japonska, kde ji na počátku
+        20. století znovuobjevil a rozvinul Mikao Usui. Slovo „Reiki" se
+        skládá ze dvou částí: <em>Rei</em> (univerzální, duchovní) a
+        <em>Ki</em> (životní energie, známá také jako čchi nebo prána).
+        Společně označují univerzální životní energii, která proudí vším živým.
+      </p>
+
+      <h3>Jak Reiki funguje?</h3>
+      <p>
+        Při Reiki ošetření působí praktik skrze své ruce, kterými nechává
+        proudit léčivou energii do těla klienta. Nejedná se o masáž ani
+        fyzickou manipulaci – jde o jemné přikládání rukou na tělo nebo
+        jejich držení mírně nad tělem. Reiki energie proudí tam, kde je
+        jí nejvíce potřeba, a podporuje tělo v jeho přirozené schopnosti
+        samoléčby.
+      </p>
+
+      <Button href="/co-je-reiki" size="sm">Číst více informací</Button>
+    </div>
+
+    <div class="what-is__visual" aria-hidden="true">
+      <div class="what-is__placeholder">
+        <span>Reiki</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .what-is {
+    padding-block: var(--space-6);
+    background: var(--color-white);
+  }
+  .what-is__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    align-items: center;
+  }
+  .what-is__content h2 {
+    color: var(--color-primary-dark);
+  }
+  .what-is__content h3 {
+    margin-top: var(--space-3);
+  }
+  .what-is__placeholder {
+    aspect-ratio: 4/3;
+    background:
+      radial-gradient(circle at center, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    box-shadow: var(--shadow-md);
+  }
+  @media (min-width: 1024px) {
+    .what-is__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

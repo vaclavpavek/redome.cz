@@ -1,0 +1,68 @@
+---
+import { getCollection, render } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+
+const stories = (await getCollection('stories')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const storiesWithContent = await Promise.all(
+  stories.map(async (story) => {
+    const { Content } = await render(story);
+    return { ...story, Content };
+  })
+);
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: 'Příběhy z praxe', url: '/pribehy-z-praxe' },
+];
+---
+
+<PageLayout
+  title="Příběhy z praxe"
+  description="Skutečné zkušenosti klientů s Reiki, Dornovou metodou a Breussovou masáží."
+  breadcrumbs={breadcrumbs}
+>
+  <h1>Příběhy z praxe</h1>
+  <p>Co o své zkušenosti říkají klienti, kteří k nám přišli.</p>
+
+  {
+    storiesWithContent.map((story) => (
+      <article class="story">
+        <div class="story__quote">
+          <story.Content />
+        </div>
+        <footer class="story__attribution">
+          — {story.data.author}{story.data.location && `, ${story.data.location}`}
+        </footer>
+      </article>
+    ))
+  }
+</PageLayout>
+
+<style>
+  .story {
+    margin-block: var(--space-5);
+    padding: var(--space-3);
+    background: var(--color-gray-100);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+  }
+  .story__quote {
+    color: var(--color-gray-800);
+    line-height: var(--leading-relaxed);
+  }
+  .story__quote :global(h3) {
+    margin-top: 0;
+    color: var(--color-primary-dark);
+    font-size: var(--text-h4);
+  }
+  .story__attribution {
+    margin-top: var(--space-2);
+    color: var(--color-gray-600);
+    font-style: italic;
+    font-weight: 700;
+    text-align: right;
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import { getCollection, render } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+
+const masters = (await getCollection('masters')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const mastersWithContent = await Promise.all(
+  masters.map(async (master) => {
+    const { Content } = await render(master);
+    return { ...master, Content };
+  })
+);
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: 'Reiki mistři', url: '/reiki-mistri' },
+];
+---
+
+<PageLayout
+  title="Reiki mistři"
+  description="Karel Hánl – Reiki Mistr/učitel (IV. stupeň). Praxe Reiki, Dornovy metody a Breussovy masáže v Litomyšli."
+  breadcrumbs={breadcrumbs}
+>
+  <h1>Reiki mistři</h1>
+
+  {
+    mastersWithContent.map((master) => (
+      <article class="master">
+        <header class="master__header">
+          <h2>{master.data.name}</h2>
+          <p class="master__role">{master.data.role}</p>
+        </header>
+        <div class="master__bio">
+          <master.Content />
+        </div>
+      </article>
+    ))
+  }
+</PageLayout>
+
+<style>
+  .master {
+    margin-block: var(--space-5);
+  }
+  .master:first-of-type {
+    margin-top: var(--space-3);
+  }
+  .master__header h2 {
+    margin: 0;
+    color: var(--color-primary-dark);
+  }
+  .master__role {
+    font-style: italic;
+    color: var(--color-gray-700);
+    margin: 0 0 var(--space-2);
+  }
+  .master__bio {
+    line-height: var(--leading-relaxed);
+  }
+</style>
