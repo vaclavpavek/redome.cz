@@ -1,26 +1,29 @@
 ---
 title: O nás
-description: Kanit Hauel – mistr Reiki, terapeut Dornovy metody a Breussovy
-  masáže. Práce s tělem a energií v Praze a okolí.
+description: Karel Hánl – Reiki Mistr/učitel (IV. stupeň), Dornova metoda
+  a Breussova masáž. Reiki praxe v Litomyšli.
 order: 20
 section: main
 ---
 
 # O nás
 
-**Redome** je projekt **Kanit Hauel**, mistra Reiki a dlouholetého praktika
-manuálních metod (Dornova metoda, Breussova masáž).
+**Redome** je projekt **Karla Hánla**, mistra Reiki a dlouholetého praktika
+manuálních metod (Dornova metoda, Breussova masáž). Spolupracuje
+s **Monikou Bišickou**.
 
-## Kdo je Kanit Hauel
+## Kdo je Karel Hánl
 
-Reiki jsem začal praktikovat v roce 2008. Mistrovský stupeň linie Usui Shiki
-Ryoho jsem získal v roce 2014. Od té doby provázím klienty individuálními
-sezeními i zasvěceními do prvních stupňů Reiki.
+Narodil jsem se ve znamení Býka. Na životní cestě 7 ukazuje na přirozené
+léčitelské schopnosti, které se naplno rozvinuly díky práci s energií Reiki.
 
-Souběžně s Reiki nabízím Dornovu metodu a Breussovu masáž – kombinaci, která
-často přináší úlevu při bolestech zad a kloubů tam, kde samotná rehabilitace
-nestačí.
+Poprvé jsem o svém léčitelském potenciálu dozvěděl v roce 2008 při
+numerologii a výkladu karet od paní **Janky Skálové**. Tehdy mi ještě
+neprozradila, že se sama věnuje energii Reiki – to jsem se dozvěděl o tři
+roky později, v roce 2011, kdy jsem navštívil její stránky. Reiki mě
+okamžitě oslovilo – cítil jsem, že právě tohle je ta cesta, kterou hledám.
 
 ## Kde nás najdete
 
-V Praze. Termín si domluvíme individuálně – napište nebo zavolejte.
+Peciny 196, **Litomyšl 570 01**.
+Termín si domluvíme individuálně – napište nebo zavolejte.
