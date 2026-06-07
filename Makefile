@@ -27,7 +27,8 @@ RESET := \033[0m
 
 .PHONY: help install dev build preview check lint format test clean \
         docker-up docker-down docker-shell logs ps \
-        generate-sitemap generate-llms generate-md deploy
+        generate-sitemap generate-llms generate-md deploy \
+        screenshot browser-shell
 
 ## help: Zobrazí tuto nápovědu se seznamem příkazů
 help:
@@ -106,6 +107,23 @@ generate-llms: build
 ## generate-md: Vygeneruje pouze Markdown varianty stránek (běží v rámci build)
 generate-md: build
 	@echo "Markdown varianty jsou v dist/*.md"
+
+## screenshot: Vyfotí stránku přes headless Chrome (URL=/cesta [OUT=name.png])
+# Browser kontejner běží vždy mimo (sourozenec), v devcontaineru/Codespaces
+# musí mít docker-outside-of-docker feature.
+screenshot:
+	@mkdir -p screenshots
+	@URL=$${URL:-/}; OUT=$${OUT:-screenshot.png}; \
+	docker compose --profile tools run --rm browser sh -c " \
+	  agent-browser open 'http://host.docker.internal:4321$$URL' \
+	    --executable-path /usr/bin/chromium --wait load && \
+	  agent-browser screenshot --full '/work/screenshots/'$$OUT && \
+	  agent-browser close" && \
+	echo "📷 screenshots/$$OUT (URL: $$URL)"
+
+## browser-shell: Otevře shell uvnitř browser kontejneru (debug)
+browser-shell:
+	docker compose --profile tools run --rm browser bash
 
 ## deploy: Push do main – nasazení obstará GitHub Actions (stage); na produkci jde přes PR
 deploy:

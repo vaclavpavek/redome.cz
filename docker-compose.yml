@@ -20,5 +20,25 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
 
+  # Agent-browser pro screenshoty / vizuální kontrolu UI.
+  # Pouští se na vyžádání přes `make screenshot URL=/cesta`.
+  # Připojuje se na dev server přes host.docker.internal (Mac/Windows)
+  # nebo přes interní docker síť.
+  browser:
+    build:
+      context: .
+      dockerfile: .devcontainer/browser.Dockerfile
+    image: redome-cz-browser:dev
+    profiles: ["tools"]
+    # host.docker.internal funguje napříč Mac/Win Docker Desktop, Linuxem
+    # (host-gateway) i GitHub Codespaces – browser tedy vždy míří na
+    # http://host.docker.internal:4321, kde je vystavený dev server.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./screenshots:/work/screenshots
+      - browser_cache:/home/node/.cache/agent-browser
+
 volumes:
   node_modules:
+  browser_cache:

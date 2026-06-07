@@ -5,6 +5,9 @@ node_modules/
 dist/
 .astro/
 
+# Screenshoty z agent-browser (nehouseme v gitu)
+screenshots/
+
 # Cache
 .cache/
 .vite/

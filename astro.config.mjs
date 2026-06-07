@@ -28,6 +28,9 @@ export default defineConfig({
       // Polling je potřeba, protože pracujeme přes bind mount v Dockeru
       watch: { usePolling: true, interval: 300 },
       hmr: { clientPort: 4321 },
+      // Povolíme host.docker.internal kvůli `make screenshot`
+      // (browser kontejner sahá na dev server přes tento alias)
+      allowedHosts: ['host.docker.internal', 'localhost'],
     },
   },
 });
