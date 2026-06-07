@@ -31,6 +31,14 @@ export default defineConfig({
       // Povolíme host.docker.internal kvůli `make screenshot`
       // (browser kontejner sahá na dev server přes tento alias)
       allowedHosts: ['host.docker.internal', 'localhost'],
+      // /api/* požadavky pošleme do PHP kontejneru
+      // (v produkci je obsluhuje Apache přímo)
+      proxy: {
+        '/api': {
+          target: 'http://php:8080',
+          changeOrigin: true,
+        },
+      },
     },
   },
 });

@@ -20,6 +20,33 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
 
+  # Mailpit – zachytává všechny e-maily během vývoje (SMTP + webové UI)
+  mailpit:
+    image: axllent/mailpit:v1.21
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # webové UI: http://localhost:8025
+    environment:
+      MP_MAX_MESSAGES: "1000"
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+
+  # PHP-CLI server pro lehké backend endpointy (kontaktní formulář).
+  # `mail()` posílá přes msmtp na mailpit:1025; v produkci jde to samé
+  # PHP do public/ a Apache si ho obslouží sám.
+  php:
+    build:
+      context: .
+      dockerfile: .devcontainer/php.Dockerfile
+    image: redome-cz-php:dev
+    restart: unless-stopped
+    volumes:
+      - ./public:/var/www
+    depends_on:
+      - mailpit
+    environment:
+      - CONTACT_TO=redome@redome.cz
+
   # Agent-browser pro screenshoty / vizuální kontrolu UI.
   # Pouští se na vyžádání přes `make screenshot URL=/cesta`.
   # Připojuje se na dev server přes host.docker.internal (Mac/Windows)

@@ -28,7 +28,7 @@ RESET := \033[0m
 .PHONY: help install dev build preview check lint format test clean \
         docker-up docker-down docker-shell logs ps \
         generate-sitemap generate-llms generate-md deploy \
-        screenshot browser-shell
+        screenshot browser-shell mail
 
 ## help: Zobrazí tuto nápovědu se seznamem příkazů
 help:
@@ -107,6 +107,11 @@ generate-llms: build
 ## generate-md: Vygeneruje pouze Markdown varianty stránek (běží v rámci build)
 generate-md: build
 	@echo "Markdown varianty jsou v dist/*.md"
+
+## mail: Otevře schránku Mailpit (zachycuje všechny vývojové e-maily)
+mail:
+	@echo "📬 Otevři v prohlížeči: http://localhost:8025"
+	@command -v open >/dev/null 2>&1 && open http://localhost:8025 || true
 
 ## screenshot: Vyfotí stránku přes headless Chrome (URL=/cesta [OUT=name.png])
 # Browser kontejner běží vždy mimo (sourozenec), v devcontaineru/Codespaces
