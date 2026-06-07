@@ -4,7 +4,7 @@
  */
 
 export const SITE = {
-  url: 'https://www.redome.cz',
+  url: 'https://redome.cz',
   name: 'Redome.cz',
   shortName: 'Redome',
   tagline: 'Reiki a terapeutické služby',

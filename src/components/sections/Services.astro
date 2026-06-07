@@ -28,7 +28,7 @@ const services = (await getCollection('services')).sort(
             {service.data.duration && (
               <p class="service-card__meta">Délka: {service.data.duration}</p>
             )}
-            <a href={`/sluzby/${service.id}`} class="service-card__link">
+            <a href={`/${service.id}`} class="service-card__link">
               Více informací
               <Icon size={16}><ArrowRight /></Icon>
             </a>

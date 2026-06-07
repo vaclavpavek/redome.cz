@@ -33,12 +33,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }));
 
   const servicePaths = services.map((service: CollectionEntry<'services'>) => ({
-    params: { slug: `sluzby/${service.id}` },
+    params: { slug: service.id },
     props: {
       title: service.data.title,
       description: service.data.summary,
       body: service.body ?? '',
-      canonical: `${SITE.url}/sluzby/${service.id}`,
+      canonical: `${SITE.url}/${service.id}`,
     } satisfies MDProps,
   }));
 

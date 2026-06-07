@@ -34,12 +34,12 @@ const breadcrumbs = [
             <Lotus />
           </Icon>
           <div class="service-row__body">
-            <h2><a href={`/sluzby/${service.id}`}>{service.data.title}</a></h2>
+            <h2><a href={`/${service.id}`}>{service.data.title}</a></h2>
             <p>{service.data.summary}</p>
             {service.data.duration && (
               <p class="service-row__meta">Délka sezení: {service.data.duration}</p>
             )}
-            <a href={`/sluzby/${service.id}`} class="service-row__link">
+            <a href={`/${service.id}`} class="service-row__link">
               Více o službě
               <Icon size={16}><ArrowRight /></Icon>
             </a>

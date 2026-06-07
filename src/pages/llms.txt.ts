@@ -32,7 +32,7 @@ export const GET: APIRoute = async () => {
     '## Služby',
     '',
     ...services.map((s) =>
-      formatPage(`sluzby/${s.id}`, s.data.title, s.data.summary)
+      formatPage(s.id, s.data.title, s.data.summary)
     ),
   ];
 

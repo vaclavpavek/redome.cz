@@ -1,60 +1,160 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import PageLayout from '~/layouts/PageLayout.astro';
 import ContactForm from '~/components/sections/ContactForm.astro';
 import FAQPage from '~/components/schema/FAQPage.astro';
 import Person from '~/components/schema/Person.astro';
+import Service from '~/components/schema/Service.astro';
+import Button from '~/components/ui/Button.astro';
+
+type Props =
+  | { type: 'page'; page: CollectionEntry<'pages'> }
+  | { type: 'service'; service: CollectionEntry<'services'> };
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages');
-  return pages.map((page) => ({
+  const services = await getCollection('services');
+
+  const pagePaths = pages.map((page) => ({
     params: { slug: page.id },
-    props: { page },
+    props: { type: 'page', page } satisfies Props,
   }));
+
+  const servicePaths = services.map((service) => ({
+    params: { slug: service.id },
+    props: { type: 'service', service } satisfies Props,
+  }));
+
+  return [...pagePaths, ...servicePaths];
 }
 
-const { page } = Astro.props;
-const { Content } = await render(page);
+const props = Astro.props as Props;
 
-const breadcrumbs = [
-  { name: 'Domů', url: '/' },
-  { name: page.data.title, url: `/${page.id}` },
-];
+let title: string;
+let description: string;
+let Content;
+let breadcrumbs: { name: string; url: string }[];
 
-// Stránkové schema rozšíření
-const isContact = page.id === 'kontakt';
-const isAbout = page.id === 'o-nas';
-const isWhatIsReiki = page.id === 'co-je-reiki';
+if (props.type === 'service') {
+  const { service } = props;
+  ({ Content } = await render(service));
+  title = service.data.title;
+  description = service.data.summary;
+  breadcrumbs = [
+    { name: 'Domů', url: '/' },
+    { name: 'Služby', url: '/sluzby' },
+    { name: title, url: `/${service.id}` },
+  ];
+} else {
+  const { page } = props;
+  ({ Content } = await render(page));
+  title = page.data.title;
+  description = page.data.description;
+  breadcrumbs = [
+    { name: 'Domů', url: '/' },
+    { name: title, url: `/${page.id}` },
+  ];
+}
 
-// Pro „Co je Reiki" načteme FAQ položky
+// Pro „Co je Reiki" načteme FAQ položky do JSON-LD
 let faqItems: { question: string; answer: string }[] = [];
-if (isWhatIsReiki) {
+if (props.type === 'page' && props.page.id === 'co-je-reiki') {
   const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
   faqItems = faqs.map((f) => ({
     question: f.data.question,
     answer: (f.body ?? '').trim(),
   }));
 }
+
+const isContact = props.type === 'page' && props.page.id === 'kontakt';
+const isAbout = props.type === 'page' && props.page.id === 'o-nas';
 ---
 
-<PageLayout
-  title={page.data.title}
-  description={page.data.description}
-  breadcrumbs={breadcrumbs}
->
+<PageLayout title={title} description={description} breadcrumbs={breadcrumbs}>
   <Fragment slot="head">
+    {props.type === 'service' && (
+      <Service
+        name={props.service.data.title}
+        description={props.service.data.summary}
+        slug={props.service.id}
+      />
+    )}
     {isAbout && (
       <Person
         name="Kanit Hauel"
         jobTitle="Mistr Reiki, terapeut Dornovy metody a Breussovy masáže"
-        description={page.data.description}
+        description={description}
         knowsAbout={['Reiki', 'Dornova metoda', 'Breussova masáž']}
       />
     )}
-    {isWhatIsReiki && faqItems.length > 0 && <FAQPage items={faqItems} />}
+    {faqItems.length > 0 && <FAQPage items={faqItems} />}
   </Fragment>
+
+  {
+    props.type === 'service' && (
+      <>
+        <h1>{props.service.data.title}</h1>
+        <p class="service-summary">{props.service.data.summary}</p>
+        {(props.service.data.duration || props.service.data.price) && (
+          <dl class="service-meta">
+            {props.service.data.duration && (
+              <>
+                <dt>Délka sezení</dt>
+                <dd>{props.service.data.duration}</dd>
+              </>
+            )}
+            {props.service.data.price && (
+              <>
+                <dt>Cena</dt>
+                <dd>{props.service.data.price}</dd>
+              </>
+            )}
+          </dl>
+        )}
+      </>
+    )
+  }
 
   <Content />
 
+  {
+    props.type === 'service' && (
+      <div class="service-cta">
+        <Button href="/kontakt#formular">Domluvit setkání</Button>
+        <Button href="/sluzby" variant="outline">Zpět na služby</Button>
+      </div>
+    )
+  }
+
   {isContact && <ContactForm />}
 </PageLayout>
+
+<style>
+  .service-summary {
+    font-size: var(--text-18);
+    color: var(--color-gray-700);
+    font-style: italic;
+  }
+  .service-meta {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5rem var(--space-2);
+    margin: var(--space-3) 0;
+    padding: var(--space-2);
+    background: var(--color-primary-light);
+    border-radius: var(--radius-sm);
+  }
+  .service-meta dt {
+    font-weight: 700;
+    color: var(--color-primary-dark);
+  }
+  .service-meta dd {
+    margin: 0;
+  }
+  .service-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-top: var(--space-4);
+  }
+</style>

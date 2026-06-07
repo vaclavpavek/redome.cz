@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://www.redome.cz/sitemap-index.xml
+Sitemap: https://redome.cz/sitemap-index.xml

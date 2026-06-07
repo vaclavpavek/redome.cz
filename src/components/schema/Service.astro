@@ -18,7 +18,7 @@ const data = {
   serviceType: serviceType ?? name,
   provider: { '@id': `${SITE.url}#business` },
   areaServed: { '@type': 'Country', name: 'Česká republika' },
-  ...(slug && { url: `${SITE.url}/sluzby/${slug}` }),
+  ...(slug && { url: `${SITE.url}/${slug}` }),
 };
 ---
 
