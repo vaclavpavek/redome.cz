@@ -1,0 +1,19 @@
+{
+  "name": "Redome.cz",
+  "short_name": "Redome",
+  "description": "Reiki a terapeutické služby – Kanit Hauel",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#19868e",
+  "lang": "cs",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

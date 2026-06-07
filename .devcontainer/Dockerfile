@@ -12,5 +12,10 @@ ENV IN_CONTAINER=1 \
 
 WORKDIR /workspace
 
+# Aby named volume node_modules měl správného vlastníka (uid 1000 = node)
+RUN mkdir -p /workspace/node_modules && chown -R node:node /workspace
+
+USER node
+
 # Defaultně držíme kontejner naživu, samotný server spouští `make dev`
 CMD ["sleep", "infinity"]

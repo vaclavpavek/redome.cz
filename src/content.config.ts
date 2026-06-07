@@ -31,7 +31,7 @@ const masters = defineCollection({
     name: z.string(),
     role: z.string(),
     photo: z.string().optional(),
-    bio: z.string(),
+    // Biografie samotná je v těle MD souboru (renderuje se přes <Content />)
     order: z.number().default(100),
   }),
 });

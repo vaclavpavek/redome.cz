@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#19868e"/>
+      <stop offset="100%" stop-color="#003138"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g transform="translate(80,140)" fill="none" stroke="#c3dacd" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M180 360c70 0 130-50 130-110-50 0-90 20-105 60 15-50 15-95 0-140-30 45-45 95-30 140-15-40-55-60-105-60 0 60 60 110 110 110z"/>
+    <path d="M180 360c-70 0-130-50-130-110 50 0 90 20 105 60"/>
+  </g>
+  <g transform="translate(440, 200)" fill="#ffffff" font-family="Georgia, 'Playfair Display', serif">
+    <text font-size="92" font-weight="700">Redome.cz</text>
+    <text y="80" font-size="40" font-style="italic" fill="#c3dacd">Najděte rovnováhu těla i mysli</text>
+    <text y="180" font-size="28" fill="#e6f0f2">Reiki · Dornova metoda · Breussova masáž</text>
+  </g>
+</svg>
