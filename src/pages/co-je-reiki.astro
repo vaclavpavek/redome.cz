@@ -1,0 +1,278 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import BreadcrumbsSchema from '~/components/schema/Breadcrumbs.astro';
+import FAQPage from '~/components/schema/FAQPage.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import Button from '~/components/ui/Button.astro';
+
+const pages = await getCollection('pages');
+const page = pages.find((p) => p.id === 'co-je-reiki');
+if (!page) throw new Error('content/pages/co-je-reiki.md chybí');
+
+const { Content } = await render(page);
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: 'Co je Reiki', url: '/co-je-reiki' },
+];
+
+// FAQ se generuje ze samostatné collection (sdílí HP)
+const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+const faqItems = faqs.map((f) => ({
+  question: f.data.question,
+  answer: (f.body ?? '').trim(),
+}));
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <Fragment slot="head">
+    <BreadcrumbsSchema items={breadcrumbs} />
+    {faqItems.length > 0 && <FAQPage items={faqItems} />}
+  </Fragment>
+
+  <!-- Hero ve stylu Figma Subpage – tmavě zelený gradient s ilustrací -->
+  <section class="reiki-hero" aria-labelledby="reiki-hero-title">
+    <div class="container reiki-hero__inner">
+      <div class="reiki-hero__content">
+        <h1 id="reiki-hero-title">Co je Reiki?</h1>
+        <p class="reiki-hero__subtitle">
+          Harmonizace těla, mysli i duše původem z Japonska.
+        </p>
+        <Button href="/kontakt#formular" variant="soft" color="primary">Rezervovat termín</Button>
+      </div>
+      <div class="reiki-hero__art" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <article class="container reiki-page">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <!-- Hlavní popis Reiki + obrázek napravo -->
+    <section class="reiki-section reiki-section--split">
+      <div class="reiki-section__text reiki-prose">
+        <Content />
+      </div>
+      <div class="reiki-section__visual reiki-section__visual--right" aria-hidden="true">
+        <div class="visual-placeholder visual-placeholder--earth">
+          <span>Reiki energie</span>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <!-- Zelená claim sekce (přes celou šířku) -->
+  <section class="reiki-claim" aria-label="Citát">
+    <div class="container">
+      <p>
+        Reiki neodstraňuje žádné překážky, ale skrze ně i doplňuje – pomáhá
+        na úrovni fyzické, psychické i duchovní a přináší celkové uklidnění
+        a vnitřní rovnováhu.
+      </p>
+    </div>
+  </section>
+
+  <!-- „Pro koho je Reiki vhodné" s obrázkem vlevo -->
+  <article class="container">
+    <section class="reiki-section reiki-section--split reiki-section--reverse">
+      <div class="reiki-section__visual" aria-hidden="true">
+        <div class="visual-placeholder visual-placeholder--flowers">
+          <span>Květy</span>
+        </div>
+      </div>
+      <div class="reiki-section__text reiki-prose">
+        <h2>Pro koho je Reiki vhodné?</h2>
+        <p>
+          Reiki je vhodné pro úplně všechny – dospělé, děti i seniory. Není
+          třeba v cokoliv věřit. Stačí být otevřený a dovolit tělu přijmout
+          to, co potřebuje. Mnoho klientů přichází se skepsí a odchází
+          překvapeno tím, jak hluboce mohou Reiki pocítit.
+        </p>
+        <Button href="/kontakt#formular" size="sm">Zjistit více</Button>
+      </div>
+    </section>
+  </article>
+
+  <!-- Mistrovská linie + foto Mikao Usui napravo -->
+  <article class="container">
+    <section class="reiki-section reiki-section--split">
+      <div class="reiki-section__text reiki-prose">
+        <h2>Mistrovská linie k dr. Mikao Usuimu</h2>
+        <p>
+          Každý mistr Reiki je přímou součástí linie navazující na zakladatele.
+          <strong>Karel Háněl</strong> je v této linii zasvěcený přes:
+        </p>
+        <ul class="lineage">
+          <li>dr. Mikao Usui</li>
+          <li>dr. Chujiro Hayashi</li>
+          <li>Hawayo Takata</li>
+          <li>Phyllis Lei Furumoto</li>
+          <li>Paul Mitchell</li>
+          <li><em>a další žáci, kteří dovedli zasvěcení až k českým praktikům</em></li>
+        </ul>
+      </div>
+      <div class="reiki-section__visual reiki-section__visual--right" aria-hidden="true">
+        <div class="visual-placeholder visual-placeholder--usui">
+          <span>靈氣</span>
+          <small>dr. Mikao Usui</small>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <ContactForm />
+</BaseLayout>
+
+<style>
+  /* === Hero === */
+  .reiki-hero {
+    background:
+      linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+    color: var(--color-white);
+  }
+  .reiki-hero__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding-block: var(--space-6);
+    align-items: center;
+    min-height: 22rem;
+  }
+  .reiki-hero h1 {
+    color: var(--color-white);
+    font-size: clamp(2rem, 4vw, var(--text-h1));
+  }
+  .reiki-hero__subtitle {
+    font-size: var(--text-18);
+    color: var(--color-secondary-light);
+    margin-bottom: var(--space-3);
+  }
+  .reiki-hero__art {
+    min-height: 12rem;
+    border-radius: var(--radius-md);
+    background:
+      radial-gradient(
+        circle at 70% 50%,
+        color-mix(in srgb, var(--color-secondary-light) 30%, transparent),
+        transparent 60%
+      );
+  }
+  @media (min-width: 1024px) {
+    .reiki-hero__inner {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+
+  /* === Obecný layout sekcí === */
+  .reiki-page {
+    padding-block: var(--space-4) var(--space-3);
+  }
+  .reiki-section {
+    margin-block: var(--space-5);
+  }
+  .reiki-section--split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    align-items: center;
+  }
+  .reiki-section__text {
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .reiki-section--split {
+      grid-template-columns: 1.3fr 1fr;
+    }
+    .reiki-section--reverse {
+      grid-template-columns: 1fr 1.3fr;
+    }
+  }
+
+  /* === Prose typography pro Markdown obsah === */
+  .reiki-prose :global(h2) {
+    color: var(--color-primary-dark);
+    margin-top: var(--space-4);
+  }
+  .reiki-prose :global(h2:first-child),
+  .reiki-prose > :global(h2:first-of-type) {
+    margin-top: 0;
+  }
+  .reiki-prose :global(p) {
+    line-height: var(--leading-relaxed);
+  }
+  .reiki-prose :global(ul) {
+    padding-left: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .reiki-prose :global(li) {
+    margin-bottom: 0.4rem;
+  }
+
+  /* === Claim banner === */
+  .reiki-claim {
+    background: var(--color-secondary);
+    padding-block: var(--space-4);
+    margin-block: var(--space-5);
+  }
+  .reiki-claim p {
+    color: var(--color-primary-dark);
+    font-size: var(--text-18);
+    font-style: italic;
+    text-align: center;
+    max-width: 56rem;
+    margin: 0 auto;
+    line-height: var(--leading-relaxed);
+  }
+
+  /* === Placeholdery obrázků (zatím bez assetů z Figmy) === */
+  .visual-placeholder {
+    aspect-ratio: 4/3;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: var(--text-h3);
+    box-shadow: var(--shadow-md);
+  }
+  .visual-placeholder small {
+    font-family: var(--font-body);
+    font-size: var(--text-12);
+    opacity: 0.85;
+  }
+  .visual-placeholder--earth {
+    background: radial-gradient(circle at center, var(--color-info), var(--color-primary-dark));
+  }
+  .visual-placeholder--flowers {
+    background:
+      linear-gradient(135deg, var(--color-warning) 0%, var(--color-success) 100%);
+    color: var(--color-primary-dark);
+  }
+  .visual-placeholder--usui {
+    background: var(--color-danger);
+    font-size: 4rem;
+  }
+  .visual-placeholder--usui small {
+    color: var(--color-white);
+  }
+
+  /* === Seznam mistrovské linie === */
+  .lineage {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-2) 0;
+  }
+  .lineage li {
+    padding: 0.5rem var(--space-1);
+    border-bottom: 1px solid var(--color-gray-200);
+    color: var(--color-gray-800);
+  }
+  .lineage li:last-child {
+    border-bottom: 0;
+    color: var(--color-gray-600);
+  }
+</style>

@@ -15,7 +15,7 @@ export const SITE = {
 } as const;
 
 export const CONTACT = {
-  person: 'Karel Hánl',
+  person: 'Karel Háněl',
   phone: '+420 775 504 175',
   phoneHref: 'tel:+420775504175',
   email: 'redome@redome.cz',

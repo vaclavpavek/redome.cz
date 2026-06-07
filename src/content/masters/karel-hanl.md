@@ -1,5 +1,5 @@
 ---
-name: Karel Hánl
+name: Karel Háněl
 role: Reiki Mistr/učitel (IV. stupeň), Dornova metoda, Breussova masáž – Litomyšl
 order: 10
 ---

@@ -1,6 +1,6 @@
 ---
 title: O nás
-description: Karel Hánl – Reiki Mistr/učitel (IV. stupeň), Dornova metoda
+description: Karel Háněl – Reiki Mistr/učitel (IV. stupeň), Dornova metoda
   a Breussova masáž. Reiki praxe v Litomyšli.
 order: 20
 section: main
@@ -8,11 +8,11 @@ section: main
 
 # O nás
 
-**Redome** je projekt **Karla Hánla**, mistra Reiki a dlouholetého praktika
+**Redome** je projekt **Karla Háněla**, mistra Reiki a dlouholetého praktika
 manuálních metod (Dornova metoda, Breussova masáž). Spolupracuje
 s **Monikou Bišickou**.
 
-## Kdo je Karel Hánl
+## Kdo je Karel Háněl
 
 Narodil jsem se ve znamení Býka. Na životní cestě 7 ukazuje na přirozené
 léčitelské schopnosti, které se naplno rozvinuly díky práci s energií Reiki.

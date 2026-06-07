@@ -13,7 +13,7 @@ naší Jaňulky a následující týden jsem už jela směr její „úřadovna"
 Začaly jsme si povídat, že když jsme dělali výklad karet, natahují tu
 špatnou energii z lidí do sebe a nemůžou se jí zbavit. Při další návštěvě
 mi Janička řekla: *„Hele, pojď, v víkendu tu bude seminář REIKI a přijede
-i další mistr Karel Hánl, v té době jsem absolutně neměla tušení, kdo je
+i další mistr Karel Háněl, v té době jsem absolutně neměla tušení, kdo je
 to a hlavně, co je to REIKI."*
 
 Proběhl krásný den s Janičkou, Karlem a dalšími zájemci o zasvěcení do
