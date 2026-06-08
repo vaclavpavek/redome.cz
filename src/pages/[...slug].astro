@@ -1,6 +1,9 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
 import PageLayout from '~/layouts/PageLayout.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import BreadcrumbsSchema from '~/components/schema/Breadcrumbs.astro';
 import ContactForm from '~/components/sections/ContactForm.astro';
 import FAQPage from '~/components/schema/FAQPage.astro';
 import Person from '~/components/schema/Person.astro';
@@ -15,153 +18,288 @@ export async function getStaticPaths() {
   const pages = await getCollection('pages');
   const services = await getCollection('services');
 
-  const pagePaths = pages.map((page) => ({
-    params: { slug: page.id },
-    props: { type: 'page', page } satisfies Props,
-  }));
-
-  const servicePaths = services.map((service) => ({
-    params: { slug: service.id },
-    props: { type: 'service', service } satisfies Props,
-  }));
-
-  return [...pagePaths, ...servicePaths];
+  return [
+    ...pages.map((page) => ({
+      params: { slug: page.id },
+      props: { type: 'page', page } satisfies Props,
+    })),
+    ...services.map((service) => ({
+      params: { slug: service.id },
+      props: { type: 'service', service } satisfies Props,
+    })),
+  ];
 }
 
 const props = Astro.props as Props;
 
-let title: string;
-let description: string;
-let Content;
-let breadcrumbs: { name: string; url: string }[];
+// === SERVICE detail (Subpage2 styled: hero + content + image + CTA + form) ===
+if (props.type === 'service') {
+  // (nic – render níže)
+}
+
+// === PAGE (Markdown) ===
+let pageTitle = '';
+let pageDescription = '';
+let PageContent: any = null;
+let pageBreadcrumbs: { name: string; url: string }[] = [];
+let isContact = false;
+let isAbout = false;
+let faqItems: { question: string; answer: string }[] = [];
+let pageShowContact = false;
+
+if (props.type === 'page') {
+  ({ Content: PageContent } = await render(props.page));
+  pageTitle = props.page.data.title;
+  pageDescription = props.page.data.description;
+  pageBreadcrumbs = [
+    { name: 'Domů', url: '/' },
+    { name: pageTitle, url: `/${props.page.id}` },
+  ];
+  isContact = props.page.id === 'kontakt';
+  isAbout = props.page.id === 'o-nas';
+  const PAGES_WITHOUT_CTA = new Set(['ochrana-osobnich-udaju']);
+  pageShowContact = !PAGES_WITHOUT_CTA.has(props.page.id);
+
+  if (props.page.id === 'co-je-reiki') {
+    const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+    faqItems = faqs.map((f) => ({
+      question: f.data.question,
+      answer: (f.body ?? '').trim(),
+    }));
+  }
+}
+
+// === SERVICE detail (proměnné) ===
+let svcTitle = '';
+let svcSummary = '';
+let SvcContent: any = null;
+let svcBreadcrumbs: { name: string; url: string }[] = [];
+let svcId = '';
+let svcDuration: string | undefined;
+let svcPrice: string | undefined;
 
 if (props.type === 'service') {
-  const { service } = props;
-  ({ Content } = await render(service));
-  title = service.data.title;
-  description = service.data.summary;
-  breadcrumbs = [
+  ({ Content: SvcContent } = await render(props.service));
+  svcTitle = props.service.data.title;
+  svcSummary = props.service.data.summary;
+  svcId = props.service.id;
+  svcDuration = props.service.data.duration;
+  svcPrice = props.service.data.price;
+  svcBreadcrumbs = [
     { name: 'Domů', url: '/' },
     { name: 'Služby', url: '/sluzby' },
-    { name: title, url: `/${service.id}` },
-  ];
-} else {
-  const { page } = props;
-  ({ Content } = await render(page));
-  title = page.data.title;
-  description = page.data.description;
-  breadcrumbs = [
-    { name: 'Domů', url: '/' },
-    { name: title, url: `/${page.id}` },
+    { name: svcTitle, url: `/${svcId}` },
   ];
 }
-
-// Pro „Co je Reiki" načteme FAQ položky do JSON-LD
-let faqItems: { question: string; answer: string }[] = [];
-if (props.type === 'page' && props.page.id === 'co-je-reiki') {
-  const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
-  faqItems = faqs.map((f) => ({
-    question: f.data.question,
-    answer: (f.body ?? '').trim(),
-  }));
-}
-
-const isContact = props.type === 'page' && props.page.id === 'kontakt';
-const isAbout = props.type === 'page' && props.page.id === 'o-nas';
-// Stránky bez výzvy k akci na konci (typicky právní dokumenty)
-const PAGES_WITHOUT_CTA = new Set(['ochrana-osobnich-udaju']);
-const showContact =
-  props.type === 'service' ||
-  (props.type === 'page' && !PAGES_WITHOUT_CTA.has(props.page.id));
 ---
 
-<PageLayout title={title} description={description} breadcrumbs={breadcrumbs}>
-  <Fragment slot="head">
-    {props.type === 'service' && (
-      <Service
-        name={props.service.data.title}
-        description={props.service.data.summary}
-        slug={props.service.id}
-      />
-    )}
-    {isAbout && (
-      <Person
-        name="Karel Háněl"
-        jobTitle="Reiki Mistr/učitel (IV. stupeň), terapeut Dornovy metody a Breussovy masáže"
-        description={description}
-        knowsAbout={['Reiki', 'Dornova metoda', 'Breussova masáž', 'Runy', 'Numerologie']}
-      />
-    )}
-    {faqItems.length > 0 && <FAQPage items={faqItems} />}
-  </Fragment>
+{
+  props.type === 'service' ? (
+    <BaseLayout title={svcTitle} description={svcSummary}>
+      <Fragment slot="head">
+        <BreadcrumbsSchema items={svcBreadcrumbs} />
+        <Service name={svcTitle} description={svcSummary} slug={svcId} />
+      </Fragment>
 
-  {
-    props.type === 'service' && (
-      <>
-        <h1>{props.service.data.title}</h1>
-        <p class="service-summary">{props.service.data.summary}</p>
-        {(props.service.data.duration || props.service.data.price) && (
-          <dl class="service-meta">
-            {props.service.data.duration && (
-              <>
+      {/* Subpage2 styled hero */}
+      <section class="svc-hero" aria-labelledby="svc-hero-title">
+        <div class="svc-hero__bg" aria-hidden="true">
+          <img src="/images/hero-hp.jpg" alt="" loading="eager" />
+          <div class="svc-hero__overlay" />
+        </div>
+        <div class="container svc-hero__inner">
+          <div class="svc-hero__content">
+            <Breadcrumbs items={svcBreadcrumbs} />
+            <h1 id="svc-hero-title">{svcTitle}</h1>
+            <p class="svc-hero__subtitle">{svcSummary}</p>
+            <Button href="/kontakt#formular" variant="soft" color="primary">
+              Rezervovat termín
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* 2-sloupcový content: text vlevo + meta/info vpravo */}
+      <article class="container svc-page">
+        <div class="svc-grid">
+          <div class="svc-prose">
+            <SvcContent />
+          </div>
+          <aside class="svc-meta">
+            <h2>Informace o sezení</h2>
+            {svcDuration && (
+              <div class="svc-meta__row">
                 <dt>Délka sezení</dt>
-                <dd>{props.service.data.duration}</dd>
-              </>
+                <dd>{svcDuration}</dd>
+              </div>
             )}
-            {props.service.data.price && (
-              <>
+            {svcPrice && (
+              <div class="svc-meta__row">
                 <dt>Cena</dt>
-                <dd>{props.service.data.price}</dd>
-              </>
+                <dd>{svcPrice}</dd>
+              </div>
             )}
-          </dl>
+            <div class="svc-meta__row">
+              <dt>Kde</dt>
+              <dd>Litomyšl</dd>
+            </div>
+            <Button href="/kontakt#formular">Domluvit setkání</Button>
+            <Button href="/sluzby" variant="outline">Zpět na všechny služby</Button>
+          </aside>
+        </div>
+      </article>
+
+      <ContactForm />
+    </BaseLayout>
+  ) : (
+    <PageLayout
+      title={pageTitle}
+      description={pageDescription}
+      breadcrumbs={pageBreadcrumbs}
+    >
+      <Fragment slot="head">
+        {isAbout && (
+          <Person
+            name="Karel Háněl"
+            jobTitle="Reiki Mistr/učitel (IV. stupeň), terapeut Dornovy metody a Breussovy masáže"
+            description={pageDescription}
+            knowsAbout={['Reiki', 'Dornova metoda', 'Breussova masáž', 'Runy', 'Numerologie']}
+          />
         )}
-      </>
-    )
-  }
+        {faqItems.length > 0 && <FAQPage items={faqItems} />}
+      </Fragment>
 
-  <Content />
+      <PageContent />
 
-  {
-    props.type === 'service' && (
-      <div class="service-cta">
-        <Button href="/kontakt#formular">Domluvit setkání</Button>
-        <Button href="/sluzby" variant="outline">Zpět na služby</Button>
-      </div>
-    )
-  }
-
-  <Fragment slot="after">
-    {showContact && <ContactForm />}
-  </Fragment>
-</PageLayout>
+      <Fragment slot="after">
+        {pageShowContact && <ContactForm />}
+      </Fragment>
+    </PageLayout>
+  )
+}
 
 <style>
-  .service-summary {
+  /* === Service hero (Subpage2 stylem) === */
+  .svc-hero {
+    position: relative;
+    color: var(--color-white);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .svc-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .svc-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+  }
+  .svc-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to right,
+      var(--color-primary-dark) 0%,
+      var(--color-primary) 32%,
+      color-mix(in srgb, var(--color-primary) 60%, transparent) 48%,
+      transparent 62%
+    );
+  }
+  .svc-hero__inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    align-items: center;
+    min-height: 42vh;
+    padding-block: var(--space-6) var(--space-5);
+  }
+  .svc-hero__content :global(.breadcrumbs ol) {
+    color: color-mix(in srgb, var(--color-white) 75%, transparent);
+    margin-bottom: var(--space-2);
+  }
+  .svc-hero__content :global(.breadcrumbs a),
+  .svc-hero__content :global(.breadcrumbs [aria-current='page']) {
+    color: var(--color-white);
+  }
+  .svc-hero h1 {
+    color: var(--color-white);
+    font-size: clamp(2rem, 4vw, var(--text-h1));
+    text-shadow: 0 2px 12px rgb(0 0 0 / 0.25);
+    margin-bottom: var(--space-2);
+  }
+  .svc-hero__subtitle {
     font-size: var(--text-18);
-    color: var(--color-gray-700);
+    color: var(--color-gray-100);
+    margin-bottom: var(--space-3);
+    max-width: 36rem;
     font-style: italic;
   }
-  .service-meta {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.5rem var(--space-2);
-    margin: var(--space-3) 0;
-    padding: var(--space-2);
-    background: var(--color-primary-light);
-    border-radius: var(--radius-sm);
+  @media (min-width: 1024px) {
+    .svc-hero__content {
+      max-width: 38rem;
+    }
   }
-  .service-meta dt {
+
+  /* === Service content === */
+  .svc-page {
+    padding-block: var(--space-5) var(--space-3);
+  }
+  .svc-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  @media (min-width: 1024px) {
+    .svc-grid {
+      grid-template-columns: 2fr 1fr;
+      align-items: start;
+    }
+  }
+  .svc-prose :global(p) {
+    line-height: var(--leading-relaxed);
+  }
+  .svc-prose :global(ul) {
+    padding-left: var(--space-2);
+  }
+  .svc-prose :global(li) {
+    margin-bottom: 0.4rem;
+  }
+  .svc-meta {
+    background: var(--color-primary-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    position: sticky;
+    top: 6rem;
+  }
+  .svc-meta h2 {
+    margin: 0 0 var(--space-2);
+    color: var(--color-primary-dark);
+    font-size: var(--text-h5);
+  }
+  .svc-meta__row {
+    display: flex;
+    justify-content: space-between;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+  .svc-meta__row dt {
     font-weight: 700;
     color: var(--color-primary-dark);
-  }
-  .service-meta dd {
     margin: 0;
   }
-  .service-cta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1);
-    margin-top: var(--space-4);
+  .svc-meta__row dd {
+    margin: 0;
+    color: var(--color-gray-800);
+  }
+  .svc-meta :global(.btn) {
+    margin-top: var(--space-1);
+    width: 100%;
   }
 </style>
