@@ -79,8 +79,12 @@ ServerSignature Off
   # direktivy proti Google FLoC / Topics / Attribution Reporting API.
   Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=(), browsing-topics=(), attribution-reporting=()"
 
-  # HSTS s preload listem (zaregistruj na https://hstspreload.org/)
-  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" env=HTTPS
+  # HSTS úmyslně nevynucujeme – u laiků dělá medvědí službu:
+  # prohlížeč si pamatuje, že doména je „jen https" a kdyby zákazník
+  # někdy potřeboval otevřít http:// (např. lokální preview, migrace
+  # na jiný cert), bez vyčištění state se to neudělá.
+  # https → vynucené přes mod_rewrite výše, to stačí.
+  # Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" env=HTTPS
 
   # CSP – uvolněno pro Astro (inline styly), zpřísnit po nasazení
   Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
