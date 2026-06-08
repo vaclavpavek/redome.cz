@@ -23,10 +23,15 @@ const { Content } = featured ? await render(featured) : { Content: null };
           </div>
           <Button href="/reiki-mistri">Číst více informací</Button>
         </div>
-        <div class="masters__photo" aria-hidden="true">
-          <div class="masters__photo-placeholder">
-            <span>Foto</span>
-          </div>
+        <div class="masters__photo">
+          <img
+            src="/images/master-karel.jpg"
+            alt={`${featured.data.name} – foto`}
+            class="masters__photo-img"
+            loading="eager"
+            width="600"
+            height="800"
+          />
         </div>
       </div>
     </section>
@@ -61,17 +66,13 @@ const { Content } = featured ? await render(featured) : { Content: null };
     font-style: italic;
     color: var(--color-gray-700);
   }
-  .masters__photo-placeholder {
+  .masters__photo-img {
+    width: 100%;
+    height: auto;
     aspect-ratio: 3/4;
-    background:
-      linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+    object-fit: cover;
     border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-white);
-    font-family: var(--font-heading);
-    font-size: var(--text-h3);
+    box-shadow: var(--shadow-md);
   }
   @media (min-width: 1024px) {
     .masters__grid {

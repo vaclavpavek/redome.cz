@@ -121,7 +121,9 @@ screenshot:
 	@URL=$${URL:-/}; OUT=$${OUT:-screenshot.png}; \
 	docker compose --profile tools run --rm browser sh -c " \
 	  agent-browser open 'http://host.docker.internal:4321$$URL' \
-	    --executable-path /usr/bin/chromium --wait load && \
+	    --executable-path /usr/bin/chromium --viewport 1440 900 && \
+	  agent-browser wait --load networkidle && \
+	  agent-browser wait 1500 && \
 	  agent-browser screenshot --full '/work/screenshots/'$$OUT && \
 	  agent-browser close" && \
 	echo "📷 screenshots/$$OUT (URL: $$URL)"

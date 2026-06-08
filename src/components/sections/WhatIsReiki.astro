@@ -28,10 +28,15 @@ import Button from '~/components/ui/Button.astro';
       <Button href="/co-je-reiki" size="sm">Číst více informací</Button>
     </div>
 
-    <div class="what-is__visual" aria-hidden="true">
-      <div class="what-is__placeholder">
-        <span>Reiki</span>
-      </div>
+    <div class="what-is__visual">
+      <img
+        src="/images/what-is-reiki.jpg"
+        alt="Ruce držící zářící zeměkouli – symbol Reiki energie"
+        class="what-is__image"
+        loading="eager"
+        width="800"
+        height="600"
+      />
     </div>
   </div>
 </section>
@@ -53,17 +58,12 @@ import Button from '~/components/ui/Button.astro';
   .what-is__content h3 {
     margin-top: var(--space-3);
   }
-  .what-is__placeholder {
+  .what-is__image {
+    width: 100%;
+    height: auto;
     aspect-ratio: 4/3;
-    background:
-      radial-gradient(circle at center, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    object-fit: cover;
     border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-white);
-    font-family: var(--font-heading);
-    font-size: var(--text-h2);
     box-shadow: var(--shadow-md);
   }
   @media (min-width: 1024px) {
