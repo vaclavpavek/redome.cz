@@ -1,7 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import PageLayout from '~/layouts/PageLayout.astro';
 import ContactForm from '~/components/sections/ContactForm.astro';
+import masterImg from '~/assets/images/master-karel.jpg';
 
 const masters = (await getCollection('masters')).sort((a, b) => a.data.order - b.data.order);
 
@@ -29,12 +31,13 @@ const breadcrumbs = [
     mastersWithContent.map((master, index) => (
       <article class={`master ${index % 2 === 1 ? 'master--reverse' : ''}`}>
         <div class="master__photo">
-          <img
-            src="/images/master-karel.jpg"
+          <Image
+            src={masterImg}
             alt={`${master.data.name} – foto`}
+            widths={[300, 450, 600]}
+            sizes="(min-width: 768px) 40vw, 100vw"
             loading="lazy"
-            width="600"
-            height="800"
+            format="webp"
           />
         </div>
         <div class="master__body">

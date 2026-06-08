@@ -1,16 +1,19 @@
 ---
+import { Image } from 'astro:assets';
 import Button from '~/components/ui/Button.astro';
+import heroImg from '~/assets/images/hero-hp.jpg';
 ---
 
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero__bg" aria-hidden="true">
-    <img
-      src="/images/hero-hp.jpg"
+    <Image
+      src={heroImg}
       alt=""
+      widths={[800, 1200, 1600, 2400]}
+      sizes="100vw"
       loading="eager"
       fetchpriority="high"
-      width="2400"
-      height="563"
+      format="webp"
     />
   </div>
   <div class="hero__overlay" aria-hidden="true"></div>

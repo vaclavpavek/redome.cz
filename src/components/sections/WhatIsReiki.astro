@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import Button from '~/components/ui/Button.astro';
+import whatIsImg from '~/assets/images/what-is-reiki.jpg';
 ---
 
 <section class="what-is" aria-labelledby="what-is-title">
@@ -26,13 +28,14 @@ import Button from '~/components/ui/Button.astro';
     </div>
 
     <div class="what-is__visual">
-      <img
-        src="/images/what-is-reiki.jpg"
+      <Image
+        src={whatIsImg}
         alt="Ruce držící zářící zeměkouli – symbol Reiki energie"
+        widths={[400, 600, 800, 1200]}
+        sizes="(min-width: 1024px) 50vw, 100vw"
         class="what-is__image"
-        loading="eager"
-        width="800"
-        height="600"
+        loading="lazy"
+        format="webp"
       />
     </div>
   </div>

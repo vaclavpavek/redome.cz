@@ -1,11 +1,16 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import BreadcrumbsSchema from '~/components/schema/Breadcrumbs.astro';
 import FAQPage from '~/components/schema/FAQPage.astro';
 import ContactForm from '~/components/sections/ContactForm.astro';
 import Button from '~/components/ui/Button.astro';
+import heroImg from '~/assets/images/hero-hp.jpg';
+import planetImg from '~/assets/images/what-is-reiki.jpg';
+import flowersImg from '~/assets/images/flowers.jpg';
+import masterImg from '~/assets/images/master-karel.jpg';
 
 const pages = await getCollection('pages');
 const page = pages.find((p) => p.id === 'co-je-reiki');
@@ -35,7 +40,15 @@ const faqItems = faqs.map((f) => ({
   <!-- Hero ve stylu Figma Subpage – stejná ilustrace jako HP -->
   <section class="reiki-hero" aria-labelledby="reiki-hero-title">
     <div class="reiki-hero__bg" aria-hidden="true">
-      <img src="/images/hero-hp.jpg" alt="" loading="eager" />
+      <Image
+        src={heroImg}
+        alt=""
+        widths={[800, 1200, 1600, 2400]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        format="webp"
+      />
       <div class="reiki-hero__overlay"></div>
     </div>
     <div class="container reiki-hero__inner">
@@ -56,13 +69,14 @@ const faqItems = faqs.map((f) => ({
         <Content />
       </div>
       <div class="reiki-section__visual reiki-section__visual--right">
-        <img
-          src="/images/what-is-reiki.jpg"
+        <Image
+          src={planetImg}
           alt="Ruce držící zářící zeměkouli"
+          widths={[400, 600, 800, 1200]}
+          sizes="(min-width: 1024px) 40vw, 100vw"
           class="reiki-image"
           loading="eager"
-          width="800"
-          height="600"
+          format="webp"
         />
       </div>
     </section>
@@ -82,13 +96,14 @@ const faqItems = faqs.map((f) => ({
   <article class="container">
     <section class="reiki-section reiki-section--split reiki-section--reverse">
       <div class="reiki-section__visual">
-        <img
-          src="/images/flowers.jpg"
+        <Image
+          src={flowersImg}
           alt="Třezalka v rozkvetlém poli"
+          widths={[400, 600, 800, 1200]}
+          sizes="(min-width: 1024px) 40vw, 100vw"
           class="reiki-image"
           loading="lazy"
-          width="800"
-          height="600"
+          format="webp"
         />
       </div>
       <div class="reiki-section__text reiki-prose">
@@ -122,13 +137,14 @@ const faqItems = faqs.map((f) => ({
         </ul>
       </div>
       <div class="reiki-section__visual reiki-section__visual--right">
-        <img
-          src="/images/master-karel.jpg"
+        <Image
+          src={masterImg}
           alt="Karel Háněl – Reiki mistr v linii Mikao Usui"
+          widths={[300, 450, 600]}
+          sizes="(min-width: 1024px) 33vw, 100vw"
           class="reiki-image reiki-image--portrait"
           loading="lazy"
-          width="600"
-          height="800"
+          format="webp"
         />
       </div>
     </section>
