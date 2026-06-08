@@ -23,9 +23,11 @@ export default defineConfig({
       // Polling je potřeba, protože pracujeme přes bind mount v Dockeru
       watch: { usePolling: true, interval: 300 },
       hmr: { clientPort: 4321 },
-      // Povolíme host.docker.internal kvůli `make screenshot`
-      // (browser kontejner sahá na dev server přes tento alias)
-      allowedHosts: ['host.docker.internal', 'localhost'],
+      // Pro dev povolíme všechny hosty – jsme uvnitř Dockeru s portem
+      // exposovaným jen na hostiteli. Skutečné API by mělo přísnější check.
+      // Pokrývá: localhost (host), host.docker.internal (browser kontejner),
+      // case 127.0.0.1, IPv6 ::1, web (interní docker síť), …
+      allowedHosts: true,
       // /api/* požadavky pošleme do PHP kontejneru
       // (v produkci je obsluhuje Apache přímo)
       proxy: {
