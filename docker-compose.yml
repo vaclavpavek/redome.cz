@@ -19,6 +19,9 @@ services:
       - IN_CONTAINER=1
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+      # Zákaz Astro telemetrie (https://astro.build/telemetry) – nesbíráme
+      # anonymní statistiky používání, vývoj je čistě lokální.
+      - ASTRO_TELEMETRY_DISABLED=1
 
   # Mailpit – zachytává všechny e-maily během vývoje (SMTP + webové UI)
   mailpit:

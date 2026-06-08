@@ -8,7 +8,8 @@ ENV IN_CONTAINER=1 \
     NODE_ENV=development \
     HOST=0.0.0.0 \
     CHOKIDAR_USEPOLLING=true \
-    WATCHPACK_POLLING=true
+    WATCHPACK_POLLING=true \
+    ASTRO_TELEMETRY_DISABLED=1
 
 WORKDIR /workspace
 
