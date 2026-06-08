@@ -68,6 +68,11 @@ if (props.type === 'page' && props.page.id === 'co-je-reiki') {
 
 const isContact = props.type === 'page' && props.page.id === 'kontakt';
 const isAbout = props.type === 'page' && props.page.id === 'o-nas';
+// Stránky bez výzvy k akci na konci (typicky právní dokumenty)
+const PAGES_WITHOUT_CTA = new Set(['ochrana-osobnich-udaju']);
+const showContact =
+  props.type === 'service' ||
+  (props.type === 'page' && !PAGES_WITHOUT_CTA.has(props.page.id));
 ---
 
 <PageLayout title={title} description={description} breadcrumbs={breadcrumbs}>
@@ -127,7 +132,7 @@ const isAbout = props.type === 'page' && props.page.id === 'o-nas';
   }
 
   <Fragment slot="after">
-    {(isContact || props.type === 'service') && <ContactForm />}
+    {showContact && <ContactForm />}
   </Fragment>
 </PageLayout>
 

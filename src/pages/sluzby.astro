@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import PageLayout from '~/layouts/PageLayout.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
 import Icon from '~/components/ui/Icon.astro';
 import Lotus from '~/components/ui/icons/Lotus.astro';
 import ArrowRight from '~/components/ui/icons/ArrowRight.astro';
@@ -48,6 +49,10 @@ const breadcrumbs = [
       ))
     }
   </div>
+
+  <Fragment slot="after">
+    <ContactForm />
+  </Fragment>
 </PageLayout>
 
 <style>

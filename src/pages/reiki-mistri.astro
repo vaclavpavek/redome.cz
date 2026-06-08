@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import PageLayout from '~/layouts/PageLayout.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
 
 const masters = (await getCollection('masters')).sort(
   (a, b) => a.data.order - b.data.order
@@ -27,35 +28,72 @@ const breadcrumbs = [
   <h1>Reiki mistři</h1>
 
   {
-    mastersWithContent.map((master) => (
-      <article class="master">
-        <header class="master__header">
-          <h2>{master.data.name}</h2>
-          <p class="master__role">{master.data.role}</p>
-        </header>
-        <div class="master__bio">
-          <master.Content />
+    mastersWithContent.map((master, index) => (
+      <article class={`master ${index % 2 === 1 ? 'master--reverse' : ''}`}>
+        <div class="master__photo">
+          <img
+            src="/images/master-karel.jpg"
+            alt={`${master.data.name} – foto`}
+            loading="lazy"
+            width="600"
+            height="800"
+          />
+        </div>
+        <div class="master__body">
+          <header>
+            <h2>{master.data.name}</h2>
+            <p class="master__role">{master.data.role}</p>
+          </header>
+          <div class="master__bio">
+            <master.Content />
+          </div>
         </div>
       </article>
     ))
   }
+
+  <Fragment slot="after">
+    <ContactForm />
+  </Fragment>
 </PageLayout>
 
 <style>
   .master {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
     margin-block: var(--space-5);
+    align-items: start;
   }
-  .master:first-of-type {
-    margin-top: var(--space-3);
+  @media (min-width: 768px) {
+    .master {
+      grid-template-columns: 1fr 1.5fr;
+    }
+    .master--reverse {
+      grid-template-columns: 1.5fr 1fr;
+    }
+    .master--reverse .master__photo {
+      order: 2;
+    }
   }
-  .master__header h2 {
-    margin: 0;
+  .master__photo img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    display: block;
+  }
+  .master__body h2 {
     color: var(--color-primary-dark);
+    margin: 0;
+    font-size: var(--text-h3);
   }
   .master__role {
     font-style: italic;
     color: var(--color-gray-700);
-    margin: 0 0 var(--space-2);
+    margin: 0.25rem 0 var(--space-2);
   }
   .master__bio {
     line-height: var(--leading-relaxed);

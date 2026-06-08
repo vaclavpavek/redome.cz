@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import PageLayout from '~/layouts/PageLayout.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
 
 const stories = (await getCollection('stories')).sort(
   (a, b) => a.data.order - b.data.order
@@ -39,6 +40,10 @@ const breadcrumbs = [
       </article>
     ))
   }
+
+  <Fragment slot="after">
+    <ContactForm />
+  </Fragment>
 </PageLayout>
 
 <style>
