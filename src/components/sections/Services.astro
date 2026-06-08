@@ -42,7 +42,13 @@ const services = (await getCollection('services')).sort(
 <style>
   .services {
     padding-block: var(--space-6);
-    background: var(--color-gray-100);
+    /* Teplá béžovo-zelená (mezi primary-light a secondary-light) –
+       podle Figmy, ne studená šedá */
+    background: color-mix(
+      in srgb,
+      var(--color-secondary-light) 70%,
+      var(--color-primary-light) 30%
+    );
   }
   .services__header {
     text-align: center;

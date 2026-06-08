@@ -58,5 +58,8 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl} />
 
-<!-- Preload fontů (až se přidají do /public/fonts) -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
+<!-- Preload kritických woff2 – wordmark v hlavičce + body text -->
+<link rel="preload" href="/fonts/playfair-700-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/playfair-700-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/inter-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
