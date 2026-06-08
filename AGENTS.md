@@ -9,7 +9,7 @@ mu rozuměl i zákazník bez technického zázemí.
 
 Statický web **Redome.cz** (Reiki a terapeutické služby, Karel Háněl).
 Postavený na [Astro 5](https://astro.build/) + Tailwind, výstup je čisté HTML
-a nasazuje se přes SFTP na Apache hosting.
+a nasazuje se přes SFTP na Apache hosting (Wedos).
 
 ---
 
@@ -22,11 +22,29 @@ Nikdy nevolej `npm run …` přímo. Vždy přes `make <cíl>`.
 
 V devcontaineru i mimo něj funguje stejně – Makefile sám pozná, kde běží.
 
+Nejčastější cíle:
+
+| Cíl                        | Účel                                                   |
+| -------------------------- | ------------------------------------------------------ |
+| `make dev`                 | Vývojový server na http://localhost:4321 + HMR         |
+| `make build`               | Produkční build do `dist/`                             |
+| `make lint`                | Prettier + ESLint + `astro check` (CI brána)           |
+| `make format`              | Auto-formátování (Prettier)                            |
+| `make mail`                | Mailpit UI na http://localhost:8025 (zachycuje e-maily)|
+| `make screenshot URL=/x`   | Vizuální preview přes headless Chromium                |
+
 ### Nic se nikam neinstaluje ručně
 
 Vše běží v Dockeru. Nový package se přidává příkazem
 `docker compose run --rm web npm install <balíček>` (nebo z devcontaineru
 přímo `npm install …`).
+
+### Citlivá data (secrets)
+
+Soubory typu `.env*` (a podobné) jsou **zakázané ke čtení** – PreToolUse
+hook v `.claude/settings.local.json` blokuje jakýkoli pokus o jejich
+otevření. Pokud potřebuješ konkrétní hodnotu (SFTP, API klíč), **požádej
+zákazníka** – pošle ji přímo do chatu.
 
 ### Commit zprávy
 
@@ -42,8 +60,8 @@ Příklady:
 
 ### Větve a nasazení
 
-- `main` → stage (automaticky)
-- `production` ← merge z `main` přes PR → produkce (automaticky)
+- `main` → stage (`https://nahled.redome.cz`) – automaticky
+- `production` ← merge z `main` přes PR → produkce (`https://www.redome.cz`) – automaticky
 
 Detail: [`docs/git-flow.md`](./docs/git-flow.md).
 
@@ -64,25 +82,91 @@ CI v GitHub Actions nastavuje `SITE_URL` před `make build`. Lokálně:
 SITE_URL=https://nahled.redome.cz make build
 ```
 
+### CTA konvence
+
+Web používá jediný text výzvy k akci: **„Objednat terapii"**.
+
+| Místo                  | Odkaz              | Důvod                              |
+| ---------------------- | ------------------ | ---------------------------------- |
+| Hlavička (sticky)      | `/kontakty`        | Z jakékoli stránky na kontakty     |
+| Hero / sidebar / sekce | `#formular`        | Scroll k formuláři na téže stránce |
+
+Žádné jiné varianty („Rezervovat termín", „Domluvit setkání" apod.).
+
 ---
 
 ## Architektura webu
 
-| Adresář                     | K čemu slouží                                                |
-| --------------------------- | ------------------------------------------------------------ |
-| `src/pages/`                | Stránky webu (URL = cesta v adresáři)                        |
-| `src/pages/[...slug].md.ts` | Endpoint generující Markdown varianty stránek                |
-| `src/pages/llms.txt.ts`     | Endpoint generující `llms.txt`                               |
-| `src/components/ui/`        | Znovupoužitelné UI komponenty (Button, TextField, Icon…)     |
-| `src/components/layout/`    | Hlavička, patička, navigace, skip-link                       |
-| `src/components/sections/`  | Velké sekce HP (Hero, Services, Stories…)                    |
-| `src/components/seo/`       | Meta tagy, Open Graph, Twitter Cards                         |
-| `src/components/schema/`    | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage) |
-| `src/content/`              | Obsah stránek v Markdown / MDX (přes content collections)    |
-| `src/styles/tokens.css`     | Design tokeny – barvy, typografie, spacing (zdroj pravdy)    |
-| `src/styles/global.css`     | Globální styly nad tokeny                                    |
-| `public/.htaccess`          | Apache pravidla, content negotiation pro MD varianty         |
-| `public/fonts/`             | Self-hosted fonty (Playfair Display, Inter)                  |
+| Adresář                     | K čemu slouží                                                    |
+| --------------------------- | ---------------------------------------------------------------- |
+| `src/pages/`                | Stránky webu (URL = cesta v adresáři)                            |
+| `src/pages/[...slug].md.ts` | Endpoint generující Markdown varianty stránek (vč. static routes)|
+| `src/pages/sitemap.xml.ts`  | Vlastní sitemap (jediný soubor, ne index)                        |
+| `src/pages/robots.txt.ts`   | Robots.txt s odkazem na sitemap (`SITE_URL`-aware)               |
+| `src/pages/llms.txt.ts`     | Endpoint generující `llms.txt` (seznam stránek pro LLM)          |
+| `src/pages/llms-full.txt.ts`| Endpoint s plným obsahem všech stránek (LLM ingest)              |
+| `src/components/ui/`        | Znovupoužitelné UI komponenty (Button, TextField, Icon…)         |
+| `src/components/layout/`    | Hlavička, patička, navigace, skip-link, drobečky                 |
+| `src/components/sections/`  | Velké sekce HP (Hero, Services, Stories…)                        |
+| `src/components/seo/`       | Meta tagy, Open Graph, Twitter Cards                             |
+| `src/components/schema/`    | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage)     |
+| `src/content/`              | Obsah stránek v Markdown / MDX (přes content collections)        |
+| `src/assets/images/`        | Obrázky pro `astro:assets` (hash, WebP, srcset)                  |
+| `src/lib/site.ts`           | Centrální konfigurace (URL, kontakty, navigace, credits)         |
+| `src/styles/tokens.css`     | Design tokeny – barvy, typografie, spacing (zdroj pravdy)        |
+| `src/styles/global.css`     | Globální styly nad tokeny + Tailwind import                      |
+| `public/.htaccess`          | Apache pravidla (redirect, content negotiation, cache, CSP)      |
+| `public/fonts/`             | Self-hosted fonty (Playfair Display, Inter, woff2)               |
+| `public/favicon.svg`        | Favicon (fixní URL pro browsery)                                 |
+| `public/api/contact.php`    | Backend handler pro kontaktní formulář (PHP + msmtp)             |
+
+---
+
+## Obrázky
+
+| Kam | Co | Optimalizace |
+| --- | --- | --- |
+| `src/assets/images/` | Content obrázky (hero, fotky, dekorace, logo, footer mark) | ✅ hash, WebP, `srcset`, cache busting |
+| `public/`            | Fixní URL (favicon, OG image, manifest)                    | ❌ 1:1 kopie, žádný hash               |
+
+Pro `<img>` v Astro komponentě:
+
+```astro
+---
+import { Image } from 'astro:assets';
+import hero from '~/assets/images/hero.jpg';
+---
+<Image src={hero} alt="…" widths={[800, 1200]} sizes="100vw" format="webp" />
+```
+
+Pro CSS `background-image` (Vite v scoped `<style>` neumí `url()` přes
+astro:assets):
+
+```astro
+---
+import decor from '~/assets/images/decor.png';
+---
+<section style={`--decor-url: url('${decor.src}')`}>…</section>
+<style define:vars={{ decorUrl: `url('${decor.src}')` }}>
+  .x::before { background: var(--decorUrl) … }
+</style>
+```
+
+---
+
+## Vývojové služby (docker-compose)
+
+| Služba    | Port | Účel                                                |
+| --------- | ---- | --------------------------------------------------- |
+| `web`     | 4321 | Astro dev server (HMR)                              |
+| `mailpit` | 8025 | UI pro zachycené e-maily (`make mail`)              |
+| `php`     | -    | PHP-CLI server pro `contact.php` (interní, proxy z vite) |
+| `browser` | -    | Headless Chromium pro `make screenshot` (profile `tools`) |
+
+Kontaktní formulář v dev: POST `/api/contact.php` → vite proxy → `php` →
+`mail()` přes msmtp → `mailpit:1025` → vidět v UI na `:8025`.
+
+V produkci stejný `contact.php` v `dist/api/` obslouží Apache + PHP přímo.
 
 ---
 
@@ -90,12 +174,15 @@ SITE_URL=https://nahled.redome.cz make build
 
 `make build` vyplivne do `dist/`:
 
-1. **HTML** všech stránek
-2. **`sitemap.xml`** (vlastní endpoint, jediný soubor – ne index)
-3. **`llms.txt`** a **`llms-full.txt`** podle [llmstxt.org](https://llmstxt.org/)
-4. **Markdown varianta každé stránky** (`/co-je-reiki` → `/co-je-reiki.md`)
-5. **`.htaccess`** s pravidly pro content negotiation a bezpečnostní hlavičky
-6. **Optimalizované obrázky** (přes `astro:assets`)
+1. **HTML** všech stránek (statické)
+2. **`sitemap.xml`** (vlastní endpoint, jediný soubor s `SITE_URL`)
+3. **`robots.txt`** (s odkazem na sitemap, `SITE_URL`-aware)
+4. **`llms.txt`** a **`llms-full.txt`** podle [llmstxt.org](https://llmstxt.org/)
+5. **Markdown varianta každé stránky** (`/co-je-reiki` → `/co-je-reiki.md`,
+   včetně přehledových stránek jako `/sluzby.md`, `/reiki-mistri.md`)
+6. **`.htaccess`** s redirect/content-negotiation/cache/security pravidly
+7. **Optimalizované obrázky** v `dist/_astro/*.webp` (přes `astro:assets`)
+8. **`api/contact.php`** (kopírováno 1:1 z `public/`)
 
 ---
 
@@ -104,7 +191,7 @@ SITE_URL=https://nahled.redome.cz make build
 Každá stránka musí mít:
 
 - `<title>` a `<meta name="description">`
-- canonical URL
+- canonical URL (z `SITE_URL`)
 - Open Graph + Twitter Card meta
 - `<link rel="alternate" type="text/markdown">` na MD variantu
 - Schema.org JSON-LD relevantní danému obsahu
@@ -115,17 +202,41 @@ dle obsahu.
 
 ---
 
+## Bezpečnost (`.htaccess`)
+
+- **HTTPS vynucené** přes 301 redirect (HSTS úmyslně **nevynucujeme** –
+  u laiků dělá medvědí službu)
+- **Naked → www**: `redome.cz` → `https://www.redome.cz`
+- **Stage doména**: `nahled.redome.cz` (kanonická = `www.redome.cz`)
+- **CSP**: `default-src 'self'`, povoleno `'unsafe-inline'` ve style-src
+- **Permissions-Policy**: zakázáno geolocation, mic, camera, payment,
+  USB, MIDI, accelerometer + anti-tracking (interest-cohort,
+  browsing-topics, attribution-reporting)
+- **X-Frame-Options: SAMEORIGIN**, **X-Content-Type-Options: nosniff**
+- **Cache strategie** přes `mod_headers`:
+  - `/_astro/*` (hashované) → 1 rok + immutable
+  - HTML → 5 min + must-revalidate
+  - obrázky/SVG mimo `_astro` → 120 dní
+  - sitemap/llms/robots → 1 hodina
+  - MD varianty → 1 hodina + `Vary: Accept`
+- **Skryté soubory** (`.git`, `.env*`, zálohy `*~`, `*.bak`, `*.swp`,
+  lock soubory) → `Require all denied`
+
+---
+
 ## Přístupnost (WCAG 2.2 AA)
 
 - Sémantické HTML5 (`<main>`, `<nav>`, `<header>`, `<footer>`, `<article>`)
 - Jeden `<h1>` na stránku
-- Skip link jako první focusable
+- Skip link jako první focusable element
 - Viditelný `:focus-visible` styl
 - `lang="cs"` na `<html>`
 - Funkční ikony mají `aria-label`, dekorativní `aria-hidden="true"`
-- Burger menu má `aria-expanded` + `aria-controls`, drží focus
+- Burger menu má `aria-expanded` + `aria-controls`, drží focus (focus trap,
+  Esc zavírá)
 - `prefers-reduced-motion` vypíná animace
-- Formulářové prvky mají vždy `<label>`
+- Formulářové prvky mají vždy `<label>` + `aria-describedby` pro chyby
+- Drobečková navigace v JSON-LD i HTML (`aria-current="page"`)
 
 ---
 
@@ -135,4 +246,8 @@ Designy a styleguide jsou ve Figmě:
 
 - [Components](https://www.figma.com/design/vLP9sOV8vLyWU3nXdBX7J2/redome.cz?node-id=53-206&m=dev)
 - [Styleguide](https://www.figma.com/design/vLP9sOV8vLyWU3nXdBX7J2/redome.cz?node-id=0-1&m=dev)
-- [Design](https://www.figma.com/design/vLP9sOV8vLyWU3nXdBX7J2/redome.cz?node-id=2-1213&m=dev)
+- [HP design](https://www.figma.com/design/vLP9sOV8vLyWU3nXdBX7J2/redome.cz?node-id=159-775&m=dev)
+- [Subpage design](https://www.figma.com/design/vLP9sOV8vLyWU3nXdBX7J2/redome.cz?node-id=4106-1986&m=dev)
+  (univerzální layout: `co-je-reiki` ho používá doslova)
+- [Subpage2 design](https://www.figma.com/design/vLP9sOV8vLyWU3nXdBX7J2/redome.cz?node-id=6015-1315&m=dev)
+  (šablona pro detail služeb – hero + sidebar + ContactForm)
