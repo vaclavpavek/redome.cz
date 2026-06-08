@@ -52,11 +52,11 @@ Detail: [`docs/git-flow.md`](./docs/git-flow.md).
 Absolutní URL pro `sitemap.xml`, `robots.txt`, canonical, OG a JSON-LD
 se generuje z env proměnné `SITE_URL`:
 
-| Větev / prostředí | `SITE_URL`                  | Výsledek v sitemap                |
-| ----------------- | --------------------------- | --------------------------------- |
-| `main` (stage)    | `https://nahled.redome.cz`  | `<loc>https://nahled.redome.cz/…` |
-| `production`      | _nenastavovat_ (výchozí)    | `<loc>https://www.redome.cz/…`    |
-| lokální debug     | `http://localhost:4321`     | `<loc>http://localhost:4321/…`    |
+| Větev / prostředí | `SITE_URL`                 | Výsledek v sitemap                |
+| ----------------- | -------------------------- | --------------------------------- |
+| `main` (stage)    | `https://nahled.redome.cz` | `<loc>https://nahled.redome.cz/…` |
+| `production`      | _nenastavovat_ (výchozí)   | `<loc>https://www.redome.cz/…`    |
+| lokální debug     | `http://localhost:4321`    | `<loc>http://localhost:4321/…`    |
 
 CI v GitHub Actions nastavuje `SITE_URL` před `make build`. Lokálně:
 
