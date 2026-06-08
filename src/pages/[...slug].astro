@@ -126,7 +126,9 @@ const isAbout = props.type === 'page' && props.page.id === 'o-nas';
     )
   }
 
-  {isContact && <ContactForm />}
+  <Fragment slot="after">
+    {(isContact || props.type === 'service') && <ContactForm />}
+  </Fragment>
 </PageLayout>
 
 <style>

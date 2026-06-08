@@ -26,7 +26,9 @@ const { compact = false } = Astro.props;
         <div class="contact__intro">
           <h2 id="contact-title">
             Napište nám krátkou zprávu<br />
-            a domluvte si s námi schůzku!
+            <span class="contact__title-accent">
+              a domluvte si s námi schůzku!
+            </span>
           </h2>
           <p>
             Stačí pár vět o tom, co u vás teď není v klidu, a vyšlete formulář.
@@ -106,7 +108,7 @@ const { compact = false } = Astro.props;
 <style>
   .contact {
     padding-block: var(--space-6);
-    background: var(--color-gray-100);
+    background: var(--color-secondary-light);
   }
   .contact__grid {
     display: grid;
@@ -115,6 +117,10 @@ const { compact = false } = Astro.props;
   }
   .contact__intro h2 {
     color: var(--color-primary-dark);
+  }
+  .contact__title-accent {
+    color: var(--color-primary);
+    font-style: italic;
   }
   .contact__direct {
     font-size: var(--text-14);

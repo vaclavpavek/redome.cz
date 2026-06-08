@@ -31,6 +31,9 @@ const { title, description, breadcrumbs } = Astro.props;
       </div>
     </div>
   </article>
+
+  <!-- Full-width sloty pod texrtovým obsahem (např. ContactForm) -->
+  <slot name="after" />
 </BaseLayout>
 
 <style>
