@@ -10,14 +10,14 @@ import { CONTACT, CONTACT_SECONDARY } from '~/lib/site';
 
 const breadcrumbs = [
   { name: 'Domů', url: '/' },
-  { name: 'Kontakt', url: '/kontakt' },
+  { name: 'Kontakty', url: '/kontakty' },
 ];
 
 const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTACT.address.zip}`;
 ---
 
 <BaseLayout
-  title="Kontakt"
+  title="Kontakty"
   description="Kontaktujte Karla Háněla nebo Moniku Bišickou – telefonicky, e-mailem nebo přes formulář. Reiki a terapeutické služby v Litomyšli."
 >
   <Fragment slot="head">
@@ -28,10 +28,9 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
     <div class="container">
       <Breadcrumbs items={breadcrumbs} />
       <header class="kontakt__header">
-        <h1>Kontakt</h1>
+        <h1>Kontakty</h1>
         <p>
-          Pro domluvení termínu nás zastihnete telefonicky, e-mailem,
-          nebo využijte formulář dole.
+          Pro domluvení termínu nás zastihnete telefonicky, e-mailem, nebo využijte formulář dole.
         </p>
       </header>
 

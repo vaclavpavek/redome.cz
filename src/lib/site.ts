@@ -65,7 +65,7 @@ export const MAIN_NAV: NavItem[] = [
   { href: '/dornova-metoda', label: 'Dornova metoda' },
   { href: '/breussova-masaz', label: 'Breussova masáž' },
   { href: '/pribehy-z-praxe', label: 'Příběhy z praxe' },
-  { href: '/kontakt', label: 'Kontakt' },
+  { href: '/kontakty', label: 'Kontakty' },
 ];
 
 export const FOOTER_NAV: NavItem[] = [

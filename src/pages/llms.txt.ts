@@ -7,12 +7,8 @@ import { SITE } from '~/lib/site';
  * Skládá se ze stránek z `pages` collection, doplněný o detaily služeb.
  */
 export const GET: APIRoute = async () => {
-  const pages = (await getCollection('pages')).sort(
-    (a, b) => a.data.order - b.data.order
-  );
-  const services = (await getCollection('services')).sort(
-    (a, b) => a.data.order - b.data.order
-  );
+  const pages = (await getCollection('pages')).sort((a, b) => a.data.order - b.data.order);
+  const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
   const mainPages = pages.filter((p) => p.data.section === 'main');
   const optionalPages = pages.filter((p) => p.data.section === 'optional');
@@ -31,9 +27,7 @@ export const GET: APIRoute = async () => {
     '',
     '## Služby',
     '',
-    ...services.map((s) =>
-      formatPage(s.id, s.data.title, s.data.summary)
-    ),
+    ...services.map((s) => formatPage(s.id, s.data.title, s.data.summary)),
   ];
 
   if (optionalPages.length > 0) {
@@ -41,9 +35,7 @@ export const GET: APIRoute = async () => {
       '',
       '## Optional',
       '',
-      ...optionalPages.map((p) =>
-        formatPage(p.id, p.data.title, p.data.description)
-      )
+      ...optionalPages.map((p) => formatPage(p.id, p.data.title, p.data.description))
     );
   }
 

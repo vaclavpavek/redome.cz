@@ -25,13 +25,7 @@ const {
   'aria-label': ariaLabel,
 } = Astro.props;
 
-const classes = [
-  'btn',
-  `btn--${variant}`,
-  `btn--${color}`,
-  `btn--${size}`,
-  className,
-]
+const classes = ['btn', `btn--${variant}`, `btn--${color}`, `btn--${size}`, className]
   .filter(Boolean)
   .join(' ');
 

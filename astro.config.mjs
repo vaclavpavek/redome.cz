@@ -16,7 +16,9 @@ export default defineConfig({
     port: 4321,
   },
   vite: {
-    plugins: [tailwindcss()],
+    // Vite types u Tailwindu 4 a Astro se trochu rozcházejí (interní rozhraní)
+    // – plugin je funkčně kompatibilní, jen TS check potřebuje cast.
+    plugins: [/** @type {any} */ (tailwindcss())],
     server: {
       // Polling je potřeba, protože pracujeme přes bind mount v Dockeru
       watch: { usePolling: true, interval: 300 },

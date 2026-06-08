@@ -7,14 +7,14 @@ order: 10
 
 Bylo to někdy v dubnu letošního roku, kdy jsem se rozhodla zatelefonovat
 do TV a oslovit Janku Skálovou, tato báječná žena mi hned na úvod řekla,
-*že jsem rodilá kartářka a že se určitě uvidíme osobně.* Druhý den jsem
+_že jsem rodilá kartářka a že se určitě uvidíme osobně._ Druhý den jsem
 nelenila a vyhledala na ni kontakt, ozvala se mi energický usměvavý hlas
 naší Jaňulky a následující týden jsem už jela směr její „úřadovna".
 Začaly jsme si povídat, že když jsme dělali výklad karet, natahují tu
 špatnou energii z lidí do sebe a nemůžou se jí zbavit. Při další návštěvě
-mi Janička řekla: *„Hele, pojď, v víkendu tu bude seminář REIKI a přijede
+mi Janička řekla: _„Hele, pojď, v víkendu tu bude seminář REIKI a přijede
 i další mistr Karel Háněl, v té době jsem absolutně neměla tušení, kdo je
-to a hlavně, co je to REIKI."*
+to a hlavně, co je to REIKI."_
 
 Proběhl krásný den s Janičkou, Karlem a dalšími zájemci o zasvěcení do
 REIKI. Závěrečné probíhalo dva dny a tyhle to byly hned ty
@@ -27,8 +27,8 @@ spolujezdce, ale ja byla v autě sama. Prudce se ochladilo a ja se chtla
 tak nějak zvláštně, běhal mi mráz po zádech a odpojil se mi telefon.
 Něchtěla jsem si přípustit tu myšlenku, že tu skutečně se mnou něco je,
 tak znovu vytáčím číslo na maminku, ale telefon se nespojuje, chyba
-sítě, zkouším znovu, zase to samé, řícít už se zlobím a říkám: *„TY, KDO
-JSI TU SE MNOU, CHCI SI ZAVOLAT!!!"* Po chvíli znovu mačkám tlačítko na
+sítě, zkouším znovu, zase to samé, řícít už se zlobím a říkám: _„TY, KDO
+JSI TU SE MNOU, CHCI SI ZAVOLAT!!!"_ Po chvíli znovu mačkám tlačítko na
 vytáčení a hovor se konečně spojuje. Upozorňuji, celou dobu jsem měla
 plný signál a LTE. Od této chvíle jsem už nikdy neměla pocit, že je
 nějaké se mnou. Léca přesi 3 měsíci mi kamarádka tvrdila, že na mě vidí

@@ -70,7 +70,7 @@ if (!mail($to, $subject, $body, $headers)) {
 
 // Pokud klient přišel z prohlížeče bez fetch/JS, vrátíme ho na hezkou stránku
 if (str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'text/html')) {
-    header('Location: /kontakt?ok=1');
+    header('Location: /kontakty?ok=1');
     exit;
 }
 

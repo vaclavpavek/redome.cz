@@ -1,9 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 
-const stories = (await getCollection('stories')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b.data.order);
 
 const storiesWithContent = await Promise.all(
   stories.map(async (story) => {
@@ -41,7 +39,8 @@ const storiesWithContent = await Promise.all(
               <story.Content />
             </blockquote>
             <footer class="story__attribution">
-              — {story.data.author}{story.data.location && `, ${story.data.location}`}
+              — {story.data.author}
+              {story.data.location && `, ${story.data.location}`}
             </footer>
           </article>
         ))
@@ -51,7 +50,14 @@ const storiesWithContent = await Promise.all(
     {
       storiesWithContent.length > 1 && (
         <div class="stories__controls">
-          <button type="button" class="stories__btn" data-stories-prev aria-label="Předchozí příběh">‹</button>
+          <button
+            type="button"
+            class="stories__btn"
+            data-stories-prev
+            aria-label="Předchozí příběh"
+          >
+            ‹
+          </button>
           <div class="stories__dots" role="tablist" aria-label="Vybrat příběh">
             {storiesWithContent.map((_, index) => (
               <button
@@ -65,7 +71,9 @@ const storiesWithContent = await Promise.all(
               />
             ))}
           </div>
-          <button type="button" class="stories__btn" data-stories-next aria-label="Další příběh">›</button>
+          <button type="button" class="stories__btn" data-stories-next aria-label="Další příběh">
+            ›
+          </button>
         </div>
       )
     }
@@ -76,8 +84,7 @@ const storiesWithContent = await Promise.all(
   .stories {
     position: relative;
     padding-block: var(--space-6);
-    background:
-      linear-gradient(180deg, var(--color-white) 0%, var(--color-gray-100) 100%);
+    background: linear-gradient(180deg, var(--color-white) 0%, var(--color-gray-100) 100%);
     overflow: hidden;
   }
   .stories::before {
@@ -97,7 +104,9 @@ const storiesWithContent = await Promise.all(
     z-index: 1;
   }
   @media (max-width: 768px) {
-    .stories::before { display: none; }
+    .stories::before {
+      display: none;
+    }
   }
   .stories__header {
     text-align: center;
@@ -177,12 +186,8 @@ const storiesWithContent = await Promise.all(
   // s ohledem na prefers-reduced-motion (žádné animace, jen přepnutí).
   const root = document.querySelector<HTMLElement>('[data-stories]');
   if (root) {
-    const slides = Array.from(
-      root.querySelectorAll<HTMLElement>('[data-story-slide]')
-    );
-    const dots = Array.from(
-      document.querySelectorAll<HTMLButtonElement>('[data-stories-dot]')
-    );
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-story-slide]'));
+    const dots = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-stories-dot]'));
     const prev = document.querySelector<HTMLButtonElement>('[data-stories-prev]');
     const next = document.querySelector<HTMLButtonElement>('[data-stories-next]');
     let index = 0;

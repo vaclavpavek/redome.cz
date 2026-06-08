@@ -42,7 +42,6 @@ let pageTitle = '';
 let pageDescription = '';
 let PageContent: any = null;
 let pageBreadcrumbs: { name: string; url: string }[] = [];
-let isContact = false;
 let isAbout = false;
 let faqItems: { question: string; answer: string }[] = [];
 let pageShowContact = false;
@@ -55,9 +54,8 @@ if (props.type === 'page') {
     { name: 'Domů', url: '/' },
     { name: pageTitle, url: `/${props.page.id}` },
   ];
-  isContact = props.page.id === 'kontakt';
   isAbout = props.page.id === 'o-nas';
-  const PAGES_WITHOUT_CTA = new Set(['ochrana-osobnich-udaju']);
+  const PAGES_WITHOUT_CTA = new Set(['ochrana-osobnich-udaju', 'kontakty']);
   pageShowContact = !PAGES_WITHOUT_CTA.has(props.page.id);
 
   if (props.page.id === 'co-je-reiki') {
@@ -144,7 +142,9 @@ if (props.type === 'service') {
               <dd>Litomyšl</dd>
             </div>
             <Button href="#formular">Objednat terapii</Button>
-            <Button href="/sluzby" variant="outline">Zpět na všechny služby</Button>
+            <Button href="/sluzby" variant="outline">
+              Zpět na všechny služby
+            </Button>
           </aside>
         </div>
       </article>
@@ -152,11 +152,7 @@ if (props.type === 'service') {
       <ContactForm />
     </BaseLayout>
   ) : (
-    <PageLayout
-      title={pageTitle}
-      description={pageDescription}
-      breadcrumbs={pageBreadcrumbs}
-    >
+    <PageLayout title={pageTitle} description={pageDescription} breadcrumbs={pageBreadcrumbs}>
       <Fragment slot="head">
         {isAbout && (
           <Person
@@ -171,9 +167,7 @@ if (props.type === 'service') {
 
       <PageContent />
 
-      <Fragment slot="after">
-        {pageShowContact && <ContactForm />}
-      </Fragment>
+      <Fragment slot="after">{pageShowContact && <ContactForm />}</Fragment>
     </PageLayout>
   )
 }

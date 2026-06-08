@@ -2,9 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Button from '~/components/ui/Button.astro';
 
-const masters = (await getCollection('masters')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+const masters = (await getCollection('masters')).sort((a, b) => a.data.order - b.data.order);
 const featured = masters[0];
 const { Content } = featured ? await render(featured) : { Content: null };
 ---

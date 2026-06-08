@@ -23,7 +23,9 @@ const { items } = Astro.props;
             ) : (
               <>
                 <a href={item.url}>{item.name}</a>
-                <span aria-hidden="true" class="breadcrumbs__sep">/</span>
+                <span aria-hidden="true" class="breadcrumbs__sep">
+                  /
+                </span>
               </>
             )}
           </li>

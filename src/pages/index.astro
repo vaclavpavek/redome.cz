@@ -10,10 +10,7 @@ import ContactForm from '~/components/sections/ContactForm.astro';
 import { SITE } from '~/lib/site';
 ---
 
-<BaseLayout
-  title={`${SITE.name} – ${SITE.tagline}`}
-  description={SITE.description}
->
+<BaseLayout title={`${SITE.name} – ${SITE.tagline}`} description={SITE.description}>
   <Hero />
   <IntroServices />
   <WhatIsReiki />

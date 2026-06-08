@@ -31,14 +31,14 @@ nabídne otevřít náhled webu v prohlížeči.
 
 ## Struktura
 
-| Cesta | Co tam je |
-|---|---|
-| `src/pages/` | Jednotlivé stránky webu |
-| `src/components/` | Opakovaně použité kousky (tlačítka, hlavička, patička…) |
-| `src/content/` | Texty a obsah stránek (Markdown) |
-| `src/styles/` | Styly a barvy projektu |
-| `public/` | Soubory, které jdou na web tak jak jsou (favicon, fonty, `.htaccess`) |
-| `dist/` | Hotový web po `make build` – co se nahrává na server |
+| Cesta             | Co tam je                                                             |
+| ----------------- | --------------------------------------------------------------------- |
+| `src/pages/`      | Jednotlivé stránky webu                                               |
+| `src/components/` | Opakovaně použité kousky (tlačítka, hlavička, patička…)               |
+| `src/content/`    | Texty a obsah stránek (Markdown)                                      |
+| `src/styles/`     | Styly a barvy projektu                                                |
+| `public/`         | Soubory, které jdou na web tak jak jsou (favicon, fonty, `.htaccess`) |
+| `dist/`           | Hotový web po `make build` – co se nahrává na server                  |
 
 ---
 

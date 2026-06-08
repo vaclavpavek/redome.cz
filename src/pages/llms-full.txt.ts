@@ -7,21 +7,10 @@ import { SITE } from '~/lib/site';
  * souboru. Pro LLM nástroje, které chtějí ingestovat celý web najednou.
  */
 export const GET: APIRoute = async () => {
-  const pages = (await getCollection('pages')).sort(
-    (a, b) => a.data.order - b.data.order
-  );
-  const services = (await getCollection('services')).sort(
-    (a, b) => a.data.order - b.data.order
-  );
+  const pages = (await getCollection('pages')).sort((a, b) => a.data.order - b.data.order);
+  const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
-  const out: string[] = [
-    `# ${SITE.name}`,
-    '',
-    `> ${SITE.description}`,
-    '',
-    '---',
-    '',
-  ];
+  const out: string[] = [`# ${SITE.name}`, '', `> ${SITE.description}`, '', '---', ''];
 
   for (const page of pages) {
     out.push(`## ${page.data.title}`, '', page.body ?? '', '', '---', '');

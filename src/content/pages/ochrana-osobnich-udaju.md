@@ -27,7 +27,7 @@ získáme tyto údaje:
 
 - **Jméno a příjmení** – abychom vás mohli oslovit
 - **E-mail** – pro odpověď
-- **Telefon** *(volitelné)* – pro rychlejší kontakt
+- **Telefon** _(volitelné)_ – pro rychlejší kontakt
 - **Obsah vaší zprávy** – co od nás potřebujete
 
 ## Proč údaje zpracováváme

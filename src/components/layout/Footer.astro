@@ -20,9 +20,13 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
     <nav class="site-footer__col" aria-label="Patička – navigace">
       <h2 class="site-footer__heading">Navigace</h2>
       <ul class="site-footer__list">
-        {FOOTER_NAV.map((item) => (
-          <li><a href={item.href}>{item.label}</a></li>
-        ))}
+        {
+          FOOTER_NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
       </ul>
     </nav>
 
@@ -66,12 +70,7 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
       {
         CREDITS.authors.map((author, index) => (
           <>
-            <a
-              href={author.url}
-              title={author.role}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={author.url} title={author.role} target="_blank" rel="noopener noreferrer">
               {author.name}
             </a>
             {index < CREDITS.authors.length - 2 ? ', ' : ''}

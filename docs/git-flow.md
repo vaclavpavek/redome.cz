@@ -3,10 +3,10 @@
 Tenhle návod popisuje, jak dostat změnu z tvého počítače až na ostrý web.
 Máme **dvě prostředí**:
 
-| Prostředí | Větev | URL | K čemu slouží |
-|-----------|-------|-----|---------------|
-| **Stage** (testovací) | `main` | _stage URL_ | Tady si v klidu vyzkoušíš, že je vše v pořádku. Nikomu nevadí, když tu něco zrovna není dokonalé. |
-| **Produkce** (ostrý web) | `production` | _www_ | Tohle vidí zákazníci. Sem pouštíme jen ověřené věci. |
+| Prostředí                | Větev        | URL         | K čemu slouží                                                                                     |
+| ------------------------ | ------------ | ----------- | ------------------------------------------------------------------------------------------------- |
+| **Stage** (testovací)    | `main`       | _stage URL_ | Tady si v klidu vyzkoušíš, že je vše v pořádku. Nikomu nevadí, když tu něco zrovna není dokonalé. |
+| **Produkce** (ostrý web) | `production` | _www_       | Tohle vidí zákazníci. Sem pouštíme jen ověřené věci.                                              |
 
 > **Hlavní pravidlo:** Na produkci pouštěj jen to, co sis ověřil na stage. Nikdy nepřeskakuj testovací krok.
 
@@ -15,25 +15,31 @@ Máme **dvě prostředí**:
 ## Postup krok za krokem
 
 ### 1. Udělej změnu a ulož ji (commit)
+
 Uprav, co potřebuješ, a ulož to **commitem do větve `main`**.
-Ke commitu napiš krátce, co jsi změnil — např. *„Přidán kontaktní formulář"*.
+Ke commitu napiš krátce, co jsi změnil — např. _„Přidán kontaktní formulář"_.
 
 ### 2. Počkej, až se změna objeví na stage
+
 Po commitu se změna **sama nahraje na stage URL**. Nemusíš nic dělat, jen chvíli počkat.
 
 ### 3. Zkontroluj to na stage
+
 Otevři stage URL a projdi, jestli změna vypadá a funguje, jak má.
 Tohle je tvoje poslední šance něco chytit, než to uvidí zákazníci.
 
 ### 4. Otevři PR do produkce
+
 Když jsi spokojený, na GitHubu otevři **Pull Request** z `main` do `production`.
-PR si představ jako formulář *„chci tohle pustit na ostrý web"*.
+PR si představ jako formulář _„chci tohle pustit na ostrý web"_.
 
 ### 5. Popiš, co se mění
+
 Do PR napiš krátké shrnutí — **co a proč** se nasazuje.
 Slouží to jako záznam: za měsíc budeš vědět, co se kdy pustilo ven.
 
 ### 6. Potvrď nasazení (merge)
+
 Klikni na **Merge**. Změna se **sama nahraje na produkci (www)**.
 Hotovo — je to venku. ✅
 

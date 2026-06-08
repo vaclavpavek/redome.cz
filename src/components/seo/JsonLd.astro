@@ -16,4 +16,4 @@ const enriched = normalized.map((item) => ({
 const json = JSON.stringify(enriched.length === 1 ? enriched[0] : enriched);
 ---
 
-<script type="application/ld+json" set:html={json} is:inline></script>
+<script type="application/ld+json" set:html={json} is:inline />

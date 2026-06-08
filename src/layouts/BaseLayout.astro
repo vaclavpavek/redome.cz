@@ -21,13 +21,7 @@ const { title, description, image, type, noindex } = Astro.props;
 <!doctype html>
 <html lang={SITE.lang}>
   <head>
-    <BaseHead
-      title={title}
-      description={description}
-      image={image}
-      type={type}
-      noindex={noindex}
-    />
+    <BaseHead title={title} description={description} image={image} type={type} noindex={noindex} />
     <LocalBusiness />
     <WebSite />
     <slot name="head" />

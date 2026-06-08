@@ -51,21 +51,21 @@ Detail: [`docs/git-flow.md`](./docs/git-flow.md).
 
 ## Architektura webu
 
-| Adresář | K čemu slouží |
-|---|---|
-| `src/pages/` | Stránky webu (URL = cesta v adresáři) |
-| `src/pages/[...slug].md.ts` | Endpoint generující Markdown varianty stránek |
-| `src/pages/llms.txt.ts` | Endpoint generující `llms.txt` |
-| `src/components/ui/` | Znovupoužitelné UI komponenty (Button, TextField, Icon…) |
-| `src/components/layout/` | Hlavička, patička, navigace, skip-link |
-| `src/components/sections/` | Velké sekce HP (Hero, Services, Stories…) |
-| `src/components/seo/` | Meta tagy, Open Graph, Twitter Cards |
-| `src/components/schema/` | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage) |
-| `src/content/` | Obsah stránek v Markdown / MDX (přes content collections) |
-| `src/styles/tokens.css` | Design tokeny – barvy, typografie, spacing (zdroj pravdy) |
-| `src/styles/global.css` | Globální styly nad tokeny |
-| `public/.htaccess` | Apache pravidla, content negotiation pro MD varianty |
-| `public/fonts/` | Self-hosted fonty (Playfair Display, Inter) |
+| Adresář                     | K čemu slouží                                                |
+| --------------------------- | ------------------------------------------------------------ |
+| `src/pages/`                | Stránky webu (URL = cesta v adresáři)                        |
+| `src/pages/[...slug].md.ts` | Endpoint generující Markdown varianty stránek                |
+| `src/pages/llms.txt.ts`     | Endpoint generující `llms.txt`                               |
+| `src/components/ui/`        | Znovupoužitelné UI komponenty (Button, TextField, Icon…)     |
+| `src/components/layout/`    | Hlavička, patička, navigace, skip-link                       |
+| `src/components/sections/`  | Velké sekce HP (Hero, Services, Stories…)                    |
+| `src/components/seo/`       | Meta tagy, Open Graph, Twitter Cards                         |
+| `src/components/schema/`    | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage) |
+| `src/content/`              | Obsah stránek v Markdown / MDX (přes content collections)    |
+| `src/styles/tokens.css`     | Design tokeny – barvy, typografie, spacing (zdroj pravdy)    |
+| `src/styles/global.css`     | Globální styly nad tokeny                                    |
+| `public/.htaccess`          | Apache pravidla, content negotiation pro MD varianty         |
+| `public/fonts/`             | Self-hosted fonty (Playfair Display, Inter)                  |
 
 ---
 

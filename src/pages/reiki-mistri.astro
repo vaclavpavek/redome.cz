@@ -3,9 +3,7 @@ import { getCollection, render } from 'astro:content';
 import PageLayout from '~/layouts/PageLayout.astro';
 import ContactForm from '~/components/sections/ContactForm.astro';
 
-const masters = (await getCollection('masters')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+const masters = (await getCollection('masters')).sort((a, b) => a.data.order - b.data.order);
 
 const mastersWithContent = await Promise.all(
   masters.map(async (master) => {

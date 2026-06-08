@@ -4,9 +4,7 @@ import Lotus from '~/components/ui/icons/Lotus.astro';
 import Icon from '~/components/ui/Icon.astro';
 import ArrowRight from '~/components/ui/icons/ArrowRight.astro';
 
-const services = (await getCollection('services')).sort(
-  (a, b) => a.data.order - b.data.order
-);
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <section class="services" aria-labelledby="services-title">
@@ -30,7 +28,9 @@ const services = (await getCollection('services')).sort(
             )}
             <a href={`/${service.id}`} class="service-card__link">
               Více informací
-              <Icon size={16}><ArrowRight /></Icon>
+              <Icon size={16}>
+                <ArrowRight />
+              </Icon>
             </a>
           </article>
         ))

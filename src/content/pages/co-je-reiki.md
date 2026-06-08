@@ -7,9 +7,8 @@ section: main
 ---
 
 Reiki je jemná, ale velmi účinná metoda energetického léčení, která
-harmonizuje tělo, mysl i duši. Pochází z Japonska, kde ji na počátku
-20. století znovuobjevil a rozvinul **Mikao Usui**. Slovo „Reiki" se skládá
-ze dvou částí: *Rei* (univerzální, duchovní) a *Ki* (životní energie, známá
+harmonizuje tělo, mysl i duši. Pochází z Japonska, kde ji na počátku 20. století znovuobjevil a rozvinul **Mikao Usui**. Slovo „Reiki" se skládá
+ze dvou částí: _Rei_ (univerzální, duchovní) a _Ki_ (životní energie, známá
 také jako čchi nebo prána). Společně označují univerzální životní energii,
 která proudí vším živým.
 
@@ -62,4 +61,4 @@ Karel Háněl je v této linii zasvěcený přes:
 - Hawayo Takata
 - Phyllis Lei Furumoto
 - Paul Mitchell
-- *(a další žáci, kteří dovedli zasvěcení až k českým praktikům)*
+- _(a další žáci, kteří dovedli zasvěcení až k českým praktikům)_

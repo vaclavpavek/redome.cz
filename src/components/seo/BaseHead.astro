@@ -17,9 +17,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const fullTitle = title.includes(SITE.shortName)
-  ? title
-  : `${title} | ${SITE.name}`;
+const fullTitle = title.includes(SITE.shortName) ? title : `${title} | ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, SITE.url).href.replace(/\/$/, '');
 const imageUrl = new URL(image, SITE.url).href;
 const mdAlternate = canonical.endsWith('/') ? canonical : `${canonical}.md`;
@@ -59,7 +57,19 @@ const isHome = Astro.url.pathname === '/' || Astro.url.pathname === '';
 <meta name="twitter:image" content={imageUrl} />
 
 <!-- Preload kritických woff2 – wordmark v hlavičce + body text -->
-<link rel="preload" href="/fonts/playfair-700-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link
+  rel="preload"
+  href="/fonts/playfair-700-latin.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="/fonts/playfair-700-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
+<link
+  rel="preload"
+  href="/fonts/playfair-700-latin-ext.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 <link rel="preload" href="/fonts/inter-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
