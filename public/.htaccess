@@ -17,20 +17,24 @@ DirectoryIndex index.html
 ServerSignature Off
 
 # ---------------------------------------------------------------------
-# Přesměrování: https + bez www
+# Přesměrování domén:
+#   nahled.redome.cz (stage)  → vždy https
+#   www.redome.cz   (produkce) → vždy https (kanonická)
+#   redome.cz       (naked)   → 301 na https://www.redome.cz/…
 # ---------------------------------------------------------------------
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # http → https
+  # 1) Naked doména redome.cz → www.redome.cz (kanonická produkční doména)
+  #    Provede se před https redirektem, aby uživatel doletěl jedním 301.
+  RewriteCond %{HTTP_HOST} ^redome\.cz$ [NC]
+  RewriteRule ^(.*)$ https://www.redome.cz/$1 [R=301,L]
+
+  # 2) Vše ostatní (www.redome.cz, nahled.redome.cz) → vynutíme https.
+  #    %{HTTP:X-Forwarded-Proto} je tu kvůli reverse proxy (Wedos LB).
   RewriteCond %{HTTPS} off
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
-
-  # www → bez www (kanonická doména: redome.cz)
-  # Pokud bys preferoval www.redome.cz, prohoď podmínku a cílovou doménu.
-  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-  RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
   # -----------------------------------------------------------------
   # Content negotiation: pokud klient žádá Markdown, podsuneme `.md`
