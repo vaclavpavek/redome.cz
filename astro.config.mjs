@@ -3,11 +3,18 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
 
+// Doména pro absolutní URL (sitemap, robots, canonical, OG).
+//   - SITE_URL=https://nahled.redome.cz  na stage (build z `main`)
+//   - SITE_URL nevyplněno → produkční default https://www.redome.cz
+// Nastavuje se přes env (docker-compose, GitHub Actions, …),
+// žádný .env soubor v repu není potřeba.
+const SITE_URL = (process.env.SITE_URL ?? 'https://www.redome.cz').replace(/\/$/, '');
+
 // https://astro.build/config
 // Sitemap si generujeme sami v src/pages/sitemap.xml.ts – chceme jediný
 // soubor sitemap.xml (ne sitemap-index.xml + sitemap-0.xml).
 export default defineConfig({
-  site: 'https://www.redome.cz',
+  site: SITE_URL,
   trailingSlash: 'never',
   output: 'static',
   integrations: [mdx()],

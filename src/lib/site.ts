@@ -3,8 +3,13 @@
  * Mění se tady, ne ve více komponentách najednou.
  */
 
+// SITE_URL přebíráme z env (stejně jako v astro.config.mjs), aby stage
+// (nahled.redome.cz) generovala správné canonical / OG / sitemap URL.
+// Default produkce: https://www.redome.cz
+const SITE_URL = (import.meta.env.SITE_URL ?? 'https://www.redome.cz').replace(/\/$/, '');
+
 export const SITE = {
-  url: 'https://www.redome.cz',
+  url: SITE_URL,
   name: 'Redome.cz',
   shortName: 'Redome',
   tagline: 'Reiki a terapeutické služby',

@@ -22,6 +22,12 @@ services:
       # Zákaz Astro telemetrie (https://astro.build/telemetry) – nesbíráme
       # anonymní statistiky používání, vývoj je čistě lokální.
       - ASTRO_TELEMETRY_DISABLED=1
+      # Absolutní URL webu (canonical, OG, sitemap, robots).
+      # CI nastaví:
+      #   main → SITE_URL=https://nahled.redome.cz (stage)
+      #   production → SITE_URL=https://www.redome.cz (default, dá se vynechat)
+      # Lokálně přepiš: `SITE_URL=http://localhost:4321 make build`
+      - SITE_URL=${SITE_URL:-https://www.redome.cz}
 
   # Mailpit – zachytává všechny e-maily během vývoje (SMTP + webové UI)
   mailpit:
