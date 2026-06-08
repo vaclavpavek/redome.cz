@@ -66,10 +66,14 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
       {
         CREDITS.authors.map((author, index) => (
           <>
-            <a href={author.url} target="_blank" rel="noopener noreferrer">
+            <a
+              href={author.url}
+              title={author.role}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {author.name}
             </a>
-            <span class="site-footer__credit-role"> ({author.role})</span>
             {index < CREDITS.authors.length - 2 ? ', ' : ''}
             {index === CREDITS.authors.length - 2 ? ' a ' : ''}
           </>
@@ -161,9 +165,6 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
   }
   .site-footer__credit a:hover {
     color: var(--color-secondary);
-  }
-  .site-footer__credit-role {
-    opacity: 0.7;
   }
   @media (min-width: 768px) {
     .site-footer__inner {
