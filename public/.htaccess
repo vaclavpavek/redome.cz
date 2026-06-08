@@ -4,7 +4,14 @@
 # Komentáře česky, ať tomu rozumí kdokoli, kdo se k tomu dostane.
 # =====================================================================
 
-Options -Indexes -MultiViews
+# Plná varianta (vypne directory listing i content negotiation podle přípony).
+# Wedos.cz neumožňuje měnit MultiViews → zakomentováno, kdyby projekt
+# přešel na jiný hosting, lze vrátit.
+# Options -Indexes -MultiViews
+
+# Wedos a jiné sdílené hostingy – povolen jen zákaz directory listingu.
+Options -Indexes
+
 AddDefaultCharset UTF-8
 DirectoryIndex index.html
 ServerSignature Off
