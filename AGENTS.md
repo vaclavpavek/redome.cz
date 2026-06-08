@@ -7,7 +7,7 @@ mu rozuměl i zákazník bez technického zázemí.
 
 ## Co je tohle za projekt
 
-Statický web **Redome.cz** (Reiki a terapeutické služby, Kanit Hauel).
+Statický web **Redome.cz** (Reiki a terapeutické služby, Karel Háněl).
 Postavený na [Astro 5](https://astro.build/) + Tailwind, výstup je čisté HTML
 a nasazuje se přes SFTP na Apache hosting.
 
@@ -74,7 +74,7 @@ Detail: [`docs/git-flow.md`](./docs/git-flow.md).
 `make build` vyplivne do `dist/`:
 
 1. **HTML** všech stránek
-2. **`sitemap-index.xml`** + dílčí sitemap soubory (přes `@astrojs/sitemap`)
+2. **`sitemap.xml`** (vlastní endpoint, jediný soubor – ne index)
 3. **`llms.txt`** a **`llms-full.txt`** podle [llmstxt.org](https://llmstxt.org/)
 4. **Markdown varianta každé stránky** (`/co-je-reiki` → `/co-je-reiki.md`)
 5. **`.htaccess`** s pravidly pro content negotiation a bezpečnostní hlavičky

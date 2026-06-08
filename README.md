@@ -1,6 +1,6 @@
 # Redome.cz
 
-Web pro Reiki a terapeutické služby (Kanit Hauel).
+Web pro Reiki a terapeutické služby (Karel Háněl).
 Postavený na [Astro](https://astro.build/) – generuje statické HTML, takže je rychlý a levný na hosting.
 
 ---

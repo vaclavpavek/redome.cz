@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Web Redome.cz – Reiki a terapeutické služby (Kanit Hauel)",
+  "description": "Web Redome.cz – Reiki a terapeutické služby (Karel Háněl)",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
