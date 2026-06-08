@@ -6,6 +6,7 @@ import ContactForm from '~/components/sections/ContactForm.astro';
 import Icon from '~/components/ui/Icon.astro';
 import Phone from '~/components/ui/icons/Phone.astro';
 import Envelope from '~/components/ui/icons/Envelope.astro';
+import MapPin from '~/components/ui/icons/MapPin.astro';
 import { CONTACT, CONTACT_SECONDARY } from '~/lib/site';
 
 const breadcrumbs = [
@@ -39,7 +40,7 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
           <h2>{CONTACT.person}</h2>
           <ul>
             <li>
-              <Icon size={18}><Envelope /></Icon>
+              <Icon size={18}><MapPin /></Icon>
               <address>{fullAddress}</address>
             </li>
             <li>

@@ -4,6 +4,7 @@ import Logo from '~/components/ui/Logo.astro';
 import Icon from '~/components/ui/Icon.astro';
 import Phone from '~/components/ui/icons/Phone.astro';
 import Envelope from '~/components/ui/icons/Envelope.astro';
+import MapPin from '~/components/ui/icons/MapPin.astro';
 
 const year = new Date().getFullYear();
 const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTACT.address.zip}`;
@@ -34,7 +35,7 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
       <h2 class="site-footer__heading">{CONTACT.person}</h2>
       <address class="site-footer__list">
         <p class="site-footer__row">
-          <Icon size={16}><Envelope /></Icon>
+          <Icon size={16}><MapPin /></Icon>
           <span>{fullAddress}</span>
         </p>
         <p class="site-footer__row">

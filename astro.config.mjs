@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 // Sitemap si generujeme sami v src/pages/sitemap.xml.ts – chceme jediný
 // soubor sitemap.xml (ne sitemap-index.xml + sitemap-0.xml).
 export default defineConfig({
-  site: 'https://redome.cz',
+  site: 'https://www.redome.cz',
   trailingSlash: 'never',
   output: 'static',
   integrations: [mdx()],

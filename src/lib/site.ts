@@ -4,12 +4,12 @@
  */
 
 export const SITE = {
-  url: 'https://redome.cz',
+  url: 'https://www.redome.cz',
   name: 'Redome.cz',
   shortName: 'Redome',
   tagline: 'Reiki a terapeutické služby',
   description:
-    'Reiki, Dornova metoda a Breussova masáž. Kanit Hauel – mistr Reiki. Najděte rovnováhu těla i mysli.',
+    'Reiki, Dornova metoda a Breussova masáž. Karel Háněl – mistr Reiki. Najděte rovnováhu těla i mysli.',
   locale: 'cs_CZ',
   lang: 'cs',
 } as const;
