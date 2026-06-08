@@ -5,6 +5,7 @@ import Icon from '~/components/ui/Icon.astro';
 import Phone from '~/components/ui/icons/Phone.astro';
 import Envelope from '~/components/ui/icons/Envelope.astro';
 import MapPin from '~/components/ui/icons/MapPin.astro';
+import footerMark from '~/assets/images/footer-mark.svg';
 
 const year = new Date().getFullYear();
 const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTACT.address.zip}`;
@@ -83,7 +84,7 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
   </div>
 </footer>
 
-<style>
+<style define:vars={{ footerMarkUrl: `url('${footerMark.src}')` }}>
   .site-footer {
     position: relative;
     background: var(--color-primary-dark);
@@ -100,7 +101,7 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
     bottom: -2rem;
     width: 22rem;
     height: 22rem;
-    background: url('/footer-mark.svg') no-repeat center / contain;
+    background: var(--footerMarkUrl) no-repeat center / contain;
     pointer-events: none;
     z-index: 0;
   }

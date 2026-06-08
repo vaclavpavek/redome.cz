@@ -1,4 +1,7 @@
 ---
+import markDefault from '~/assets/images/logo-mark.svg';
+import markInverse from '~/assets/images/logo-mark-inverse.svg';
+
 interface Props {
   variant?: 'default' | 'inverse';
   href?: string | false;
@@ -6,7 +9,7 @@ interface Props {
 }
 
 const { variant = 'default', href = '/', class: className = '' } = Astro.props;
-const markSrc = variant === 'inverse' ? '/logo-mark-inverse.svg' : '/logo-mark.svg';
+const markSrc = variant === 'inverse' ? markInverse.src : markDefault.src;
 const classes = `logo logo--${variant} ${className}`.trim();
 const alt = 'Redome.cz – domů';
 ---
