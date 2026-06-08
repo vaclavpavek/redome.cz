@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import decorImg from '~/assets/images/stories-decor.png';
 
 const stories = (await getCollection('stories')).sort((a, b) => a.data.order - b.data.order);
 
@@ -80,7 +81,7 @@ const storiesWithContent = await Promise.all(
   </div>
 </section>
 
-<style>
+<style define:vars={{ decorUrl: `url('${decorImg.src}')` }}>
   .stories {
     position: relative;
     padding-block: var(--space-6);
@@ -94,7 +95,8 @@ const storiesWithContent = await Promise.all(
     bottom: -2rem;
     width: 22rem;
     height: 22rem;
-    background: url('/images/stories-decor.png') no-repeat left center / contain;
+    /* URL injektována přes Astro define:vars – src s hashem z astro:assets */
+    background: var(--decorUrl) no-repeat left center / contain;
     pointer-events: none;
     z-index: 0;
     opacity: 0.9;
