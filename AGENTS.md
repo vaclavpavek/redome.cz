@@ -24,14 +24,14 @@ V devcontaineru i mimo něj funguje stejně – Makefile sám pozná, kde běž�
 
 Nejčastější cíle:
 
-| Cíl                        | Účel                                                   |
-| -------------------------- | ------------------------------------------------------ |
-| `make dev`                 | Vývojový server na http://localhost:4321 + HMR         |
-| `make build`               | Produkční build do `dist/`                             |
-| `make lint`                | Prettier + ESLint + `astro check` (CI brána)           |
-| `make format`              | Auto-formátování (Prettier)                            |
-| `make mail`                | Mailpit UI na http://localhost:8025 (zachycuje e-maily)|
-| `make screenshot URL=/x`   | Vizuální preview přes headless Chromium                |
+| Cíl                      | Účel                                                    |
+| ------------------------ | ------------------------------------------------------- |
+| `make dev`               | Vývojový server na http://localhost:4321 + HMR          |
+| `make build`             | Produkční build do `dist/`                              |
+| `make lint`              | Prettier + ESLint + `astro check` (CI brána)            |
+| `make format`            | Auto-formátování (Prettier)                             |
+| `make mail`              | Mailpit UI na http://localhost:8025 (zachycuje e-maily) |
+| `make screenshot URL=/x` | Vizuální preview přes headless Chromium                 |
 
 ### Nic se nikam neinstaluje ručně
 
@@ -86,10 +86,10 @@ SITE_URL=https://nahled.redome.cz make build
 
 Web používá jediný text výzvy k akci: **„Objednat terapii"**.
 
-| Místo                  | Odkaz              | Důvod                              |
-| ---------------------- | ------------------ | ---------------------------------- |
-| Hlavička (sticky)      | `/kontakty`        | Z jakékoli stránky na kontakty     |
-| Hero / sidebar / sekce | `#formular`        | Scroll k formuláři na téže stránce |
+| Místo                  | Odkaz       | Důvod                              |
+| ---------------------- | ----------- | ---------------------------------- |
+| Hlavička (sticky)      | `/kontakty` | Z jakékoli stránky na kontakty     |
+| Hero / sidebar / sekce | `#formular` | Scroll k formuláři na téže stránce |
 
 Žádné jiné varianty („Rezervovat termín", „Domluvit setkání" apod.).
 
@@ -97,35 +97,35 @@ Web používá jediný text výzvy k akci: **„Objednat terapii"**.
 
 ## Architektura webu
 
-| Adresář                     | K čemu slouží                                                    |
-| --------------------------- | ---------------------------------------------------------------- |
-| `src/pages/`                | Stránky webu (URL = cesta v adresáři)                            |
-| `src/pages/[...slug].md.ts` | Endpoint generující Markdown varianty stránek (vč. static routes)|
-| `src/pages/sitemap.xml.ts`  | Vlastní sitemap (jediný soubor, ne index)                        |
-| `src/pages/robots.txt.ts`   | Robots.txt s odkazem na sitemap (`SITE_URL`-aware)               |
-| `src/pages/llms.txt.ts`     | Endpoint generující `llms.txt` (seznam stránek pro LLM)          |
-| `src/pages/llms-full.txt.ts`| Endpoint s plným obsahem všech stránek (LLM ingest)              |
-| `src/components/ui/`        | Znovupoužitelné UI komponenty (Button, TextField, Icon…)         |
-| `src/components/layout/`    | Hlavička, patička, navigace, skip-link, drobečky                 |
-| `src/components/sections/`  | Velké sekce HP (Hero, Services, Stories…)                        |
-| `src/components/seo/`       | Meta tagy, Open Graph, Twitter Cards                             |
-| `src/components/schema/`    | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage)     |
-| `src/content/`              | Obsah stránek v Markdown / MDX (přes content collections)        |
-| `src/assets/images/`        | Obrázky pro `astro:assets` (hash, WebP, srcset)                  |
-| `src/lib/site.ts`           | Centrální konfigurace (URL, kontakty, navigace, credits)         |
-| `src/styles/tokens.css`     | Design tokeny – barvy, typografie, spacing (zdroj pravdy)        |
-| `src/styles/global.css`     | Globální styly nad tokeny + Tailwind import                      |
-| `public/.htaccess`          | Apache pravidla (redirect, content negotiation, cache, CSP)      |
-| `public/fonts/`             | Self-hosted fonty (Playfair Display, Inter, woff2)               |
-| `public/favicon.svg`        | Favicon (fixní URL pro browsery)                                 |
-| `public/api/contact.php`    | Backend handler pro kontaktní formulář (PHP + msmtp)             |
+| Adresář                      | K čemu slouží                                                     |
+| ---------------------------- | ----------------------------------------------------------------- |
+| `src/pages/`                 | Stránky webu (URL = cesta v adresáři)                             |
+| `src/pages/[...slug].md.ts`  | Endpoint generující Markdown varianty stránek (vč. static routes) |
+| `src/pages/sitemap.xml.ts`   | Vlastní sitemap (jediný soubor, ne index)                         |
+| `src/pages/robots.txt.ts`    | Robots.txt s odkazem na sitemap (`SITE_URL`-aware)                |
+| `src/pages/llms.txt.ts`      | Endpoint generující `llms.txt` (seznam stránek pro LLM)           |
+| `src/pages/llms-full.txt.ts` | Endpoint s plným obsahem všech stránek (LLM ingest)               |
+| `src/components/ui/`         | Znovupoužitelné UI komponenty (Button, TextField, Icon…)          |
+| `src/components/layout/`     | Hlavička, patička, navigace, skip-link, drobečky                  |
+| `src/components/sections/`   | Velké sekce HP (Hero, Services, Stories…)                         |
+| `src/components/seo/`        | Meta tagy, Open Graph, Twitter Cards                              |
+| `src/components/schema/`     | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage)      |
+| `src/content/`               | Obsah stránek v Markdown / MDX (přes content collections)         |
+| `src/assets/images/`         | Obrázky pro `astro:assets` (hash, WebP, srcset)                   |
+| `src/lib/site.ts`            | Centrální konfigurace (URL, kontakty, navigace, credits)          |
+| `src/styles/tokens.css`      | Design tokeny – barvy, typografie, spacing (zdroj pravdy)         |
+| `src/styles/global.css`      | Globální styly nad tokeny + Tailwind import                       |
+| `public/.htaccess`           | Apache pravidla (redirect, content negotiation, cache, CSP)       |
+| `public/fonts/`              | Self-hosted fonty (Playfair Display, Inter, woff2)                |
+| `public/favicon.svg`         | Favicon (fixní URL pro browsery)                                  |
+| `public/api/contact.php`     | Backend handler pro kontaktní formulář (PHP + msmtp)              |
 
 ---
 
 ## Obrázky
 
-| Kam | Co | Optimalizace |
-| --- | --- | --- |
+| Kam                  | Co                                                         | Optimalizace                           |
+| -------------------- | ---------------------------------------------------------- | -------------------------------------- |
 | `src/assets/images/` | Content obrázky (hero, fotky, dekorace, logo, footer mark) | ✅ hash, WebP, `srcset`, cache busting |
 | `public/`            | Fixní URL (favicon, OG image, manifest)                    | ❌ 1:1 kopie, žádný hash               |
 
@@ -136,6 +136,7 @@ Pro `<img>` v Astro komponentě:
 import { Image } from 'astro:assets';
 import hero from '~/assets/images/hero.jpg';
 ---
+
 <Image src={hero} alt="…" widths={[800, 1200]} sizes="100vw" format="webp" />
 ```
 
@@ -146,9 +147,12 @@ astro:assets):
 ---
 import decor from '~/assets/images/decor.png';
 ---
+
 <section style={`--decor-url: url('${decor.src}')`}>…</section>
 <style define:vars={{ decorUrl: `url('${decor.src}')` }}>
-  .x::before { background: var(--decorUrl) … }
+  .x::before {
+    background: var(--decorUrl) …;
+  }
 </style>
 ```
 
@@ -156,11 +160,11 @@ import decor from '~/assets/images/decor.png';
 
 ## Vývojové služby (docker-compose)
 
-| Služba    | Port | Účel                                                |
-| --------- | ---- | --------------------------------------------------- |
-| `web`     | 4321 | Astro dev server (HMR)                              |
-| `mailpit` | 8025 | UI pro zachycené e-maily (`make mail`)              |
-| `php`     | -    | PHP-CLI server pro `contact.php` (interní, proxy z vite) |
+| Služba    | Port | Účel                                                      |
+| --------- | ---- | --------------------------------------------------------- |
+| `web`     | 4321 | Astro dev server (HMR)                                    |
+| `mailpit` | 8025 | UI pro zachycené e-maily (`make mail`)                    |
+| `php`     | -    | PHP-CLI server pro `contact.php` (interní, proxy z vite)  |
 | `browser` | -    | Headless Chromium pro `make screenshot` (profile `tools`) |
 
 Kontaktní formulář v dev: POST `/api/contact.php` → vite proxy → `php` →
