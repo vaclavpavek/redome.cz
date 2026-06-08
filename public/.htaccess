@@ -66,9 +66,11 @@ ServerSignature Off
 </IfModule>
 
 # ---------------------------------------------------------------------
-# Bezpečnostní hlavičky
+# Bezpečnostní hlavičky + cache strategie
+# (mod_headers stačí, mod_expires zrušen – jeden zdroj pravdy)
 # ---------------------------------------------------------------------
 <IfModule mod_headers.c>
+  # === Bezpečnostní hlavičky ===
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
@@ -78,46 +80,51 @@ ServerSignature Off
   # CSP – uvolněno pro Astro (inline styly), zpřísnit po nasazení
   Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 
-  # Pro MD varianty ať crawleři vidí, že je to alternativa
-  <FilesMatch "\.md$">
-    Header set Vary "Accept"
-    Header set Cache-Control "public, max-age=3600"
-  </FilesMatch>
-</IfModule>
+  # === Cache strategie ===
+  # Pravidla jdou od nejspecifičtějšího po obecné – setifempty zajistí,
+  # že už nastavený Cache-Control nepřepíše obecnější FilesMatch.
 
-# ---------------------------------------------------------------------
-# Cache – dlouhé pro neměnné assety, krátké pro HTML
-# ---------------------------------------------------------------------
-<IfModule mod_expires.c>
-  ExpiresActive On
-  ExpiresDefault                              "access plus 1 hour"
-
-  # HTML – krátká cache, ať uživatel rychle vidí novinky
-  ExpiresByType text/html                     "access plus 5 minutes"
-
-  # Assety s hashem v názvu (Astro je vyrábí) – cache rok
-  ExpiresByType text/css                      "access plus 1 year"
-  ExpiresByType application/javascript        "access plus 1 year"
-  ExpiresByType image/svg+xml                 "access plus 1 year"
-  ExpiresByType image/png                     "access plus 1 year"
-  ExpiresByType image/jpeg                    "access plus 1 year"
-  ExpiresByType image/webp                    "access plus 1 year"
-  ExpiresByType image/avif                    "access plus 1 year"
-  ExpiresByType font/woff2                    "access plus 1 year"
-  ExpiresByType font/woff                     "access plus 1 year"
-
-  # SEO meta – krátká cache
-  ExpiresByType application/xml               "access plus 1 hour"
-  ExpiresByType text/plain                    "access plus 1 hour"
-</IfModule>
-
-<IfModule mod_headers.c>
-  <FilesMatch "\.(css|js|svg|png|jpe?g|webp|avif|woff2?)$">
+  # 1) Astro fingerprintované assety v /_astro/ → 1 rok + immutable.
+  #    Astro generuje názvy s hashem (např. hero-hp.EetaBH_z.webp).
+  #    Při změně zdroje se hash mění → cache je bezpečně immutable.
+  <If "%{REQUEST_URI} =~ m#^/_astro/#">
     Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+
+  # 2) CSS / JS / fonty mimo /_astro/ (favicon, fonty v public/) → 30 dní
+  <FilesMatch "\.(css|js|woff|woff2|ttf|otf|eot)$">
+    Header setifempty Cache-Control "public, max-age=2592000"
   </FilesMatch>
+
+  # 3) Obrázky a SVG mimo /_astro/ → 120 dní
+  <FilesMatch "\.(jpg|jpeg|png|gif|webp|avif|svg|svgz|ico)$">
+    Header setifempty Cache-Control "public, max-age=10368000"
+  </FilesMatch>
+
+  # 4) Dokumenty (PDF, kancelář, ZIP) → 30 dní
+  <FilesMatch "\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip)$">
+    Header setifempty Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+
+  # 5) HTML → 5 minut + must-revalidate (rychlé promítnutí změn obsahu)
   <FilesMatch "\.html$">
-    Header set Cache-Control "public, max-age=300, must-revalidate"
+    Header setifempty Cache-Control "public, max-age=300, must-revalidate"
   </FilesMatch>
+
+  # 6) Markdown varianty stránek → 1 hodina + Vary: Accept
+  #    (Accept header rozhoduje, jestli klient dostane HTML nebo MD)
+  <FilesMatch "\.md$">
+    Header set Cache-Control "public, max-age=3600"
+    Header set Vary "Accept"
+  </FilesMatch>
+
+  # 7) sitemap.xml / llms*.txt / robots.txt → 1 hodina
+  <FilesMatch "^(sitemap\.xml|llms.*\.txt|robots\.txt)$">
+    Header setifempty Cache-Control "public, max-age=3600"
+  </FilesMatch>
+
+  # Vary: Accept-Encoding kvůli gzip/brotli
+  Header append Vary "Accept-Encoding"
 </IfModule>
 
 # ---------------------------------------------------------------------
