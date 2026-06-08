@@ -3,7 +3,16 @@ import Button from '~/components/ui/Button.astro';
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="hero__bg" aria-hidden="true">
+    <img
+      src="/images/hero-hp.jpg"
+      alt=""
+      loading="eager"
+      fetchpriority="high"
+      width="2400"
+      height="563"
+    />
+  </div>
   <div class="hero__overlay" aria-hidden="true"></div>
 
   <div class="container hero__inner">
@@ -36,26 +45,29 @@ import Button from '~/components/ui/Button.astro';
     position: absolute;
     inset: 0;
     z-index: 0;
-    /* Image plnou výškou hero – auto width zachová aspect ratio.
-       Pozice -17 % posune image trochu doleva, takže ve viewportu
-       vidíme prvních ~66 % obrazu: páteř, záři, ruku i masérku. */
-    background:
-      url('/images/hero-hp.jpg') no-repeat;
-    background-size: auto 100%;
-    background-position: -17% center;
+  }
+  .hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Image native 2400×563 (aspect 4.26). Hero ~1440×600 (aspect 2.4).
+       Cover scaling škáluje image podle výšky (height fills hero), pak
+       ho center-zarovná – tím vidíme střední ~56 % obrazu, což pokrývá
+       celý motiv: páteř, záři, ruku i masérku.  */
+    object-position: center center;
+    display: block;
   }
   .hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
-    /* Overlay jen přes ~levou třetinu – zbytek odhalí celou ilustraci
-       (páteř, záři, ruce i postavu masérky napravo) */
+    /* Overlay přes ~levou polovinu – pravá část odhalí ilustraci */
     background: linear-gradient(
       to right,
       var(--color-primary-dark) 0%,
-      var(--color-primary) 22%,
-      color-mix(in srgb, var(--color-primary) 50%, transparent) 36%,
-      transparent 50%
+      var(--color-primary) 28%,
+      color-mix(in srgb, var(--color-primary) 55%, transparent) 42%,
+      transparent 56%
     );
   }
   .hero__inner {
@@ -63,14 +75,16 @@ import Button from '~/components/ui/Button.astro';
     z-index: 2;
     display: grid;
     align-items: center;
-    min-height: 70vh;
-    padding-block: var(--space-7) var(--space-6);
+    /* 50vh ladí s aspect ratio image (2400×563 = 4.26). Větší výška
+       by cover-scale zvětšila image a oříznula bočky (páteř / postavu). */
+    min-height: 50vh;
+    padding-block: var(--space-6) var(--space-5);
   }
   .hero__title {
     color: var(--color-white);
     font-size: clamp(2.25rem, 5vw, var(--text-h1));
     margin-bottom: var(--space-2);
-    text-shadow: 0 2px 12px rgb(0 0 0 / 0.25);
+    text-shadow: 0 2px 12px rgb(0 0 0 / 0.3);
   }
   .hero__lead {
     font-size: var(--text-18);
