@@ -52,11 +52,11 @@ import Button from '~/components/ui/Button.astro';
     z-index: 1;
     /* Tmavě zelená pouze přes ~levou polovinu – pravá část odhalí ilustraci */
     background: linear-gradient(
-      75deg,
-      var(--color-primary-dark) 8%,
-      var(--color-primary) 50%,
-      color-mix(in srgb, var(--color-primary) 50%, transparent) 70%,
-      transparent 91%
+      to right,
+      var(--color-primary-dark) 0%,
+      var(--color-primary) 32%,
+      color-mix(in srgb, var(--color-primary) 60%, transparent) 48%,
+      transparent 62%
     );
   }
   .hero__inner {

@@ -1,0 +1,143 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import BreadcrumbsSchema from '~/components/schema/Breadcrumbs.astro';
+import ContactForm from '~/components/sections/ContactForm.astro';
+import Icon from '~/components/ui/Icon.astro';
+import Phone from '~/components/ui/icons/Phone.astro';
+import Envelope from '~/components/ui/icons/Envelope.astro';
+import { CONTACT, CONTACT_SECONDARY } from '~/lib/site';
+
+const breadcrumbs = [
+  { name: 'Domů', url: '/' },
+  { name: 'Kontakt', url: '/kontakt' },
+];
+
+const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTACT.address.zip}`;
+---
+
+<BaseLayout
+  title="Kontakt"
+  description="Kontaktujte Karla Háněla nebo Moniku Bišickou – telefonicky, e-mailem nebo přes formulář. Reiki a terapeutické služby v Litomyšli."
+>
+  <Fragment slot="head">
+    <BreadcrumbsSchema items={breadcrumbs} />
+  </Fragment>
+
+  <article class="kontakt">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+      <header class="kontakt__header">
+        <h1>Kontakt</h1>
+        <p>
+          Pro domluvení termínu nás zastihnete telefonicky, e-mailem,
+          nebo využijte formulář dole.
+        </p>
+      </header>
+
+      <div class="kontakt__grid">
+        <article class="kontakt-card">
+          <h2>{CONTACT.person}</h2>
+          <ul>
+            <li>
+              <Icon size={18}><Envelope /></Icon>
+              <address>{fullAddress}</address>
+            </li>
+            <li>
+              <Icon size={18}><Phone /></Icon>
+              <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
+            </li>
+            <li>
+              <Icon size={18}><Envelope /></Icon>
+              <a href={CONTACT.emailHref}>{CONTACT.email}</a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="kontakt-card">
+          <h2>{CONTACT_SECONDARY.person}</h2>
+          <ul>
+            <li>
+              <Icon size={18}><Phone /></Icon>
+              <a href={CONTACT_SECONDARY.phoneHref}>{CONTACT_SECONDARY.phone}</a>
+            </li>
+            <li>
+              <Icon size={18}><Envelope /></Icon>
+              <a href={CONTACT_SECONDARY.emailHref}>{CONTACT_SECONDARY.email}</a>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </article>
+
+  <ContactForm compact />
+</BaseLayout>
+
+<style>
+  .kontakt {
+    padding-block: var(--space-4) var(--space-5);
+  }
+  .kontakt__header {
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-4);
+    max-width: 40rem;
+  }
+  .kontakt__header h1 {
+    color: var(--color-primary-dark);
+    margin-bottom: var(--space-1);
+  }
+  .kontakt__header p {
+    color: var(--color-gray-700);
+    font-size: var(--text-18);
+  }
+  .kontakt__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  @media (min-width: 768px) {
+    .kontakt__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .kontakt-card {
+    background: var(--color-primary-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+  }
+  .kontakt-card h2 {
+    margin: 0 0 var(--space-2);
+    color: var(--color-primary-dark);
+    font-size: var(--text-h4);
+  }
+  .kontakt-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .kontakt-card li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--color-gray-800);
+  }
+  .kontakt-card :global(.icon) {
+    color: var(--color-primary);
+  }
+  .kontakt-card a {
+    color: var(--color-primary-dark);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .kontakt-card a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  .kontakt-card address {
+    font-style: normal;
+  }
+</style>

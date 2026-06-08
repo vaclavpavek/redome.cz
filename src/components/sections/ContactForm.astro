@@ -3,24 +3,49 @@ import { CONTACT } from '~/lib/site';
 import TextField from '~/components/ui/TextField.astro';
 import Textarea from '~/components/ui/Textarea.astro';
 import Button from '~/components/ui/Button.astro';
+
+interface Props {
+  /**
+   * Compact = jen formulář bez levého claim sloupce.
+   * Použij na /kontakt, kde jsou kontakty výše (jinak by se duplikovaly).
+   */
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
 ---
 
-<section class="contact" aria-labelledby="contact-title" id="formular">
+<section
+  class={`contact ${compact ? 'contact--compact' : ''}`.trim()}
+  aria-labelledby="contact-title"
+  id="formular"
+>
   <div class="container contact__grid">
-    <div class="contact__intro">
-      <h2 id="contact-title">
-        Napište nám krátkou zprávu<br />
-        a domluvte si s námi schůzku!
-      </h2>
-      <p>
-        Stačí pár vět o tom, co u vás teď není v klidu, a vyšlete formulář.
-        Ozveme se telefonicky nebo e-mailem a najdeme společně termín.
-      </p>
-      <p class="contact__direct">
-        Raději přímo? <a href={CONTACT.phoneHref}>{CONTACT.phone}</a> /
-        <a href={CONTACT.emailHref}>{CONTACT.email}</a>
-      </p>
-    </div>
+    {
+      !compact && (
+        <div class="contact__intro">
+          <h2 id="contact-title">
+            Napište nám krátkou zprávu<br />
+            a domluvte si s námi schůzku!
+          </h2>
+          <p>
+            Stačí pár vět o tom, co u vás teď není v klidu, a vyšlete formulář.
+            Ozveme se telefonicky nebo e-mailem a najdeme společně termín.
+          </p>
+          <p class="contact__direct">
+            Raději přímo? <a href={CONTACT.phoneHref}>{CONTACT.phone}</a> /
+            <a href={CONTACT.emailHref}>{CONTACT.email}</a>
+          </p>
+        </div>
+      )
+    }
+    {
+      compact && (
+        <h2 id="contact-title" class="contact__title-compact">
+          Napište nám krátkou zprávu
+        </h2>
+      )
+    }
 
     <form
       class="contact__form"
@@ -116,10 +141,24 @@ import Button from '~/components/ui/Button.astro';
     height: 1px;
     overflow: hidden;
   }
+  /* === Kompaktní varianta (pro samotný /kontakt) === */
+  .contact--compact .contact__grid {
+    grid-template-columns: 1fr;
+    max-width: 40rem;
+  }
+  .contact__title-compact {
+    color: var(--color-primary-dark);
+    text-align: center;
+    margin-bottom: var(--space-2);
+  }
+
   @media (min-width: 1024px) {
     .contact__grid {
       grid-template-columns: 1fr 1fr;
       align-items: start;
+    }
+    .contact--compact .contact__grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

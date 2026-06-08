@@ -6,22 +6,22 @@ interface Props {
 }
 
 const { variant = 'default', href = '/', class: className = '' } = Astro.props;
-
-// Logo SVG je v /public — varianta default je tmavá pro světlé pozadí,
-// inverse je světlá pro tmavé pozadí (např. patička).
-const src = variant === 'inverse' ? '/logo-inverse.svg' : '/logo.svg';
-const classes = `logo ${className}`.trim();
+const markSrc =
+  variant === 'inverse' ? '/logo-mark-inverse.svg' : '/logo-mark.svg';
+const classes = `logo logo--${variant} ${className}`.trim();
 const alt = 'Redome.cz – domů';
 ---
 
 {
   href === false ? (
     <span class={classes}>
-      <img src={src} alt={alt} class="logo__img" />
+      <img src={markSrc} alt="" class="logo__mark" />
+      <span class="logo__wordmark">Redome</span>
     </span>
   ) : (
     <a href={href} class={classes} aria-label={alt}>
-      <img src={src} alt="" class="logo__img" />
+      <img src={markSrc} alt="" class="logo__mark" />
+      <span class="logo__wordmark">Redome</span>
     </a>
   )
 }
@@ -30,20 +30,36 @@ const alt = 'Redome.cz – domů';
   .logo {
     display: inline-flex;
     align-items: center;
-    line-height: 0;
+    gap: 0.625rem;
+    line-height: 1;
+    text-decoration: none;
     flex-shrink: 0;
   }
-  .logo__img {
-    height: 2.5rem;
-    width: auto;
-    max-width: none;
-    min-width: 9.5rem;
+  .logo__mark {
+    width: 2.5rem;
+    height: 1.7rem;
+    flex-shrink: 0;
     display: block;
   }
+  .logo__wordmark {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .logo--default .logo__wordmark {
+    color: var(--color-primary-dark);
+  }
+  .logo--inverse .logo__wordmark {
+    color: var(--color-white);
+  }
   @media (min-width: 1024px) {
-    .logo__img {
-      height: 3rem;
-      min-width: 11.5rem;
+    .logo__mark {
+      width: 3rem;
+      height: 2rem;
+    }
+    .logo__wordmark {
+      font-size: 2.5rem;
     }
   }
 </style>
