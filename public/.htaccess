@@ -74,8 +74,13 @@ ServerSignature Off
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
-  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+  # Web nepotřebuje žádné z těchto API – explicitní zákaz chrání před
+  # extensions a případnými 3rd party skripty. Zároveň anti-tracking
+  # direktivy proti Google FLoC / Topics / Attribution Reporting API.
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), midi=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=(), browsing-topics=(), attribution-reporting=()"
+
+  # HSTS s preload listem (zaregistruj na https://hstspreload.org/)
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" env=HTTPS
 
   # CSP – uvolněno pro Astro (inline styly), zpřísnit po nasazení
   Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
@@ -123,6 +128,16 @@ ServerSignature Off
     Header setifempty Cache-Control "public, max-age=3600"
   </FilesMatch>
 
+  # 8) 404 stránka – nikdy neindexovat (kdyby ji crawler chytil přímo)
+  <FilesMatch "^404\.html$">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+
+  # CORS pro fonty (kdyby je někdo embedoval z jiné domény / preview)
+  <FilesMatch "\.(woff2?|ttf|otf|eot)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+
   # Vary: Accept-Encoding kvůli gzip/brotli
   Header append Vary "Accept-Encoding"
 </IfModule>
@@ -145,9 +160,21 @@ ServerSignature Off
 </IfModule>
 
 # ---------------------------------------------------------------------
-# Skryté soubory (.git, .env, …) raději úplně nedostupné
+# Citlivé soubory zvenku nedostupné
 # ---------------------------------------------------------------------
+
+# Skryté soubory (.git, .htaccess, …)
 <FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+
+# Zálohy a temp soubory editorů (~, .bak, .backup, .swp, .swo, .orig, .old)
+<FilesMatch "(~|\.(bak|backup|swp|swo|orig|old|tmp))$">
+  Require all denied
+</FilesMatch>
+
+# Composer / npm / lock soubory – kdyby je někdo omylem nahrál
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|pnpm-lock\.yaml)$">
   Require all denied
 </FilesMatch>
 
