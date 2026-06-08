@@ -1,23 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
+// Sitemap si generujeme sami v src/pages/sitemap.xml.ts – chceme jediný
+// soubor sitemap.xml (ne sitemap-index.xml + sitemap-0.xml).
 export default defineConfig({
   site: 'https://redome.cz',
   trailingSlash: 'never',
   output: 'static',
-  integrations: [
-    sitemap({
-      i18n: {
-        defaultLocale: 'cs',
-        locales: { cs: 'cs-CZ' },
-      },
-    }),
-    mdx(),
-  ],
+  integrations: [mdx()],
   server: {
     host: '0.0.0.0',
     port: 4321,

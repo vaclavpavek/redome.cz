@@ -13,7 +13,7 @@ export const GET: APIRoute = ({ site }) => {
     'Allow: /',
     'Disallow: /api/',
     '',
-    `Sitemap: ${baseUrl}/sitemap-index.xml`,
+    `Sitemap: ${baseUrl}/sitemap.xml`,
     '',
   ].join('\n');
 
