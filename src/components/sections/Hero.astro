@@ -3,10 +3,8 @@ import Button from '~/components/ui/Button.astro';
 ---
 
 <section class="hero" aria-labelledby="hero-title">
-  <div class="hero__bg" aria-hidden="true">
-    <img src="/images/hero-hp.jpg" alt="" loading="eager" fetchpriority="high" />
-    <div class="hero__overlay"></div>
-  </div>
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="hero__overlay" aria-hidden="true"></div>
 
   <div class="container hero__inner">
     <div class="hero__content">
@@ -38,27 +36,26 @@ import Button from '~/components/ui/Button.astro';
     position: absolute;
     inset: 0;
     z-index: 0;
-  }
-  .hero__bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* Motiv (páteř, ruce, masér) je ve střední části obrazu –
-       posuneme ho doprava, aby nebyl pod overlayem */
-    object-position: 75% center;
-    display: block;
+    /* Image plnou výškou hero – auto width zachová aspect ratio.
+       Pozice -17 % posune image trochu doleva, takže ve viewportu
+       vidíme prvních ~66 % obrazu: páteř, záři, ruku i masérku. */
+    background:
+      url('/images/hero-hp.jpg') no-repeat;
+    background-size: auto 100%;
+    background-position: -17% center;
   }
   .hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
-    /* Tmavě zelená pouze přes ~levou polovinu – pravá část odhalí ilustraci */
+    /* Overlay jen přes ~levou třetinu – zbytek odhalí celou ilustraci
+       (páteř, záři, ruce i postavu masérky napravo) */
     background: linear-gradient(
       to right,
       var(--color-primary-dark) 0%,
-      var(--color-primary) 32%,
-      color-mix(in srgb, var(--color-primary) 60%, transparent) 48%,
-      transparent 62%
+      var(--color-primary) 22%,
+      color-mix(in srgb, var(--color-primary) 50%, transparent) 36%,
+      transparent 50%
     );
   }
   .hero__inner {
