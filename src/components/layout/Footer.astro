@@ -10,6 +10,8 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
 ---
 
 <footer class="site-footer">
+  <div class="site-footer__bg" aria-hidden="true"></div>
+
   <div class="container site-footer__inner">
     <div class="site-footer__col site-footer__col--brand">
       <Logo variant="inverse" />
@@ -60,17 +62,46 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
   <div class="container site-footer__bottom">
     <small>© {year} {SITE.name}</small>
     <small class="site-footer__credit">
-      Created by <strong>{CREDITS.by}</strong>
+      Vytvořil
+      {
+        CREDITS.authors.map((author, index) => (
+          <>
+            <a href={author.url} target="_blank" rel="noopener noreferrer">
+              {author.name}
+            </a>
+            {index < CREDITS.authors.length - 2 ? ', ' : ''}
+            {index === CREDITS.authors.length - 2 ? ' a ' : ''}
+          </>
+        ))
+      }
     </small>
   </div>
 </footer>
 
 <style>
   .site-footer {
+    position: relative;
     background: var(--color-primary-dark);
     color: var(--color-white);
     padding-block: var(--space-5) var(--space-3);
-    margin-top: var(--space-8);
+    isolation: isolate;
+    overflow: hidden;
+    /* Žádný margin-top – jinak vznikne bílá mezera mezi sekcí webu a patičkou */
+  }
+  /* Velký lotusový vzor jako pozadí (opacity 0.1, primary barva) */
+  .site-footer__bg {
+    position: absolute;
+    left: -3rem;
+    bottom: -2rem;
+    width: 22rem;
+    height: 22rem;
+    background: url('/footer-mark.svg') no-repeat center / contain;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .site-footer > .container {
+    position: relative;
+    z-index: 1;
   }
   .site-footer__inner {
     display: grid;
@@ -121,9 +152,14 @@ const fullAddress = `${CONTACT.address.street}, ${CONTACT.address.city} ${CONTAC
     justify-content: space-between;
     gap: var(--space-1);
   }
-  .site-footer__credit strong {
+  .site-footer__credit a {
     color: var(--color-white);
-    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 500;
+  }
+  .site-footer__credit a:hover {
+    color: var(--color-secondary);
   }
   @media (min-width: 768px) {
     .site-footer__inner {

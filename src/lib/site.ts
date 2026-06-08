@@ -37,7 +37,10 @@ export const CONTACT_SECONDARY = {
 } as const;
 
 export const CREDITS = {
-  by: 'Jan Chalupník & Václav Pávek',
+  authors: [
+    { name: 'Václav Pávek', url: 'https://www.vaclavpavek.cz/' },
+    { name: 'Jan Chalupník', url: 'https://www.janchalupnik.cz/' },
+  ],
 } as const;
 
 export const SOCIAL = {
