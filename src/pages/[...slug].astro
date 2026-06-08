@@ -112,8 +112,8 @@ if (props.type === 'service') {
             <Breadcrumbs items={svcBreadcrumbs} />
             <h1 id="svc-hero-title">{svcTitle}</h1>
             <p class="svc-hero__subtitle">{svcSummary}</p>
-            <Button href="/kontakt#formular" variant="soft" color="primary">
-              Rezervovat termín
+            <Button href="#formular" variant="soft" color="primary">
+              Objednat terapii
             </Button>
           </div>
         </div>
@@ -143,7 +143,7 @@ if (props.type === 'service') {
               <dt>Kde</dt>
               <dd>Litomyšl</dd>
             </div>
-            <Button href="/kontakt#formular">Domluvit setkání</Button>
+            <Button href="#formular">Objednat terapii</Button>
             <Button href="/sluzby" variant="outline">Zpět na všechny služby</Button>
           </aside>
         </div>
@@ -269,7 +269,8 @@ if (props.type === 'service') {
     margin-bottom: 0.4rem;
   }
   .svc-meta {
-    background: var(--color-primary-light);
+    /* Stejně jako story box v Příběhy z praxe – neutrální gray-100 */
+    background: var(--color-gray-100);
     border-radius: var(--radius-md);
     padding: var(--space-3);
     display: flex;
@@ -287,7 +288,7 @@ if (props.type === 'service') {
     display: flex;
     justify-content: space-between;
     padding-block: 0.5rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+    border-bottom: 1px solid var(--color-gray-300);
   }
   .svc-meta__row dt {
     font-weight: 700;
