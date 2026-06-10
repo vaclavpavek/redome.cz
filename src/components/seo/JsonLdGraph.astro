@@ -1,0 +1,18 @@
+---
+/**
+ * Vyrenderuje jeden `<script type="application/ld+json">` s `@graph`
+ * obsahujícím všechny schemata zaregistrovaná během renderu stránky
+ * (Astro.locals.schemas).
+ *
+ * Musí být v <head> jako POSLEDNÍ, aby měl všechna data dohromady.
+ */
+const items = Astro.locals.schemas ?? [];
+
+const payload = {
+  '@context': 'https://schema.org',
+  '@graph': items,
+};
+const json = JSON.stringify(payload);
+---
+
+{items.length > 0 && <script type="application/ld+json" set:html={json} is:inline />}

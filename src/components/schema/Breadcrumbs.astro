@@ -1,6 +1,6 @@
 ---
-import JsonLd from '~/components/seo/JsonLd.astro';
 import { SITE } from '~/lib/site';
+import { addSchema } from '~/lib/schema';
 
 interface Crumb {
   name: string;
@@ -13,7 +13,7 @@ interface Props {
 
 const { items } = Astro.props;
 
-const data = {
+addSchema(Astro.locals, {
   '@type': 'BreadcrumbList',
   itemListElement: items.map((item, index) => ({
     '@type': 'ListItem',
@@ -21,7 +21,5 @@ const data = {
     name: item.name,
     item: new URL(item.url, SITE.url).href.replace(/\/$/, ''),
   })),
-};
+});
 ---
-
-<JsonLd data={data} />

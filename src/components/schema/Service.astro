@@ -1,6 +1,6 @@
 ---
-import JsonLd from '~/components/seo/JsonLd.astro';
 import { SITE } from '~/lib/site';
+import { addSchema } from '~/lib/schema';
 
 interface Props {
   name: string;
@@ -11,7 +11,7 @@ interface Props {
 
 const { name, description, serviceType, slug } = Astro.props;
 
-const data = {
+addSchema(Astro.locals, {
   '@type': 'Service',
   name,
   description,
@@ -19,7 +19,5 @@ const data = {
   provider: { '@id': `${SITE.url}#business` },
   areaServed: { '@type': 'Country', name: 'Česká republika' },
   ...(slug && { url: `${SITE.url}/${slug}` }),
-};
+});
 ---
-
-<JsonLd data={data} />

@@ -3,6 +3,7 @@ import '~/styles/global.css';
 import Header from '~/components/layout/Header.astro';
 import Footer from '~/components/layout/Footer.astro';
 import BaseHead from '~/components/seo/BaseHead.astro';
+import JsonLdGraph from '~/components/seo/JsonLdGraph.astro';
 import LocalBusiness from '~/components/schema/LocalBusiness.astro';
 import WebSite from '~/components/schema/WebSite.astro';
 import { SITE } from '~/lib/site';
@@ -25,6 +26,7 @@ const { title, description, image, type, noindex } = Astro.props;
     <LocalBusiness />
     <WebSite />
     <slot name="head" />
+    <JsonLdGraph />
   </head>
   <body>
     <a href="#main" class="skip-link">Přeskočit na obsah</a>

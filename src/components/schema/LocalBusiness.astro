@@ -1,13 +1,13 @@
 ---
-import JsonLd from '~/components/seo/JsonLd.astro';
 import { SITE, CONTACT } from '~/lib/site';
+import { addSchema } from '~/lib/schema';
 
 /**
  * Globální schema.org LocalBusiness (HealthAndBeautyBusiness).
- * Vykreslit jednou v BaseLayout – ne v každé sekci.
+ * Vykreslit jednou v BaseLayout – data se sloučí v JsonLdGraph.
  */
 
-const data = {
+addSchema(Astro.locals, {
   '@type': 'HealthAndBeautyBusiness',
   '@id': `${SITE.url}#business`,
   name: SITE.name,
@@ -22,7 +22,6 @@ const data = {
     postalCode: CONTACT.address.zip,
     addressCountry: CONTACT.address.country,
   },
-  // Provider role pro služby (terapie)
   makesOffer: [
     { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Reiki' } },
     { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Dornova metoda' } },
@@ -32,7 +31,5 @@ const data = {
     '@type': 'Person',
     name: CONTACT.person,
   },
-};
+});
 ---
-
-<JsonLd data={data} />

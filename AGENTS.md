@@ -24,14 +24,15 @@ V devcontaineru i mimo něj funguje stejně – Makefile sám pozná, kde běž�
 
 Nejčastější cíle:
 
-| Cíl                      | Účel                                                    |
-| ------------------------ | ------------------------------------------------------- |
-| `make dev`               | Vývojový server na http://localhost:4321 + HMR          |
-| `make build`             | Produkční build do `dist/`                              |
-| `make lint`              | Prettier + ESLint + `astro check` (CI brána)            |
-| `make format`            | Auto-formátování (Prettier)                             |
-| `make mail`              | Mailpit UI na http://localhost:8025 (zachycuje e-maily) |
-| `make screenshot URL=/x` | Vizuální preview přes headless Chromium                 |
+| Cíl                      | Účel                                                           |
+| ------------------------ | -------------------------------------------------------------- |
+| `make dev`               | Vývojový server na http://localhost:4321 + HMR                 |
+| `make build`             | Produkční build do `dist/`                                     |
+| `make lint`              | Prettier + ESLint + `astro check` (CI brána)                   |
+| `make format`            | Auto-formátování (Prettier)                                    |
+| `make mail`              | Mailpit UI na http://localhost:8025 (zachycuje e-maily)        |
+| `make screenshot URL=/x` | Vizuální preview přes headless Chromium                        |
+| `make generate-og`       | Přerenderuje `public/og-default.jpg` z `tools/og-default.html` |
 
 ### Nic se nikam neinstaluje ručně
 
@@ -97,28 +98,33 @@ Web používá jediný text výzvy k akci: **„Objednat terapii"**.
 
 ## Architektura webu
 
-| Adresář                      | K čemu slouží                                                     |
-| ---------------------------- | ----------------------------------------------------------------- |
-| `src/pages/`                 | Stránky webu (URL = cesta v adresáři)                             |
-| `src/pages/[...slug].md.ts`  | Endpoint generující Markdown varianty stránek (vč. static routes) |
-| `src/pages/sitemap.xml.ts`   | Vlastní sitemap (jediný soubor, ne index)                         |
-| `src/pages/robots.txt.ts`    | Robots.txt s odkazem na sitemap (`SITE_URL`-aware)                |
-| `src/pages/llms.txt.ts`      | Endpoint generující `llms.txt` (seznam stránek pro LLM)           |
-| `src/pages/llms-full.txt.ts` | Endpoint s plným obsahem všech stránek (LLM ingest)               |
-| `src/components/ui/`         | Znovupoužitelné UI komponenty (Button, TextField, Icon…)          |
-| `src/components/layout/`     | Hlavička, patička, navigace, skip-link, drobečky                  |
-| `src/components/sections/`   | Velké sekce HP (Hero, Services, Stories…)                         |
-| `src/components/seo/`        | Meta tagy, Open Graph, Twitter Cards                              |
-| `src/components/schema/`     | Schema.org JSON-LD (LocalBusiness, Service, Person, FAQPage)      |
-| `src/content/`               | Obsah stránek v Markdown / MDX (přes content collections)         |
-| `src/assets/images/`         | Obrázky pro `astro:assets` (hash, WebP, srcset)                   |
-| `src/lib/site.ts`            | Centrální konfigurace (URL, kontakty, navigace, credits)          |
-| `src/styles/tokens.css`      | Design tokeny – barvy, typografie, spacing (zdroj pravdy)         |
-| `src/styles/global.css`      | Globální styly nad tokeny + Tailwind import                       |
-| `public/.htaccess`           | Apache pravidla (redirect, content negotiation, cache, CSP)       |
-| `public/fonts/`              | Self-hosted fonty (Playfair Display, Inter, woff2)                |
-| `public/favicon.svg`         | Favicon (fixní URL pro browsery)                                  |
-| `public/api/contact.php`     | Backend handler pro kontaktní formulář (PHP + msmtp)              |
+| Adresář                                | K čemu slouží                                                        |
+| -------------------------------------- | -------------------------------------------------------------------- |
+| `src/pages/`                           | Stránky webu (URL = cesta v adresáři)                                |
+| `src/pages/[...slug].md.ts`            | Endpoint generující Markdown varianty stránek (vč. static routes)    |
+| `src/pages/sitemap.xml.ts`             | Vlastní sitemap (jediný soubor, ne index)                            |
+| `src/pages/robots.txt.ts`              | Robots.txt s odkazem na sitemap (`SITE_URL`-aware)                   |
+| `src/pages/llms.txt.ts`                | Endpoint generující `llms.txt` (seznam stránek pro LLM)              |
+| `src/pages/llms-full.txt.ts`           | Endpoint s plným obsahem všech stránek (LLM ingest)                  |
+| `src/pages/odeslano.astro`             | Potvrzovací stránka po odeslání kontaktního formuláře (noindex)      |
+| `src/lib/schema.ts`                    | Helper `addSchema(locals, data)` – registry pro JSON-LD `@graph`     |
+| `tools/og-default.html`                | Šablona pro `public/og-default.jpg` (render přes `make generate-og`) |
+| `src/components/ui/`                   | Znovupoužitelné UI komponenty (Button, TextField, Icon…)             |
+| `src/components/layout/`               | Hlavička, patička, navigace, skip-link, drobečky                     |
+| `src/components/sections/`             | Velké sekce HP (Hero, Services, Stories…)                            |
+| `src/components/seo/`                  | Meta tagy, Open Graph, Twitter Cards                                 |
+| `src/components/schema/`               | Schema.org – komponenty registrují data přes `addSchema`             |
+| `src/components/seo/JsonLdGraph.astro` | Sloučí všechna registrovaná schemata do jednoho `@graph`             |
+| `src/content/`                         | Obsah stránek v Markdown / MDX (přes content collections)            |
+| `src/assets/images/`                   | Obrázky pro `astro:assets` (hash, WebP, srcset)                      |
+| `src/lib/site.ts`                      | Centrální konfigurace (URL, kontakty, navigace, credits)             |
+| `src/styles/tokens.css`                | Design tokeny – barvy, typografie, spacing (zdroj pravdy)            |
+| `src/styles/global.css`                | Globální styly nad tokeny + Tailwind import                          |
+| `public/.htaccess`                     | Apache pravidla (redirect, content negotiation, cache, CSP)          |
+| `public/fonts/`                        | Self-hosted fonty (Playfair Display, Inter, woff2)                   |
+| `public/favicon.svg`                   | Favicon (fixní URL pro browsery)                                     |
+| `public/api/contact.php`               | Backend handler pro kontaktní formulář (PHP + msmtp)                 |
+| `public/og-default.jpg`                | Výchozí Open Graph náhled (1200×630, JPG – FB/X nečtou SVG)          |
 
 ---
 
@@ -203,6 +209,26 @@ Každá stránka musí mít:
 Globální schema.org: `LocalBusiness` (HealthAndBeautyBusiness), `WebSite`.
 Stránkové schema.org: `Service`, `Person`, `FAQPage`, `BreadcrumbList`
 dle obsahu.
+
+**Architektura JSON-LD:** Schema komponenty (`LocalBusiness`, `WebSite`,
+`Service`, `Person`, `FAQPage`, `Breadcrumbs`) **nic nerenderují** – jen
+registrují svoje JSON-LD objekty přes `addSchema(Astro.locals, …)`.
+Na konci `<head>` v `BaseLayout` je `<JsonLdGraph />`, který vše spojí
+do **jednoho** `<script type="application/ld+json">` s `@graph`.
+Tím jsou všechny `@id` reference (`#business`, `#website`) v rámci
+jednoho dokumentu a parsery (Rich Results) je propojí bezpečně.
+
+Stránkové schemata se vkládají do `<Fragment slot="head">`:
+
+```astro
+<BaseLayout title={pageTitle}>
+  <Fragment slot="head">
+    <BreadcrumbsSchema items={breadcrumbs} />
+    <Service name={svcTitle} description={svcSummary} slug={svcId} />
+  </Fragment>
+  <!-- … obsah stránky … -->
+</BaseLayout>
+```
 
 ---
 

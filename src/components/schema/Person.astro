@@ -1,6 +1,6 @@
 ---
-import JsonLd from '~/components/seo/JsonLd.astro';
 import { SITE } from '~/lib/site';
+import { addSchema } from '~/lib/schema';
 
 interface Props {
   name: string;
@@ -11,14 +11,12 @@ interface Props {
 
 const { name, jobTitle, description, knowsAbout } = Astro.props;
 
-const data = {
+addSchema(Astro.locals, {
   '@type': 'Person',
   name,
   jobTitle,
   ...(description && { description }),
   ...(knowsAbout && { knowsAbout }),
   worksFor: { '@id': `${SITE.url}#business` },
-};
+});
 ---
-
-<JsonLd data={data} />

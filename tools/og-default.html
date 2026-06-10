@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="utf-8" />
+    <title>OG image source</title>
+    <style>
+      @font-face {
+        font-family: 'Playfair Display';
+        font-weight: 700;
+        font-style: normal;
+        src: url('../public/fonts/playfair-700-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter';
+        font-weight: 400 700;
+        font-style: normal;
+        src: url('../public/fonts/inter-latin.woff2') format('woff2-variations');
+      }
+      :root {
+        color-scheme: light;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #003138;
+      }
+      .card {
+        width: 1200px;
+        height: 630px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #19868e 0%, #003138 100%);
+        color: #fff;
+        font-family: 'Inter', system-ui, sans-serif;
+        display: flex;
+        align-items: center;
+        padding: 80px;
+        box-sizing: border-box;
+      }
+      .lotus {
+        position: absolute;
+        left: 60px;
+        bottom: 60px;
+        width: 320px;
+        height: 320px;
+        color: #c3dacd;
+        opacity: 0.55;
+      }
+      .text {
+        margin-left: 380px;
+      }
+      .brand {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 700;
+        font-size: 104px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        margin: 0 0 24px;
+      }
+      .tagline {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 44px;
+        line-height: 1.2;
+        color: #c3dacd;
+        margin: 0 0 60px;
+      }
+      .services {
+        font-size: 28px;
+        font-weight: 500;
+        color: #e6f0f2;
+        letter-spacing: 0.04em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <svg class="lotus" viewBox="0 0 320 320" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M160 250c50 0 95-35 95-80-40 0-72 14-82 42 10-35 10-65 0-95-22 30-32 65-22 95-10-28-42-42-82-42 0 45 45 80 91 80z" />
+        <path d="M160 250c-46 0-91-35-91-80 40 0 72 14 82 42" />
+      </svg>
+      <div class="text">
+        <h1 class="brand">Redome.cz</h1>
+        <p class="tagline">Najděte rovnováhu těla i mysli</p>
+        <p class="services">Reiki · Dornova metoda · Breussova masáž</p>
+      </div>
+    </div>
+  </body>
+</html>

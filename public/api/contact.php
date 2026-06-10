@@ -68,9 +68,9 @@ if (!mail($to, $subject, $body, $headers)) {
     exit;
 }
 
-// Pokud klient přišel z prohlížeče bez fetch/JS, vrátíme ho na hezkou stránku
+// Pokud klient přišel z prohlížeče bez fetch/JS, vrátíme ho na potvrzovací stránku
 if (str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'text/html')) {
-    header('Location: /kontakty?ok=1');
+    header('Location: /odeslano');
     exit;
 }
 

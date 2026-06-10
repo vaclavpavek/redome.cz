@@ -1,8 +1,8 @@
 ---
-import JsonLd from '~/components/seo/JsonLd.astro';
 import { SITE } from '~/lib/site';
+import { addSchema } from '~/lib/schema';
 
-const data = {
+addSchema(Astro.locals, {
   '@type': 'WebSite',
   '@id': `${SITE.url}#website`,
   url: SITE.url,
@@ -10,7 +10,5 @@ const data = {
   description: SITE.description,
   inLanguage: SITE.lang,
   publisher: { '@id': `${SITE.url}#business` },
-};
+});
 ---
-
-<JsonLd data={data} />

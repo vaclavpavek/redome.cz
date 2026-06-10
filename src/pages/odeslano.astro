@@ -1,0 +1,50 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Button from '~/components/ui/Button.astro';
+import { CONTACT } from '~/lib/site';
+---
+
+<BaseLayout
+  title="Zpráva odeslána"
+  description="Děkujeme za vaši zprávu – brzy se vám ozveme."
+  noindex
+>
+  <section class="thanks container" role="status" aria-live="polite">
+    <h1>Děkujeme, zpráva je u nás.</h1>
+    <p>
+      Ozveme se vám během několika dní telefonicky nebo e-mailem a najdeme společně termín. Pokud
+      spěcháte, volejte přímo na <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>.
+    </p>
+    <div class="thanks__actions">
+      <Button href="/">Zpět na úvod</Button>
+      <Button href="/sluzby" variant="outline">Prohlédnout služby</Button>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .thanks {
+    padding-block: var(--space-8);
+    text-align: center;
+    max-width: 40rem;
+  }
+  .thanks h1 {
+    color: var(--color-primary-dark);
+  }
+  .thanks p {
+    color: var(--color-gray-700);
+    font-size: var(--text-18);
+    margin-top: var(--space-2);
+  }
+  .thanks p a {
+    color: var(--color-primary-dark);
+    font-weight: 500;
+  }
+  .thanks__actions {
+    display: inline-flex;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+</style>

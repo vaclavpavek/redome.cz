@@ -27,7 +27,7 @@ RESET := \033[0m
 
 .PHONY: help install dev build preview check lint format test clean \
         docker-up docker-down docker-shell logs ps \
-        generate-sitemap generate-llms generate-md deploy \
+        generate-sitemap generate-llms generate-md generate-og deploy \
         screenshot browser-shell mail
 
 ## help: Zobrazí tuto nápovědu se seznamem příkazů
@@ -107,6 +107,22 @@ generate-llms: build
 ## generate-md: Vygeneruje pouze Markdown varianty stránek (běží v rámci build)
 generate-md: build
 	@echo "Markdown varianty jsou v dist/*.md"
+
+## generate-og: Přerenderuje public/og-default.jpg ze šablony tools/og-default.html
+generate-og:
+	@docker compose --profile tools run --rm \
+		-v "$$(pwd)/tools:/work/tools" \
+		-v "$$(pwd)/public:/work/public" \
+		browser sh -c " \
+		  agent-browser open 'file:///work/tools/og-default.html' \
+		    --executable-path /usr/bin/chromium --viewport 1200 630 && \
+		  agent-browser wait --load networkidle && \
+		  agent-browser wait 800 && \
+		  agent-browser screenshot '/work/tools/og-default.png' && \
+		  agent-browser close"
+	@$(RUN) node -e "require('sharp')('tools/og-default.png').resize(1200,630,{fit:'cover'}).jpeg({quality:85,progressive:true,mozjpeg:true}).toFile('public/og-default.jpg').then(i=>console.log('✓ public/og-default.jpg',i.size,'B'))"
+	@rm -f tools/og-default.png
+	@echo "✓ Hotovo: public/og-default.jpg"
 
 ## mail: Otevře schránku Mailpit (zachycuje všechny vývojové e-maily)
 mail:
