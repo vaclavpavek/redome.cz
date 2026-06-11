@@ -1,5 +1,9 @@
 # Makefile pro redome.cz – jednotný entry point pro všechny příkazy.
-# Vychozí cíl je `help`. Cíle jsou pojmenované anglicky, popisy česky.
+# Výchozí cíl je `help`. Cíle jsou pojmenované anglicky, popisy česky.
+#
+# Konvence pro `make help`:
+#   ### Nadpis skupiny      – hlavička sekce v nápovědě
+#   ## cil: Popis česky     – cíl + jeho popis
 #
 # Použití:
 #   make            – zobrazí nápovědu
@@ -23,21 +27,35 @@ endif
 # Barvy do nápovědy
 CYAN  := \033[36m
 BOLD  := \033[1m
+DIM   := \033[2m
 RESET := \033[0m
 
-.PHONY: help install dev build preview check lint format test clean \
-        docker-up docker-down docker-shell logs ps \
-        generate-sitemap generate-llms generate-md generate-og deploy \
-        screenshot browser-shell mail
+.PHONY: help \
+        install dev preview mail clean \
+        docker-up docker-down docker-shell docker-logs docker-ps browser-shell \
+        check lint format test pre-commit screenshot \
+        build generate-sitemap generate-llms generate-md generate-og deploy
 
 ## help: Zobrazí tuto nápovědu se seznamem příkazů
 help:
-	@printf "\n$(BOLD)Redome.cz – dostupné příkazy$(RESET)\n\n"
-	@awk 'BEGIN {FS = ":[^#]*## "} /^## [a-zA-Z_-]+:/ { \
-		gsub(/^## /, "", $$1); \
-		printf "  $(CYAN)%-20s$(RESET) %s\n", $$1, $$2 \
-	}' $(MAKEFILE_LIST)
-	@printf "\nNejprve spusť: $(CYAN)make install$(RESET), pak $(CYAN)make dev$(RESET).\n\n"
+	@printf "\n$(BOLD)Redome.cz – dostupné příkazy$(RESET)\n"
+	@awk ' \
+		/^### / { \
+			sub(/^### /, ""); \
+			printf "\n  $(BOLD)%s$(RESET)\n", $$0; \
+			next \
+		} \
+		/^## [a-zA-Z_-]+:/ { \
+			sub(/^## /, ""); \
+			idx = index($$0, ":"); \
+			name = substr($$0, 1, idx - 1); \
+			desc = substr($$0, idx + 2); \
+			printf "    $(CYAN)%-18s$(RESET)  %s\n", name, desc \
+		} \
+	' $(MAKEFILE_LIST)
+	@printf "\n  $(DIM)Nejprve spusť$(RESET) $(CYAN)make install$(RESET)$(DIM), pak$(RESET) $(CYAN)make dev$(RESET)$(DIM).$(RESET)\n\n"
+
+### Lokální prostředí
 
 ## install: Nainstaluje závislosti (npm) uvnitř kontejneru
 install:
@@ -47,13 +65,45 @@ install:
 dev:
 	$(RUN_PORTS) npm run dev
 
-## build: Sestaví produkční verzi do dist/ (vč. sitemap, llms.txt, MD variant)
-build:
-	$(RUN) npm run build
-
 ## preview: Spustí náhled produkčního buildu na http://localhost:4321
 preview:
 	$(RUN_PORTS) npm run preview
+
+## mail: Otevře schránku Mailpit (zachycuje všechny vývojové e-maily)
+mail:
+	@echo "📬 Otevři v prohlížeči: http://localhost:8025"
+	@command -v open >/dev/null 2>&1 && open http://localhost:8025 || true
+
+## clean: Smaže build artefakty a node_modules
+clean:
+	$(RUN) rm -rf dist .astro node_modules
+	-docker compose down -v
+
+## docker-up: Nastartuje docker stack na pozadí
+docker-up:
+	docker compose up -d
+
+## docker-down: Zastaví docker stack
+docker-down:
+	docker compose down
+
+## docker-shell: Otevře interaktivní shell uvnitř web kontejneru
+docker-shell:
+	docker compose run --rm web sh
+
+## docker-logs: Zobrazí logy běžícího web kontejneru
+docker-logs:
+	docker compose logs -f web
+
+## docker-ps: Zobrazí stav kontejnerů
+docker-ps:
+	docker compose ps
+
+## browser-shell: Otevře shell uvnitř browser kontejneru (debug)
+browser-shell:
+	docker compose --profile tools run --rm browser bash
+
+### Kontrola
 
 ## check: Kontrola typů a Astro diagnostika (CI brána)
 check:
@@ -71,30 +121,37 @@ format:
 test:
 	$(RUN) npm test
 
-## clean: Smaže build artefakty a node_modules
-clean:
-	$(RUN) rm -rf dist .astro node_modules
-	-docker compose down -v
+## pre-commit: Sada kontrol před commitem (lint + check + test)
+pre-commit: lint check test
+	@echo "✓ Pre-commit kontroly prošly."
 
-## docker-up: Nastartuje docker-compose stack na pozadí
-docker-up:
-	docker compose up -d
+## screenshot: Vyfotí stránku přes headless Chrome (URL=/cesta [OUT=name.png])
+# Browser kontejner běží vždy mimo (sourozenec), v devcontaineru/Codespaces
+# musí mít docker-outside-of-docker feature.
+screenshot:
+	@mkdir -p screenshots
+	@URL=$${URL:-/}; OUT=$${OUT:-screenshot.png}; \
+	docker compose --profile tools run --rm browser sh -c " \
+	  agent-browser open 'http://host.docker.internal:4321$$URL' \
+	    --executable-path /usr/bin/chromium --viewport 1440 900 && \
+	  agent-browser wait --load networkidle && \
+	  agent-browser wait 1500 && \
+	  agent-browser screenshot --full '/work/screenshots/'$$OUT && \
+	  agent-browser close" && \
+	echo "📷 screenshots/$$OUT (URL: $$URL)"
 
-## docker-down: Zastaví docker-compose stack
-docker-down:
-	docker compose down
+### Release
 
-## docker-shell: Otevře interaktivní shell uvnitř kontejneru
-docker-shell:
-	docker compose run --rm web sh
+## build: Sestaví produkční verzi do dist/ (vč. sitemap, llms.txt, MD variant)
+build:
+	$(RUN) npm run build
 
-## logs: Zobrazí logy běžícího kontejneru
-logs:
-	docker compose logs -f web
-
-## ps: Zobrazí stav kontejnerů
-ps:
-	docker compose ps
+## deploy: Push do nahled – nasazení obstará GitHub Actions (stage); na produkci jde přes PR
+deploy:
+	@echo "Nasazení probíhá automaticky přes GitHub Actions."
+	@echo "Stage: commit do větve 'nahled' → automatický deploy na nahled.redome.cz."
+	@echo "Produkce: otevři PR z 'nahled' do 'www' a po merge se nasadí na www.redome.cz."
+	@echo "Podrobnosti: code/docs/git-flow.md"
 
 ## generate-sitemap: Vygeneruje pouze sitemap.xml (běží v rámci build)
 generate-sitemap: build
@@ -123,34 +180,3 @@ generate-og:
 	@$(RUN) node -e "require('sharp')('tools/og-default.png').resize(1200,630,{fit:'cover'}).jpeg({quality:85,progressive:true,mozjpeg:true}).toFile('public/og-default.jpg').then(i=>console.log('✓ public/og-default.jpg',i.size,'B'))"
 	@rm -f tools/og-default.png
 	@echo "✓ Hotovo: public/og-default.jpg"
-
-## mail: Otevře schránku Mailpit (zachycuje všechny vývojové e-maily)
-mail:
-	@echo "📬 Otevři v prohlížeči: http://localhost:8025"
-	@command -v open >/dev/null 2>&1 && open http://localhost:8025 || true
-
-## screenshot: Vyfotí stránku přes headless Chrome (URL=/cesta [OUT=name.png])
-# Browser kontejner běží vždy mimo (sourozenec), v devcontaineru/Codespaces
-# musí mít docker-outside-of-docker feature.
-screenshot:
-	@mkdir -p screenshots
-	@URL=$${URL:-/}; OUT=$${OUT:-screenshot.png}; \
-	docker compose --profile tools run --rm browser sh -c " \
-	  agent-browser open 'http://host.docker.internal:4321$$URL' \
-	    --executable-path /usr/bin/chromium --viewport 1440 900 && \
-	  agent-browser wait --load networkidle && \
-	  agent-browser wait 1500 && \
-	  agent-browser screenshot --full '/work/screenshots/'$$OUT && \
-	  agent-browser close" && \
-	echo "📷 screenshots/$$OUT (URL: $$URL)"
-
-## browser-shell: Otevře shell uvnitř browser kontejneru (debug)
-browser-shell:
-	docker compose --profile tools run --rm browser bash
-
-## deploy: Push do nahled – nasazení obstará GitHub Actions (stage); na produkci jde přes PR
-deploy:
-	@echo "Nasazení probíhá automaticky přes GitHub Actions."
-	@echo "Stage: commit do větve 'nahled' → automatický deploy na nahled.redome.cz."
-	@echo "Produkce: otevři PR z 'nahled' do 'www' a po merge se nasadí na www.redome.cz."
-	@echo "Podrobnosti: code/docs/git-flow.md"
