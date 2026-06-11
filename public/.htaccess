@@ -72,7 +72,10 @@ ServerSignature Off
 # MIME typy (pro jistotu i přes mod_mime)
 # ---------------------------------------------------------------------
 <IfModule mod_mime.c>
+  # Wedos Apache ignoruje AddDefaultCharset – nutno per-type.
+  AddType "text/html; charset=utf-8"     .html
   AddType "text/markdown; charset=utf-8" .md
+  AddType "text/plain; charset=utf-8"    .txt
   AddType application/manifest+json .webmanifest
   AddType image/svg+xml          .svg
   AddType font/woff2             .woff2
