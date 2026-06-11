@@ -13,13 +13,20 @@ Stačí **Docker Desktop** – nebo úplně bez instalace přes **GitHub Codespa
 ### Rychlý start
 
 ```bash
-make          # zobrazí seznam všech příkazů
-make install  # nainstaluje závislosti (poprvé)
-make dev      # spustí web na http://localhost:4321 s živým náhledem
+cp .env.example .env   # vyplň, co potřebuješ (na běh dev serveru nic povinné)
+make                   # zobrazí seznam všech příkazů
+make install           # nainstaluje závislosti (poprvé)
+make dev               # spustí web na http://localhost:4321 s živým náhledem
 ```
 
 Otevři v prohlížeči `http://localhost:4321` – jakákoli změna v souborech se v prohlížeči
 sama obnoví.
+
+### Konfigurace prostředí (`.env`)
+
+Lokální i CI nastavení (SFTP přístupy, kontaktní e-mail, volitelné AI klíče)
+je popsané v [`.env.example`](./.env.example). Pro CI se stejné názvy zakládají
+jako **GitHub Secrets** (Settings → Secrets and variables → Actions).
 
 ### Užitečné příkazy navíc
 

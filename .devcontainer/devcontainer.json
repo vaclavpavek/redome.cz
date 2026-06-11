@@ -8,7 +8,11 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "version": "latest"
-    }
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
   "forwardPorts": [4321],
   "portsAttributes": {
@@ -18,6 +22,10 @@
     }
   },
   "postCreateCommand": "make install",
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -26,7 +34,10 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "editorconfig.editorconfig",
-        "yzhang.markdown-all-in-one"
+        "yzhang.markdown-all-in-one",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "anthropic.claude-code"
       ],
       "settings": {
         "editor.formatOnSave": true,

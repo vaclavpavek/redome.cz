@@ -42,10 +42,27 @@ přímo `npm install …`).
 
 ### Citlivá data (secrets)
 
-Soubory typu `.env*` (a podobné) jsou **zakázané ke čtení** – PreToolUse
-hook v `.claude/settings.local.json` blokuje jakýkoli pokus o jejich
-otevření. Pokud potřebuješ konkrétní hodnotu (SFTP, API klíč), **požádej
-zákazníka** – pošle ji přímo do chatu.
+Soubory typu `.env*` (kromě `.env.example`) jsou **zakázané ke čtení** –
+PreToolUse hook v `.claude/settings.local.json` blokuje jakýkoli pokus
+o jejich otevření. Pokud potřebuješ konkrétní hodnotu (SFTP, API klíč),
+**požádej zákazníka** – pošle ji přímo do chatu.
+
+Sjednocený zdroj pravdy pro env je [`.env.example`](./.env.example) –
+dokumentuje, co se kam plní lokálně i jako GitHub Secrets.
+
+### Devcontainer
+
+Repo je připraveno pro DevContainery (VS Code, JetBrains, Codespaces).
+`.devcontainer/devcontainer.json` přidává features:
+
+- `docker-outside-of-docker` – `docker` CLI uvnitř kontejneru míří na
+  hostitelský daemon (potřeba pro `make screenshot` / Compose)
+- `github-cli` – `gh` CLI (auth, PR, Issues, Copilot extension)
+- `anthropics/claude-code` – Claude Code CLI
+
+A VS Code extensions: GitHub Copilot, Copilot Chat, Claude Code.
+API klíče (`ANTHROPIC_API_KEY`, `GITHUB_TOKEN`) se prokládají z hostitele
+přes `remoteEnv` – jsou volitelné, bez nich jen není auto-přihlášení.
 
 ### Commit zprávy
 
