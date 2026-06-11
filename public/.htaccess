@@ -48,9 +48,12 @@ ServerSignature Off
   # REQUEST_FILENAME končí slashem (= adresář) a `.md -f` test by
   # hledal nesmyslnou cestu jako 'co-je-reiki/.md' místo 'co-je-reiki.md'.
   # -----------------------------------------------------------------
-  # DEBUG verze: jen Accept check, žádné REQUEST_URI conditions.
-  # Pokud po tomhle homepage stále vrací HTML, problém je úplně jinde
-  # (Wedos disabluje rewrite pro homepage / Apache hook order issue).
+  # Speciální pravidlo pro homepage – obecné pravidlo níže (.+?)
+  # nematchne prázdnou path. Pattern `^$` matchne exact empty string.
+  # Pozn.: -f check vynechán – Wedos mapuje subdomény přes Alias
+  # (subdom/nahled/), takže %{DOCUMENT_ROOT}/index.md ukazuje
+  # o úroveň výš a check vždy selže. Accept hlavička je dost
+  # specifická, pokud index.md neexistuje, Apache vrátí 404.
   RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
   RewriteRule ^$ /index.md [L]
 
@@ -70,7 +73,7 @@ ServerSignature Off
 # MIME typy (pro jistotu i přes mod_mime)
 # ---------------------------------------------------------------------
 <IfModule mod_mime.c>
-  AddType text/markdown          .md
+  AddType "text/markdown; charset=utf-8" .md
   AddType application/manifest+json .webmanifest
   AddType image/svg+xml          .svg
   AddType font/woff2             .woff2
