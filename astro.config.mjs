@@ -2,6 +2,31 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
+import { unlink } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+
+/**
+ * Astro publicDir zkopíruje VŠECHNO z `public/` do `dist/`, včetně
+ * souborů ignorovaných gitem. `config.local.php` obsahuje hCaptcha
+ * secret a NESMÍ skončit v deploy streamu (atomic FTPS swap by ho
+ * nahrál na hosting). Hook ho po dokončeném buildu z `dist/api/`
+ * smaže. `noop`, pokud soubor neexistuje – tj. v CI nebo když lokálně
+ * nemáš lokální override.
+ */
+const stripLocalPhpConfig = {
+  name: 'strip-local-php-config',
+  hooks: {
+    'astro:build:done': async (/** @type {{ dir: URL }} */ { dir }) => {
+      const target = fileURLToPath(new URL('api/config.local.php', dir));
+      try {
+        await unlink(target);
+        console.log('  ▶ smazán dist/api/config.local.php (lokální override)');
+      } catch (/** @type {any} */ err) {
+        if (err?.code !== 'ENOENT') throw err;
+      }
+    },
+  },
+};
 
 // Doména pro absolutní URL (sitemap, robots, canonical, OG).
 //   - SITE_URL=https://nahled.redome.cz  na stage (build z `main`)
@@ -17,7 +42,7 @@ export default defineConfig({
   site: SITE_URL,
   trailingSlash: 'never',
   output: 'static',
-  integrations: [mdx()],
+  integrations: [mdx(), stripLocalPhpConfig],
   server: {
     host: '0.0.0.0',
     port: 4321,

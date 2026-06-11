@@ -74,6 +74,14 @@ export const SOCIAL = {
   instagram: '',
 } as const;
 
+/**
+ * hCaptcha invisible – ochrana kontaktního formuláře.
+ * Site key je veřejný (vystavuje se v HTML), secret žije jen na backendu
+ * (env `HCAPTCHA_SECRET` v dev, soubor mimo deploy na produkci).
+ * Docs: https://docs.hcaptcha.com/invisible
+ */
+export const HCAPTCHA_SITE_KEY = 'cb2063a0-9696-4074-afce-f292e2d80b68';
+
 export type NavItem = { href: string; label: string };
 
 export const MAIN_NAV: NavItem[] = [

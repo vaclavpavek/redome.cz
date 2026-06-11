@@ -1,0 +1,16 @@
+<?php
+/**
+ * Lokální override `config.php` – zkopíruj na `config.local.php`
+ * (bez `.example`) a doplň skutečné hodnoty.
+ *
+ * Vrací jen ty klíče, které chceš přepsat (deep-merge s `config.php`).
+ *
+ * Pro Wedos hosting tenhle soubor NEDÁVEJ do `subdom/<branch>/api/`,
+ * deploy by ho jednou nahrál a podruhé přepsal. Tam použij soubor
+ * `redome-config.php` v dokumentovém kořeni hostingu (mimo subdom).
+ */
+return [
+    'hcaptcha' => [
+        'secret' => 'ES_…sem-doplň-skutečný-secret-z-hCaptcha-dashboardu…',
+    ],
+];

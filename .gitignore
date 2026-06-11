@@ -22,6 +22,11 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Lokální override PHP konfigurace (hCaptcha secret pro kontaktní formulář).
+# Build hook v astro.config.mjs ho po sobě smaže z dist/, aby se nedostal
+# do deploy streamu. Na produkci žije obdobný soubor v document_root Wedosu.
+public/api/config.local.php
+
 # Editor / OS
 .DS_Store
 Thumbs.db

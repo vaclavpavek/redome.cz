@@ -52,6 +52,38 @@ deploy proměnné (FTPS hostname, user, heslo, path). Lokální vývoj
 `.env` nepotřebuje; AI nástroje (Claude Code, Copilot CLI) drží auth
 v Docker named volumes (`claude-config-redomecz`, `copilot-config-redomecz`).
 
+**Runtime konfigurace PHP backendu** (kontaktní formulář, hCaptcha) jde
+jednotně přes PHP config soubory – ne přes `.env` / `getenv()`. Wedos
+hosting přes env neumí, proto stejný mechanismus pro lokál i produkci:
+
+- [`public/api/config.php`](./public/api/config.php) – **public defaults**
+  v gitu (hCaptcha site key, příjemce mailu). Sem nikdy nedávej secret.
+- [`public/api/config.local.php`](./public/api/config.local.php.example) –
+  **lokální override**, gitignored. Vytvoříš zkopírováním souboru
+  `config.local.php.example` a doplněním skutečného hCaptcha secret.
+  Po `make build` ho integrace `strip-local-php-config` v
+  [`astro.config.mjs`](./astro.config.mjs) smaže z `dist/api/`, takže
+  secret nikdy neproletí přes deploy stream.
+- **Wedos produkce**: nahraj jednou ručně soubor `redome-config.php`
+  do dokumentového kořene hostingu (mimo `subdom/`, kam nesahá deploy
+  swap). Stejná array struktura jako `config.local.php`:
+
+  ```php
+  <?php
+  return ['hcaptcha' => ['secret' => 'ES_…']];
+  ```
+
+  `contact.php` ho najde přes `$_SERVER['DOCUMENT_ROOT'] . '/redome-config.php'`
+  a deep-merge ho do configu. Atomic FTPS swap mění jen
+  `subdom/<branch>/`, takže `redome-config.php` v `/www/` přežívá deploy.
+
+Pokud secret chybí v obou cestách, `contact.php` vrátí HTTP 500
+(fail-closed – raději odmítnout než pustit spam).
+
+Struktura PHP array je připravená na budoucí přechod na Nette NEON
+(až dorazí `nette/forms` pro samotný formulář) – stačí přejmenovat
+soubor a `require` přepsat na `Neon::decodeFile()`.
+
 ### Devcontainer
 
 Repo je připraveno pro DevContainery (VS Code, JetBrains, Codespaces).

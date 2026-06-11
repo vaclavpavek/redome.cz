@@ -103,8 +103,9 @@ ServerSignature Off
   # https → vynucené přes mod_rewrite výše, to stačí.
   # Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" env=HTTPS
 
-  # CSP – uvolněno pro Astro (inline styly), zpřísnit po nasazení
-  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  # CSP – uvolněno pro Astro (inline styly) + hCaptcha (script/frame/style/connect
+  # ze subdomén hcaptcha.com kvůli invisible captcha v kontaktním formuláři).
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com; script-src 'self' https://hcaptcha.com https://*.hcaptcha.com; font-src 'self' data:; connect-src 'self' https://hcaptcha.com https://*.hcaptcha.com; frame-src https://hcaptcha.com https://*.hcaptcha.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 
   # === Cache strategie ===
   # Pravidla jdou od nejspecifičtějšího po obecné – setifempty zajistí,
@@ -196,6 +197,13 @@ ServerSignature Off
 
 # Composer / npm / lock soubory – kdyby je někdo omylem nahrál
 <FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|yarn\.lock|pnpm-lock\.yaml)$">
+  Require all denied
+</FilesMatch>
+
+# Konfigurační PHP soubory – `config.php`, `config.local.php`,
+# `redome-config.php` apod. nesmí být přístupné zvenku. `contact.php`
+# je includuje server-side, externí GET musí dostat 403.
+<FilesMatch "(^|/)(config|config\.local|redome-config|redome-secret|\.secret)\.php$">
   Require all denied
 </FilesMatch>
 

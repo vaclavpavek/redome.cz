@@ -51,8 +51,8 @@ services:
       - ./public:/var/www
     depends_on:
       - mailpit
-    environment:
-      - CONTACT_TO=redome@redome.cz
+    # Veškerou konfiguraci (příjemce mailu, hCaptcha …) řídí PHP config
+    # vedle contact.php – do PHP runtime tu nepotřebujeme žádné env.
 
   # Agent-browser pro screenshoty / vizuální kontrolu UI.
   # Pouští se na vyžádání přes `make screenshot URL=/cesta`.

@@ -4,7 +4,7 @@ description: Jak nakládáme s osobními údaji, které nám pošlete přes kont
   formulář nebo telefonicky. Vše v souladu s GDPR.
 order: 100
 section: optional
-updated: 2026-06-08
+updated: 2026-06-12
 ---
 
 # Ochrana osobních údajů
@@ -27,7 +27,7 @@ získáme tyto údaje:
 
 - **Jméno a příjmení** – abychom vás mohli oslovit
 - **E-mail** – pro odpověď
-- **Telefon** _(volitelné)_ – pro rychlejší kontakt
+- **Telefon** – pro rychlejší domluvení termínu
 - **Obsah vaší zprávy** – co od nás potřebujete
 
 ## Proč údaje zpracováváme
@@ -38,8 +38,10 @@ získáme tyto údaje:
 - **Vedení záznamů** o klientech, kteří k nám docházejí (právní základ:
   oprávněný zájem)
 
-Údaje **nepředáváme** žádné třetí straně k marketingovým ani jiným účelům.
+Údaje **nepředáváme** žádné třetí straně k marketingovým účelům.
 Nejsou používány k profilování ani automatizovanému rozhodování.
+Výjimkou je technické ověření, že formulář neodesílá robot – podrobněji
+v sekci [Komu údaje předáváme](#komu-udaje-predavame) níže.
 
 ## Jak dlouho údaje uchováváme
 
@@ -52,11 +54,32 @@ Po uplynutí lhůty údaje bezpečně smažeme.
 
 ## Komu údaje předáváme
 
-Vaše údaje zpracováváme sami a **nepředáváme** je žádné další osobě.
+Obsah vaší zprávy (jméno, e-mail, telefon, text) zpracováváme sami
+a **nepředáváme** ho žádné další osobě k marketingovým ani analytickým
+účelům. E-maily si stahujeme přímo k sobě (žádný cloudový marketing
+nástroj). Hosting webu zajišťuje provozovatel hostingu – přístup k datům
+je omezený a smluvně ošetřený.
 
-E-maily si stahujeme přímo k sobě (žádný cloudový marketing nástroj).
-Hosting webu zajišťuje provozovatel hostingu – přístup k datům je
-omezený a smluvně ošetřený.
+Při odeslání formuláře využíváme jedinou technickou službu třetí strany:
+
+**hCaptcha** (provozovatel Intuition Machines, Inc., USA) – chrání
+formulář před automatizovaným spamem. V okamžiku odeslání si od vašeho
+prohlížeče vyžádá:
+
+- **IP adresu** a **hlavičky prohlížeče** (User-Agent, jazyk),
+- omezené **údaje o chování** na stránce (pohyb myši, časování) pro
+  rozlišení robota od člověka,
+- **technický cookie / local storage záznam** pro zabránění opakované
+  výzvě stejnému návštěvníkovi.
+
+Tyto údaje zpracovává hCaptcha jako náš zpracovatel – právní základ je
+**oprávněný zájem** na ochraně formuláře před spamem (čl. 6 odst. 1
+písm. f) GDPR). Údaje **nikdy nespojujeme** s obsahem vaší zprávy.
+Detaily najdete v
+[zásadách ochrany osobních údajů hCaptcha](https://www.hcaptcha.com/privacy)
+a v [podmínkách služby](https://www.hcaptcha.com/terms).
+Pokud s tím nesouhlasíte, ozvěte se nám prosím přímo telefonicky nebo
+e-mailem (kontakty výše).
 
 ## Vaše práva
 
@@ -79,7 +102,13 @@ také právo podat stížnost u **Úřadu pro ochranu osobních údajů**
 ## Cookies a analytika
 
 Web **nepoužívá** marketingové ani analytické cookies. Žádná data o vašem
-chování na webu se nesbírají ani neodesílají třetím stranám.
+chování při běžné návštěvě se nesbírají ani neodesílají třetím stranám.
+
+Výjimkou je **technický cookie / local storage hCaptcha** na stránce
+s kontaktním formulářem. Slouží výhradně k tomu, abyste nebyli opakovaně
+vyzýváni k ověření, že nejste robot, a nemá marketingový charakter. Bez
+něj formulář nelze odeslat – viz sekce
+[Komu údaje předáváme](#komu-udaje-predavame).
 
 ## Změny tohoto dokumentu
 

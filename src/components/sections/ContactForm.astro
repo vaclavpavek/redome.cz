@@ -1,5 +1,5 @@
 ---
-import { CONTACT } from '~/lib/site';
+import { CONTACT, HCAPTCHA_SITE_KEY } from '~/lib/site';
 import TextField from '~/components/ui/TextField.astro';
 import Textarea from '~/components/ui/Textarea.astro';
 import Button from '~/components/ui/Button.astro';
@@ -53,6 +53,7 @@ const { compact = false } = Astro.props;
       method="post"
       action="/api/contact.php"
       aria-describedby="contact-privacy"
+      data-sitekey={HCAPTCHA_SITE_KEY}
       novalidate
     >
       <TextField
@@ -75,9 +76,9 @@ const { compact = false } = Astro.props;
         name="phone"
         label="Telefon"
         type="tel"
+        required
         autocomplete="tel"
         placeholder="+420"
-        helperText="Nepovinné, ale pomůže se ozvat rychleji."
       />
       <Textarea
         id="contact-message"
@@ -97,15 +98,216 @@ const { compact = false } = Astro.props;
         </label>
       </div>
 
+      <!-- Kontejner pro hCaptcha widget (invisible) – JS sem vyrenderuje
+           neviditelný iframe. Po submit volá hcaptcha.execute() a doplní
+           token jako h-captcha-response do POST. -->
+      <div class="contact__captcha" aria-hidden="true"></div>
+
+      <!-- Povinný disclaimer pro stránky s invisible hCaptcha
+           (https://docs.hcaptcha.com/invisible). Odkazy musí směřovat
+           přesně na hcaptcha.com/privacy a hcaptcha.com/terms. -->
+      <p class="contact__hcaptcha-note">
+        Tento formulář je chráněn službou hCaptcha.<br />
+        Platí její
+        <a href="https://www.hcaptcha.com/privacy" rel="external noopener" target="_blank"
+          >Zásady ochrany osobních údajů</a
+        >
+        a
+        <a href="https://www.hcaptcha.com/terms" rel="external noopener" target="_blank"
+          >Podmínky služby</a
+        >.
+      </p>
+
       <p id="contact-privacy" class="contact__privacy">
         Stisknutím tlačítka souhlasíte se zpracováním
         <a href="/ochrana-osobnich-udaju">osobních údajů dle tohoto dokumentu</a>.
       </p>
 
+      <!-- Status region pro AJAX odpovědi: validační chyby ze serveru,
+           síťový problém, průběh odesílání. aria-live=polite kvůli SR. -->
+      <p class="contact__status" role="status" aria-live="polite" hidden></p>
+
       <Button type="submit">Odeslat zprávu</Button>
     </form>
   </div>
 </section>
+
+<!-- hCaptcha API – explicit render přes globální callback onHCaptchaLoaded.
+     async/defer aby neblokoval render stránky. -->
+<script
+  is:inline
+  src="https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoaded&render=explicit"
+  async
+  defer></script>
+
+<script is:inline>
+  // Globální callback pro hCaptcha API. Najde všechny formuláře s data-sitekey
+  // a vyrendruje do nich invisible widget. Submit pak proběhne přes execute()
+  // a odeslání jde AJAXem (fetch). Server vrací JSON:
+  //   - 200 + {ok:true}                   → redirect na /odeslano
+  //   - 422 + {errors: {field: msg}, …}   → per-field hlášky přes
+  //     setCustomValidity + inline <p.field__error> pod inputem
+  //   - 4xx/5xx + {message}               → obecná hláška v status regionu
+  window.onHCaptchaLoaded = function () {
+    document.querySelectorAll('form[data-sitekey]').forEach((form) => {
+      const container = form.querySelector('.contact__captcha');
+      if (!container || form.dataset.hcaptchaReady) return;
+
+      const widgetId = window.hcaptcha.render(container, {
+        sitekey: form.dataset.sitekey,
+        size: 'invisible',
+      });
+      form.dataset.hcaptchaReady = '1';
+
+      const statusEl = form.querySelector('.contact__status');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      const setStatus = (text, kind) => {
+        if (!statusEl) return;
+        statusEl.textContent = text || '';
+        statusEl.hidden = !text;
+        statusEl.classList.toggle('contact__status--error', kind === 'error');
+        statusEl.classList.toggle('contact__status--info', kind === 'info');
+      };
+
+      // Synchronizuje vizuální stav pole (red border, aria-invalid) s tím,
+      // co o něm říká HTML5 ValidityState. Single source of truth = nativní
+      // checkValidity(); custom validation (server, vlastní pravidla) se
+      // do něj prosakuje přes setCustomValidity().
+      const syncFieldState = (input) => {
+        const wrapper = input.closest('.field');
+        if (!wrapper) return;
+        if (input.checkValidity()) {
+          wrapper.classList.remove('field--error');
+          input.removeAttribute('aria-invalid');
+        } else {
+          wrapper.classList.add('field--error');
+          input.setAttribute('aria-invalid', 'true');
+        }
+      };
+
+      // Per-field chyba ze serveru – pošleme ji do HTML5 validation API.
+      // form.reportValidity() pak ukáže nativní bublinu u prvního invalid.
+      const setServerError = (input, msg) => {
+        if (input.setCustomValidity) input.setCustomValidity(msg);
+        syncFieldState(input);
+      };
+
+      // Validace po opuštění pole (blur) + průběžné vyčištění při psaní.
+      // Honeypot a hCaptcha widget kontejner přeskočíme – nemají user input.
+      form.querySelectorAll('input, textarea, select').forEach((input) => {
+        if (!input.name || input.type === 'hidden') return;
+        if (input.closest('.contact__honeypot')) return;
+
+        input.addEventListener('blur', () => {
+          // Před validací stripneme jen leading/trailing whitespace – ať
+          // čistě prázdné nebo špatně formátované pole spadne na required
+          // / type=email check a zobrazí nativní bublinu.
+          if (!input.checkValidity()) {
+            syncFieldState(input);
+            input.reportValidity();
+          }
+        });
+
+        input.addEventListener('input', () => {
+          // Pokud měl input customValidity ze serveru, mažeme ji –
+          // user reaguje na chybu, ať checkValidity() přepne na nativní
+          // pravidla (required, type=email).
+          if (input.validity && input.validity.customError && input.setCustomValidity) {
+            input.setCustomValidity('');
+          }
+          syncFieldState(input);
+        });
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        // Vyčistit předchozí server-side chyby ze status regionu.
+        // Per-field chyby maže input handler výše při typing.
+        setStatus('');
+
+        // Nativní HTML5 validace (required, type=email) – ať se zbytečně
+        // nevolá hCaptcha API a server, když chybí povinný field.
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        setStatus('Ověřujeme, že nejste robot…', 'info');
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+          const { response: token } = await window.hcaptcha.execute(widgetId, { async: true });
+
+          setStatus('Odesíláme zprávu…', 'info');
+
+          const data = new FormData(form);
+          data.set('h-captcha-response', token);
+
+          const res = await fetch(form.action, {
+            method: 'POST',
+            body: data,
+            // Server podle Accept rozhoduje formát: application/json → JSON
+            // s polem `errors`; jinak plain text fallback (no-JS form POST).
+            headers: { Accept: 'application/json' },
+          });
+
+          let payload = null;
+          try {
+            payload = await res.json();
+          } catch {
+            /* neparsovatelná odpověď, payload zůstane null */
+          }
+
+          if (res.ok && payload && payload.ok) {
+            window.location.href = '/odeslano';
+            return;
+          }
+
+          // Per-field chyby – nastavíme přes HTML5 validation API a necháme
+          // browser ukázat svou nativní bublinu u prvního invalid inputu.
+          // Status region drží jen obecné chyby (captcha, server, network).
+          if (payload && payload.errors && typeof payload.errors === 'object') {
+            for (const [name, msg] of Object.entries(payload.errors)) {
+              const input = form.elements.namedItem(name);
+              if (!input || !('focus' in input)) continue;
+              setServerError(input, String(msg));
+            }
+            form.reportValidity();
+            setStatus('');
+          } else {
+            setStatus(
+              (payload && payload.message) ||
+                'Zprávu se nepodařilo odeslat. Zkuste to prosím znovu.',
+              'error'
+            );
+          }
+
+          // Reset captcha – nový pokus po opravě bez reloadu stránky.
+          try {
+            window.hcaptcha.reset(widgetId);
+          } catch {
+            /* noop */
+          }
+        } catch (err) {
+          console.error('contact form:', err);
+          setStatus(
+            'Spojení se nepodařilo navázat. Zkontrolujte připojení a zkuste to prosím znovu.',
+            'error'
+          );
+          try {
+            window.hcaptcha.reset(widgetId);
+          } catch {
+            /* noop */
+          }
+        } finally {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
+    });
+  };
+</script>
 
 <style>
   .contact {
@@ -137,10 +339,14 @@ const { compact = false } = Astro.props;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
   }
-  .contact__privacy {
+  .contact__privacy,
+  .contact__hcaptcha-note {
     font-size: var(--text-12);
     color: var(--color-gray-600);
     margin: 0;
+  }
+  .contact__hcaptcha-note {
+    margin-top: calc(-1 * var(--space-1));
   }
   .contact__honeypot {
     position: absolute;
@@ -148,6 +354,22 @@ const { compact = false } = Astro.props;
     width: 1px;
     height: 1px;
     overflow: hidden;
+  }
+  .contact__status {
+    font-size: var(--text-14);
+    margin: 0;
+    padding: 0.625rem 0.875rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+  }
+  .contact__status--error {
+    background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    color: var(--color-danger);
+  }
+  .contact__status--info {
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    color: var(--color-primary-dark);
   }
   /* === Kompaktní varianta (pro samotný /kontakty) === */
   .contact--compact .contact__grid {
