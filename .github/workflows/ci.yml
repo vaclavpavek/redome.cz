@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [nahled, www]
+  pull_request:
+    branches: [nahled, www]
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+
+concurrency:
+  # PR a manuální běhy se rušit můžou (verifikační smysl).
+  # Push běhy se nezruší – z nich vychází deploy a nechceme osekat
+  # build artifact uprostřed.
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+jobs:
+  build:
+    name: Lint, test & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Astro check
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      - name: Compute deploy target
+        id: target
+        # Vyhodnotí, jestli má aktuální běh smysl nasadit:
+        #   - push do nahled        → target=nahled (stage)
+        #   - merged PR do www      → target=www    (produkce)
+        #   - cokoli jiného         → prázdné (deploy se přeskočí)
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref_name }}" == "nahled" ]]; then
+            echo "branch=nahled" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == "pull_request" \
+               && "${{ github.event.action }}" == "closed" \
+               && "${{ github.event.pull_request.merged }}" == "true" \
+               && "${{ github.event.pull_request.base.ref }}" == "www" ]]; then
+            echo "branch=www" >> "$GITHUB_OUTPUT"
+          else
+            echo "branch=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build
+        run: npm run build
+        env:
+          # Pro PR i push: SITE_URL = cílová subdoména (target pokud
+          # nasazujeme, jinak PR base nebo aktuální ref).
+          SITE_URL: https://${{ steps.target.outputs.branch || github.event.pull_request.base.ref || github.ref_name }}.redome.cz
+
+      - name: Upload dist/ (pro deploy)
+        # Jen v deploy scénářích – deploy workflow čeká přesně tento artifact.
+        if: steps.target.outputs.branch != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-${{ steps.target.outputs.branch }}
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error

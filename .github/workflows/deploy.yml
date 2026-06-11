@@ -1,95 +1,69 @@
-name: CI & Deploy
+name: Deploy
 
 on:
-  # CI běží vždy (push i PR – ať PR vidí status zelený / červený před mergem)
-  push:
-    branches: [nahled, www]
-  pull_request:
-    branches: [nahled, www]
-    types: [opened, synchronize, reopened, closed]
-  workflow_dispatch:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+
+permissions:
+  # gh api (detect job) i actions/download-artifact (deploy job) s cross-run
+  # přístupem potřebují číst metadata jiných workflow runů.
+  actions: read
+  contents: read
 
 concurrency:
-  # Push (= deploy) běhy se nezruší – jinak by se mohl osekat swap.
-  # PR a dispatch se mezi sebou rušit můžou (jen verifikační smysl).
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name != 'push' }}
+  # Per-target: nahled deploye a www deploye se mezi sebou nevzdají,
+  # ale dva nahled deploye v řadě se postaví do fronty (cancel-in-progress
+  # false = neosekáme swap uprostřed).
+  group: deploy-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
 
 jobs:
   # --------------------------------------------------------------------------
-  # CI – install, lint, check, test, build. Výstup: artefakt `dist/`.
+  # Detekce: prošlo CI a existuje deploy artifact? Pokud ano, který target?
   # --------------------------------------------------------------------------
-  ci:
-    name: Lint, test & build
+  detect:
+    name: Detekce deploy targetu
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
+    if: github.event.workflow_run.conclusion == 'success'
+    outputs:
+      target: ${{ steps.find.outputs.target }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Astro check
-        run: npm run check
-
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
+      - name: Najdi deploy-* artifact z CI runu
+        id: find
         env:
-          # Jméno větve = subdoména (pro PR base.ref, jinak ref_name).
-          SITE_URL: https://${{ github.event.pull_request.base.ref || github.ref_name }}.redome.cz
-
-      - name: Upload dist/
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ github.sha }}
-          path: dist/
-          retention-days: 7
-          if-no-files-found: error
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NAMES=$(gh api \
+            "/repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts" \
+            --jq '.artifacts[].name')
+          TARGET=$(echo "$NAMES" | sed -n 's/^deploy-\(.*\)$/\1/p' | head -n 1)
+          if [[ -n "$TARGET" ]]; then
+            echo "✓ Deploy target: $TARGET"
+            echo "target=$TARGET" >> "$GITHUB_OUTPUT"
+          else
+            echo "ℹ️  Žádný deploy-* artifact – přeskakuji deploy."
+          fi
 
   # --------------------------------------------------------------------------
-  # Deploy:
-  #   - push do `nahled`         → stage deploy (jakýkoli commit i merge)
-  #   - merged PR do `www`       → produkční deploy
-  #   - direct push do `www`     → CI ano, deploy NE (ošetří branch protection)
+  # Deploy: download artifactu z CI runu + atomic FTPS swap.
   # --------------------------------------------------------------------------
   deploy:
-    name: FTPS deploy
-    needs: ci
+    name: FTPS deploy (${{ needs.detect.outputs.target }})
+    needs: detect
+    if: needs.detect.outputs.target != ''
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Environment "wedos" – přístup k FTP secrets + vars (host, user, heslo, path).
-    # V repo Settings → Environments lze přidat ruční schvalování, omezit
-    # větve apod., aniž by se měnil workflow.
     environment: wedos
-    if: |
-      (github.event_name == 'push' && github.ref_name == 'nahled') ||
-      (github.event_name == 'pull_request' &&
-       github.event.action == 'closed' &&
-       github.event.pull_request.merged == true &&
-       github.event.pull_request.base.ref == 'www')
 
     env:
-      # Pro PR merge je github.ref_name = "<PR>/merge" – musíme override.
-      BRANCH: ${{ github.event.pull_request.base.ref || github.ref_name }}
+      BRANCH: ${{ needs.detect.outputs.target }}
 
     steps:
-      - name: Checkout (jen kvůli cli/deploy.sh)
+      - name: Checkout (jen cli/deploy.sh)
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.workflow_run.head_sha }}
           sparse-checkout: |
             cli
           sparse-checkout-cone-mode: false
@@ -97,15 +71,16 @@ jobs:
       - name: Download dist/
         uses: actions/download-artifact@v4
         with:
-          name: dist-${{ github.sha }}
+          name: deploy-${{ needs.detect.outputs.target }}
           path: dist/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends lftp
 
       - name: Deploy via cli/deploy.sh
         env:
-          # Citlivé jako secrets, veřejné jako variables – viz Environment wedos.
           FTP_HOST: ${{ vars.FTP_HOST }}
           FTP_PATH: ${{ vars.FTP_PATH }}
           FTP_USER: ${{ secrets.FTP_USER }}
