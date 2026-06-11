@@ -34,7 +34,7 @@ RESET := \033[0m
         install dev preview mail clean \
         docker-up docker-down docker-shell docker-logs docker-ps browser-shell \
         check lint format test pre-commit screenshot \
-        build generate-sitemap generate-llms generate-md generate-og deploy
+        build deploy generate-sitemap generate-llms generate-md generate-og
 
 ## help: Zobrazí tuto nápovědu se seznamem příkazů
 help:
@@ -146,12 +146,12 @@ screenshot:
 build:
 	$(RUN) npm run build
 
-## deploy: Push do nahled – nasazení obstará GitHub Actions (stage); na produkci jde přes PR
-deploy:
-	@echo "Nasazení probíhá automaticky přes GitHub Actions."
-	@echo "Stage: commit do větve 'nahled' → automatický deploy na nahled.redome.cz."
-	@echo "Produkce: otevři PR z 'nahled' do 'www' a po merge se nasadí na www.redome.cz."
-	@echo "Podrobnosti: code/docs/git-flow.md"
+## deploy: Atomic FTPS deploy podle aktuální větve (cli/deploy.sh)
+# Nahraje dist/ jako <branch>-next, prohodí se <branch>, smaže prev.
+# Při chybě uprostřed swapu provede rollback. CI volá totéž
+# (workflow předá FTP_* ze secrets a BRANCH z GITHUB_REF_NAME).
+deploy: build
+	$(RUN) bash cli/deploy.sh
 
 ## generate-sitemap: Vygeneruje pouze sitemap.xml (běží v rámci build)
 generate-sitemap: build

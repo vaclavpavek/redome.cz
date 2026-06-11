@@ -9,7 +9,7 @@ mu rozuměl i zákazník bez technického zázemí.
 
 Statický web **Redome.cz** (Reiki a terapeutické služby, Karel Háněl).
 Postavený na [Astro 5](https://astro.build/) + Tailwind, výstup je čisté HTML
-a nasazuje se přes SFTP na Apache hosting (Wedos).
+a nasazuje se přes FTPS na Apache hosting (Wedos).
 
 ---
 
@@ -112,6 +112,18 @@ Jméno větve odpovídá subdoméně, kam se nasazuje:
 
 - `nahled` → stage (`https://nahled.redome.cz`) – automaticky
 - `www` ← merge z `nahled` přes PR → produkce (`https://www.redome.cz`) – automaticky
+
+Nasazení obstará workflow [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml),
+který volá [`cli/deploy.sh`](./cli/deploy.sh) – zero-downtime FTPS swap:
+
+1. upload `dist/` → `<FTP_PATH>/<branch>-next` (vedle živé verze)
+2. `<branch>` → `<branch>-prev` (záloha)
+3. `<branch>-next` → `<branch>` (nový live)
+4. smazání `<branch>-prev`
+
+Při chybě uprostřed swapu (krok 3) script automaticky vrátí
+`<branch>-prev` zpět na `<branch>`. Lokálně se stejný script
+volá přes `make deploy` (potřebuje vyplněný `.env`).
 
 Detail: [`docs/git-flow.md`](./docs/git-flow.md).
 

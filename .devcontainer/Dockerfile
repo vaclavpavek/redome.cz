@@ -4,12 +4,16 @@ FROM node:24-bookworm-slim
 # (docker-outside-of-docker, claude-code, copilot-cli, git, github-cli),
 # které předpokládají apt-get. Alpine variant by ušetřil ~100 MB, ale
 # rozbíjí features i některé binární moduly (sharp/fontconfig).
-# Git instaluje feature `git:1`. nano/mc/tree jsou QoL nástroje,
-# iputils-ping + dnsutils (ping, nslookup, dig) pro síťovou diagnostiku.
+# Git je v base, aby `docker compose run --rm web` (bez devcontainer
+# features) měl k dispozici `git rev-parse` – potřeba pro deploy script,
+# který odvozuje větev. Devcontainer feature `git:1` ho pak může
+# přeinstalovat na novější verzi, kolize nevadí.
+# nano/mc/tree jsou QoL nástroje, iputils-ping + dnsutils (ping,
+# nslookup, dig) pro síťovou diagnostiku, lftp pro FTPS deploy.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        make bash ca-certificates curl nano mc tree \
-        iputils-ping dnsutils \
+        git make bash ca-certificates curl nano mc tree \
+        iputils-ping dnsutils lftp \
     && rm -rf /var/lib/apt/lists/*
 
 # Update npm na nejnovější (image přichází se starší verzí, která pak
@@ -51,6 +55,11 @@ RUN ln -sf /commandhistory/.bash_history /home/node/.bash_history \
     && echo "export PROMPT_COMMAND='history -a'" >> /etc/bash.bashrc
 
 USER node
+
+# Bind mountovaný /workspace má UID hostitele (501 na macOS), uvnitř
+# běžíme jako node (1000). Bez tohoto by git hlásil "dubious ownership"
+# a deploy script by nemohl odvodit větev.
+RUN git config --global --add safe.directory '*'
 
 # Defaultně držíme kontejner naživu, samotný server spouští `make dev`
 CMD ["sleep", "infinity"]
