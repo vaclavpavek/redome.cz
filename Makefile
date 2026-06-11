@@ -148,9 +148,9 @@ screenshot:
 browser-shell:
 	docker compose --profile tools run --rm browser bash
 
-## deploy: Push do main – nasazení obstará GitHub Actions (stage); na produkci jde přes PR
+## deploy: Push do nahled – nasazení obstará GitHub Actions (stage); na produkci jde přes PR
 deploy:
 	@echo "Nasazení probíhá automaticky přes GitHub Actions."
-	@echo "Stage: commit do větve 'main' → automatický deploy."
-	@echo "Produkce: otevři PR z 'main' do 'production' a po merge se nasadí."
+	@echo "Stage: commit do větve 'nahled' → automatický deploy na nahled.redome.cz."
+	@echo "Produkce: otevři PR z 'nahled' do 'www' a po merge se nasadí na www.redome.cz."
 	@echo "Podrobnosti: code/docs/git-flow.md"

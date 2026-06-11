@@ -59,8 +59,10 @@ nabídne otevřít náhled webu v prohlížeči.
 
 Nasazení probíhá **automaticky** přes GitHub Actions:
 
-1. **Stage** (`https://nahled.redome.cz`) – commit do větve `main` se sám nahraje.
-2. **Produkce** (`https://www.redome.cz`) – otevři Pull Request z `main` do `production`, po
+Jméno větve odpovídá subdoméně, kam se nasazuje:
+
+1. **Stage** (`https://nahled.redome.cz`) – commit do větve `nahled` se sám nahraje.
+2. **Produkce** (`https://www.redome.cz`) – otevři Pull Request z `nahled` do `www`, po
    merge se sám nahraje.
 
 Podrobný návod krok za krokem: [`docs/git-flow.md`](./docs/git-flow.md).

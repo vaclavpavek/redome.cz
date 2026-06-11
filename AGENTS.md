@@ -61,8 +61,10 @@ Příklady:
 
 ### Větve a nasazení
 
-- `main` → stage (`https://nahled.redome.cz`) – automaticky
-- `production` ← merge z `main` přes PR → produkce (`https://www.redome.cz`) – automaticky
+Jméno větve odpovídá subdoméně, kam se nasazuje:
+
+- `nahled` → stage (`https://nahled.redome.cz`) – automaticky
+- `www` ← merge z `nahled` přes PR → produkce (`https://www.redome.cz`) – automaticky
 
 Detail: [`docs/git-flow.md`](./docs/git-flow.md).
 
@@ -73,8 +75,8 @@ se generuje z env proměnné `SITE_URL`:
 
 | Větev / prostředí | `SITE_URL`                 | Výsledek v sitemap                |
 | ----------------- | -------------------------- | --------------------------------- |
-| `main` (stage)    | `https://nahled.redome.cz` | `<loc>https://nahled.redome.cz/…` |
-| `production`      | _nenastavovat_ (výchozí)   | `<loc>https://www.redome.cz/…`    |
+| `nahled` (stage)  | `https://nahled.redome.cz` | `<loc>https://nahled.redome.cz/…` |
+| `www` (produkce)  | _nenastavovat_ (výchozí)   | `<loc>https://www.redome.cz/…`    |
 | lokální debug     | `http://localhost:4321`    | `<loc>http://localhost:4321/…`    |
 
 CI v GitHub Actions nastavuje `SITE_URL` před `make build`. Lokálně:
