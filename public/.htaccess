@@ -50,10 +50,9 @@ ServerSignature Off
   # -----------------------------------------------------------------
   # Speciální pravidlo pro homepage – obecné pravidlo níže (.+?)
   # nematchne prázdnou path. Pattern `^$` matchne exact empty string.
-  # Pozn.: -f check vynechán – Wedos mapuje subdomény přes Alias
-  # (subdom/nahled/), takže %{DOCUMENT_ROOT}/index.md ukazuje
-  # o úroveň výš a check vždy selže. Accept hlavička je dost
-  # specifická, pokud index.md neexistuje, Apache vrátí 404.
+  # Pozn.: -f check vynechán – Wedos mapuje subdomény přes Alias,
+  # takže %{DOCUMENT_ROOT}/index.md ukazuje o úroveň výš a check
+  # vždy selže. Accept hlavička je dostatečně specifická.
   RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
   RewriteRule ^$ /index.md [L]
 
