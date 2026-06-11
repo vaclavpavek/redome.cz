@@ -8,6 +8,18 @@
 // Default produkce: https://www.redome.cz
 const SITE_URL = (import.meta.env.SITE_URL ?? 'https://www.redome.cz').replace(/\/$/, '');
 
+const PRODUCTION_URL = 'https://www.redome.cz';
+
+/**
+ * `true` jen pro produkční build (`SITE_URL === https://www.redome.cz`).
+ * Používá se pro:
+ *   - globální `noindex,nofollow` na stage/feature deploys
+ *   - `robots.txt` s `Disallow: /` mimo produkci
+ * Tím se nahled.redome.cz a feature větve nedostanou do Google indexu
+ * a nekonkurují s produkční doménou v SERP.
+ */
+export const IS_PRODUCTION = SITE_URL === PRODUCTION_URL;
+
 export const SITE = {
   url: SITE_URL,
   name: 'Redome.cz',

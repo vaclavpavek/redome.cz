@@ -1,5 +1,5 @@
 ---
-import { SITE } from '~/lib/site';
+import { SITE, IS_PRODUCTION } from '~/lib/site';
 
 interface Props {
   title: string;
@@ -31,7 +31,11 @@ const mdAlternate = isHome ? `${SITE.url}/index.md` : `${canonical}.md`;
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex,nofollow" />}
+{
+  /* noindex pro: explicit prop (404, /odeslano) NEBO stage/feature deploy
+     (vše mimo produkční SITE_URL). Stage se tím nedostane do Google indexu. */
+  (noindex || !IS_PRODUCTION) && <meta name="robots" content="noindex,nofollow" />
+}
 
 <!-- Markdown varianta stránky (pro LLM klienty s Accept: text/markdown) -->
 <link rel="alternate" type="text/markdown" href={mdAlternate} title="Markdown verze" />
