@@ -39,13 +39,25 @@ ServerSignature Off
   # -----------------------------------------------------------------
   # Content negotiation: pokud klient žádá Markdown, podsuneme `.md`
   # variantu místo HTML. Funguje pro:
-  #   /co-je-reiki        → /co-je-reiki.md   (pokud existuje)
+  #   /co-je-reiki        → /co-je-reiki.md
+  #   /co-je-reiki/       → /co-je-reiki.md   (Wedos CDN přidává trailing slash)
   #   /sluzby/reiki       → /sluzby/reiki.md
+  #
+  # Důležité: testujeme přes REQUEST_URI + DOCUMENT_ROOT, ne přes
+  # REQUEST_FILENAME. Když Wedos CDN (ATS) přidá trailing slash,
+  # REQUEST_FILENAME končí slashem (= adresář) a `.md -f` test by
+  # hledal nesmyslnou cestu jako 'co-je-reiki/.md' místo 'co-je-reiki.md'.
   # -----------------------------------------------------------------
+  # DEBUG verze: jen Accept check, žádné REQUEST_URI conditions.
+  # Pokud po tomhle homepage stále vrací HTML, problém je úplně jinde
+  # (Wedos disabluje rewrite pro homepage / Apache hook order issue).
   RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME}.md -f
-  RewriteRule ^(.+?)/?$ /$1.md [L]
+  RewriteRule ^$ /index.md [L]
+
+  RewriteCond %{HTTP_ACCEPT} text/markdown [NC]
+  RewriteCond %{REQUEST_URI} ^/(.+?)/?$
+  RewriteCond %{DOCUMENT_ROOT}/%1.md -f
+  RewriteRule . /%1.md [L]
 
   # Hezké URL: /o-nas → /o-nas/index.html (Astro generuje s indexem)
   RewriteCond %{REQUEST_FILENAME} !-f
