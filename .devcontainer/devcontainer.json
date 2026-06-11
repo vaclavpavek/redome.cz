@@ -1,6 +1,6 @@
 {
   "name": "redome.cz",
-  "dockerComposeFile": ["../docker-compose.yml"],
+  "dockerComposeFile": ["../compose.yaml"],
   "service": "web",
   "workspaceFolder": "/workspace",
   "remoteUser": "node",
