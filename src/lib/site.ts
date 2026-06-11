@@ -21,10 +21,10 @@ export const SITE = {
 
 export const CONTACT = {
   person: 'Karel Háněl',
-  phone: '+420 775 504 175',
-  phoneHref: 'tel:+420775504175',
-  email: 'redome@redome.cz',
-  emailHref: 'mailto:redome@redome.cz',
+  phone: '+420 775 330 771',
+  phoneHref: 'tel:+420775330771',
+  email: 'karel@redome.cz',
+  emailHref: 'mailto:karel@redome.cz',
   address: {
     street: 'Peciny 196',
     city: 'Litomyšl',
@@ -37,8 +37,8 @@ export const CONTACT_SECONDARY = {
   person: 'Monika Bišická',
   phone: '+420 739 033 191',
   phoneHref: 'tel:+420739033191',
-  email: 'redome@redome.cz',
-  emailHref: 'mailto:redome@redome.cz',
+  email: 'monika@redome.cz',
+  emailHref: 'mailto:monika@redome.cz',
 } as const;
 
 export const CREDITS = {
@@ -58,7 +58,7 @@ export const CREDITS = {
 
 export const SOCIAL = {
   // Doplň skutečné URL nebo nech prázdné – komponenty si je odfiltrují
-  facebook: '',
+  facebook: 'https://www.facebook.com/redome.cz',
   instagram: '',
 } as const;
 

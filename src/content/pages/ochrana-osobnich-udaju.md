@@ -18,7 +18,7 @@ o zpracování osobních údajů.
 **Karel Háněl**
 Peciny 196, Litomyšl 570 01
 E-mail: [redome@redome.cz](mailto:redome@redome.cz)
-Telefon: [+420 775 504 175](tel:+420775504175)
+Telefon: [+420 775 330 771](tel:+420775330771)
 
 ## Jaké údaje zpracováváme
 

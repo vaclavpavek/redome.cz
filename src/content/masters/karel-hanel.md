@@ -1,23 +1,12 @@
 ---
-title: O nás
-description: Karel Háněl – Reiki Mistr–učitel (IV. stupeň), Dornova metoda
-  a Breussova masáž. Reiki praxe v Litomyšli.
-order: 20
-section: main
+name: Karel Háněl
+role: Reiki Mistr–učitel (IV. stupeň), Dornova metoda, Breussova masáž – Litomyšl
+order: 10
 ---
 
-# O nás
-
-**Redome** je projekt **Karla Háněla**, mistra Reiki (IV. stupeň) a
-dlouholetého praktika manuálních metod (Dornova metoda, Breussova
-masáž). Spolupracuje s **Monikou Bišickou**, která rovněž patří do
-mistrovské linie Reiki.
-
-## Karel Háněl
-
-Narodil jsem se ve znamení Býka a mé životní číslo 7 ukazuje na
-přirozené léčitelské schopnosti, které se naplno rozvinuly díky práci
-s energií Reiki.
+Narodil jsem se ve znamení Býka a mé životní číslo 7 ukazuje na přirozené
+léčitelské schopnosti, které se naplno rozvinuly díky práci s energií
+Reiki.
 
 Poprvé jsem o svém léčitelském potenciálu dozvěděl v roce 2008 při
 numerologii a výkladu karet od paní **Janky Skálové**. Tehdy mi ještě
@@ -32,7 +21,11 @@ samému a cestě duše.
 Dnes tyto metody propojuji podle individuálních potřeb každého, kdo ke
 mně přichází. Práce s energií Reiki je pro mě cestou poznání a rovnováhy.
 
-## Kde nás najdete
+Pokud cítíte, že je čas na změnu, uvolnění nebo hlubší pochopení sebe
+sama, jste vítáni.
 
-Peciny 196, **Litomyšl 570 01**.
-Termín si domluvíme individuálně – napište nebo zavolejte.
+Každé setkání je jedinečné – tak jako cesta každého z nás. Rád vás
+podpořím na té vaší.
+
+Neváhejte mě kontaktovat pro domluvu individuální terapie, konzultace
+nebo více informací o tom, co vám mohu nabídnout.
