@@ -1,0 +1,114 @@
+name: CI & Deploy
+
+on:
+  # CI běží vždy (push i PR – ať PR vidí status zelený / červený před mergem)
+  push:
+    branches: [nahled, www]
+  pull_request:
+    branches: [nahled, www]
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+
+concurrency:
+  # Push (= deploy) běhy se nezruší – jinak by se mohl osekat swap.
+  # PR a dispatch se mezi sebou rušit můžou (jen verifikační smysl).
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+jobs:
+  # --------------------------------------------------------------------------
+  # CI – install, lint, check, test, build. Výstup: artefakt `dist/`.
+  # --------------------------------------------------------------------------
+  ci:
+    name: Lint, test & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Astro check
+        run: npm run check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Jméno větve = subdoména (pro PR base.ref, jinak ref_name).
+          SITE_URL: https://${{ github.event.pull_request.base.ref || github.ref_name }}.redome.cz
+
+      - name: Upload dist/
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+
+  # --------------------------------------------------------------------------
+  # Deploy:
+  #   - push do `nahled`         → stage deploy (jakýkoli commit i merge)
+  #   - merged PR do `www`       → produkční deploy
+  #   - direct push do `www`     → CI ano, deploy NE (ošetří branch protection)
+  # --------------------------------------------------------------------------
+  deploy:
+    name: FTPS deploy
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Environment "wedos" – přístup k FTP secrets + vars (host, user, heslo, path).
+    # V repo Settings → Environments lze přidat ruční schvalování, omezit
+    # větve apod., aniž by se měnil workflow.
+    environment: wedos
+    if: |
+      (github.event_name == 'push' && github.ref_name == 'nahled') ||
+      (github.event_name == 'pull_request' &&
+       github.event.action == 'closed' &&
+       github.event.pull_request.merged == true &&
+       github.event.pull_request.base.ref == 'www')
+
+    env:
+      # Pro PR merge je github.ref_name = "<PR>/merge" – musíme override.
+      BRANCH: ${{ github.event.pull_request.base.ref || github.ref_name }}
+
+    steps:
+      - name: Checkout (jen kvůli cli/deploy.sh)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            cli
+          sparse-checkout-cone-mode: false
+
+      - name: Download dist/
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends lftp
+
+      - name: Deploy via cli/deploy.sh
+        env:
+          # Citlivé jako secrets, veřejné jako variables – viz Environment wedos.
+          FTP_HOST: ${{ vars.FTP_HOST }}
+          FTP_PATH: ${{ vars.FTP_PATH }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          CI: 'true'
+        run: bash cli/deploy.sh
