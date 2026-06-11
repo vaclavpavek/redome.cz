@@ -62,12 +62,34 @@ install:
 	$(RUN) npm install
 
 ## dev: Spustí vývojový server s auto-reloadem na http://localhost:4321
+# Když je stack zvednutý přes `make docker-up`, web kontejner už drží port
+# 4321 → `run --service-ports` by selhal. V tom případě se přepojíme přes
+# `docker compose exec` do běžícího webu. Když stack nestojí, spustíme web
+# ad-hoc přes `run --rm`.
 dev:
-	$(RUN_PORTS) npm run dev
+ifdef IN_CONTAINER
+	npm run dev
+else
+	@if docker compose ps --services --filter status=running 2>/dev/null | grep -qx web; then \
+		echo "→ web už běží (docker-up), spouštím dev server přes exec"; \
+		docker compose exec web npm run dev; \
+	else \
+		echo "→ stack stojí, spouštím web ad-hoc přes run --rm"; \
+		docker compose run --rm --service-ports web npm run dev; \
+	fi
+endif
 
 ## preview: Spustí náhled produkčního buildu na http://localhost:4321
 preview:
-	$(RUN_PORTS) npm run preview
+ifdef IN_CONTAINER
+	npm run preview
+else
+	@if docker compose ps --services --filter status=running 2>/dev/null | grep -qx web; then \
+		docker compose exec web npm run preview; \
+	else \
+		docker compose run --rm --service-ports web npm run preview; \
+	fi
+endif
 
 ## mail: Otevře schránku Mailpit (zachycuje všechny vývojové e-maily)
 mail:
