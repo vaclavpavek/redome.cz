@@ -47,22 +47,52 @@ PreToolUse hook v `.claude/settings.local.json` blokuje jakýkoli pokus
 o jejich otevření. Pokud potřebuješ konkrétní hodnotu (SFTP, API klíč),
 **požádej zákazníka** – pošle ji přímo do chatu.
 
-Sjednocený zdroj pravdy pro env je [`.env.example`](./.env.example) –
-dokumentuje, co se kam plní lokálně i jako GitHub Secrets.
+[`.env.example`](./.env.example) je šablona pro GitHub Secrets – jen
+deploy proměnné (FTPS hostname, user, heslo, path). Lokální vývoj
+`.env` nepotřebuje; AI nástroje (Claude Code, Copilot CLI) drží auth
+v Docker named volumes (`claude-config-redomecz`, `copilot-config-redomecz`).
 
 ### Devcontainer
 
 Repo je připraveno pro DevContainery (VS Code, JetBrains, Codespaces).
-`.devcontainer/devcontainer.json` přidává features:
+`.devcontainer/devcontainer.json` skládá prostředí z oficiálních
+devcontainer features:
 
+- `git` – Git
 - `docker-outside-of-docker` – `docker` CLI uvnitř kontejneru míří na
   hostitelský daemon (potřeba pro `make screenshot` / Compose)
-- `github-cli` – `gh` CLI (auth, PR, Issues, Copilot extension)
-- `anthropics/claude-code` – Claude Code CLI
+- `github-cli` – `gh` CLI (auth, PR, Issues)
+- `copilot-cli` – GitHub Copilot CLI (`copilot`)
+- `anthropics/claude-code` – Claude Code CLI (`claude`)
 
-A VS Code extensions: GitHub Copilot, Copilot Chat, Claude Code.
-API klíče (`ANTHROPIC_API_KEY`, `GITHUB_TOKEN`) se prokládají z hostitele
-přes `remoteEnv` – jsou volitelné, bez nich jen není auto-přihlášení.
+Na úrovni Dockerfile se navíc instalují drobné QoL utility pro terminál:
+`nano`, `mc`, `tree`.
+
+VS Code extensions (ignoruje JetBrains): GitHub Copilot, Copilot Chat,
+Claude Code. V JetBrains si pluginy nainstaluj ručně přes Marketplace.
+
+**Persistence přihlášení.** `claude` i `copilot` se v interaktivním
+režimu přihlašují přes browser OAuth a token si ukládají do `~/.claude`
+resp. `~/.copilot`. Aby auth přežil rebuild kontejneru (a šel sdílet
+napříč git worktrees téhož repa), jsou v `devcontainer.json` named
+volumes s fixními jmény:
+
+```json
+"mounts": [
+  "source=claude-config-redome,target=/home/node/.claude,type=volume",
+  "source=copilot-config-redome,target=/home/node/.copilot,type=volume"
+]
+```
+
+Fixní jména (bez `${devcontainerId}`) umožňují, aby všechny worktrees
+i druhé clony redome.cz sdílely stejný login. Volumes drží jen Docker,
+nejdou do gitu.
+
+Smazat volumes (vynutit re-auth) lze ručně: `docker volume rm
+claude-config-redome copilot-config-redome`.
+
+V Codespaces se volume chová stejně jako lokálně – přežije stop/start
+codespacu, ale smaže se při Rebuild Container nebo Delete codespace.
 
 ### Commit zprávy
 
