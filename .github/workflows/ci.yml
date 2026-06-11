@@ -62,11 +62,13 @@ jobs:
           fi
 
       - name: Build
-        run: npm run build
+        # SITE_URL odvodí helper cli/site-url.sh z BRANCH (stejný kód
+        # používá `make build` lokálně, tedy DRY napříč prostředími).
+        run: SITE_URL=$(bash cli/site-url.sh) npm run build
         env:
-          # Pro PR i push: SITE_URL = cílová subdoména (target pokud
-          # nasazujeme, jinak PR base nebo aktuální ref).
-          SITE_URL: https://${{ steps.target.outputs.branch || github.event.pull_request.base.ref || github.ref_name }}.redome.cz
+          # Když deploy target existuje, použij ho (= cílová subdoména).
+          # Jinak PR base.ref (PR scénář) nebo github.ref_name (push).
+          BRANCH: ${{ steps.target.outputs.branch || github.event.pull_request.base.ref || github.ref_name }}
 
       - name: Upload dist/ (pro deploy)
         # Jen v deploy scénářích – deploy workflow čeká přesně tento artifact.

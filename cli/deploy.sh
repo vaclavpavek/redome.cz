@@ -53,18 +53,9 @@ if [[ -z "$BRANCH" ]]; then
   exit 1
 fi
 
-# Slug – bezpečný název pro subdoménu i FTP cestu.
-# Příklad: 'fix/123_NEW' → 'fix-123-new'
-#   1) malá písmena
-#   2) lomítka, podtržítka, tečky, mezery → pomlčka
-#   3) všechno mimo a-z 0-9 - pryč (diakritika tedy zmizí beze stopy –
-#      branche pojmenovávej ASCII, hláška to upozorní)
-#   4) sloučení vícenásobných pomlček + ořez okrajů
-slugify() {
-  printf '%s' "$1" \
-    | tr '[:upper:]' '[:lower:]' \
-    | sed -E 's@[/_. ]+@-@g; s/[^a-z0-9-]//g; s/-+/-/g; s/^-+//; s/-+$//'
-}
+# Sdílená slugify funkce (lib/_slugify.sh).
+# shellcheck source=./lib/_slugify.sh
+source "$(dirname "$0")/lib/_slugify.sh"
 
 SLUG="$(slugify "$BRANCH")"
 if [[ -z "$SLUG" ]]; then
