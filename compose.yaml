@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: .devcontainer/Dockerfile
-    image: redome-cz-web:dev
     user: node
     working_dir: /workspace
     init: true
@@ -14,11 +13,6 @@ services:
       - node_modules:/workspace/node_modules
     ports:
       - "4321:4321"
-    # Lokální tajné/nastavitelné věci jsou v .env (viz .env.example).
-    # `env_file` je volitelný – kontejner se rozjede i bez něj.
-    env_file:
-      - path: .env
-        required: false
     environment:
       - HOST=0.0.0.0
       - IN_CONTAINER=1
@@ -33,10 +27,6 @@ services:
       #   www    → SITE_URL=https://www.redome.cz (default, dá se vynechat)
       # Lokálně přepiš: `SITE_URL=http://localhost:4321 make build`
       - SITE_URL=${SITE_URL:-https://www.redome.cz}
-      # AI nástroje uvnitř devcontaineru (volitelné, jen pokud máš klíče
-      # v .env). Bez nich Claude Code / gh fungují po ručním přihlášení.
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
 
   # Mailpit – zachytává všechny e-maily během vývoje (SMTP + webové UI)
   mailpit:
@@ -56,16 +46,13 @@ services:
     build:
       context: .
       dockerfile: .devcontainer/php.Dockerfile
-    image: redome-cz-php:dev
     restart: unless-stopped
     volumes:
       - ./public:/var/www
     depends_on:
       - mailpit
     environment:
-      # V devu chodí všechno do Mailpitu, takže reálná adresa nehraje
-      # roli. Produkční hodnotu nastav v .env (nebo přes GitHub Secret).
-      - CONTACT_TO=${CONTACT_TO:-redome@redome.cz}
+      - CONTACT_TO=redome@redome.cz
 
   # Agent-browser pro screenshoty / vizuální kontrolu UI.
   # Pouští se na vyžádání přes `make screenshot URL=/cesta`.
@@ -75,7 +62,6 @@ services:
     build:
       context: .
       dockerfile: .devcontainer/browser.Dockerfile
-    image: redome-cz-browser:dev
     profiles: ["tools"]
     # host.docker.internal funguje napříč Mac/Win Docker Desktop, Linuxem
     # (host-gateway) i GitHub Codespaces – browser tedy vždy míří na

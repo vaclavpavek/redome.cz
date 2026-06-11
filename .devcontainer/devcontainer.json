@@ -6,14 +6,21 @@
   "remoteUser": "node",
   "shutdownAction": "stopCompose",
   "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "version": "latest"
     },
     "ghcr.io/devcontainers/features/github-cli:1": {
       "version": "latest"
     },
-    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+    "ghcr.io/devcontainers/features/copilot-cli:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
   },
+  "mounts": [
+    "source=claude-config-redomecz,target=/home/node/.claude,type=volume",
+    "source=copilot-config-redomecz,target=/home/node/.copilot,type=volume",
+    "source=bash-history-redomecz,target=/commandhistory,type=volume"
+  ],
   "forwardPorts": [4321],
   "portsAttributes": {
     "4321": {
@@ -22,10 +29,6 @@
     }
   },
   "postCreateCommand": "make install",
-  "remoteEnv": {
-    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
-    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
-  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -36,7 +39,6 @@
         "editorconfig.editorconfig",
         "yzhang.markdown-all-in-one",
         "GitHub.copilot",
-        "GitHub.copilot-chat",
         "anthropic.claude-code"
       ],
       "settings": {
