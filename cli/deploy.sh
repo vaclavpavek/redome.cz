@@ -4,10 +4,14 @@
 # ============================================================================
 #
 # Postup:
-#   1) nahraj dist/  →  <FTP_PATH>/<branch>-next     (vedle live verze)
-#   2) přejmenuj      <FTP_PATH>/<branch>      →  <branch>-prev   (záloha)
-#   3) přejmenuj      <FTP_PATH>/<branch>-next →  <branch>        (nový live)
-#   4) smaž           <FTP_PATH>/<branch>-prev                    (úklid)
+#   1)  nahraj dist/  →  <FTP_PATH>/<branch>-next    (vedle live verze)
+#   1b) zkopíruj  <source>/api/config.local.php  →  <branch>-next/api/
+#       (source = sám sebe pro `www`, jinak vždy `nahled` – sdílený stage
+#       hCaptcha secret pro feature deploye; config se v dist nepřenáší,
+#       astro.config.mjs ho úmyslně před uploadem maže)
+#   2)  přejmenuj <FTP_PATH>/<branch>      →  <branch>-prev   (záloha)
+#   3)  přejmenuj <FTP_PATH>/<branch>-next →  <branch>        (nový live)
+#   4)  smaž      <FTP_PATH>/<branch>-prev                    (úklid)
 #
 #   Při jakékoli chybě po kroku 2 se provede rollback (prev → live).
 #
@@ -125,6 +129,41 @@ lftp_run "
   mkdir -p '$REMOTE_NEXT'
   mirror --reverse --delete --parallel=4 --verbose=1 '$LOCAL_DIR/' '$REMOTE_NEXT'
 "
+
+# 1b) Přenést config.local.php (hCaptcha secret) z live větve.
+# Source:
+#   www     → vlastní live (vlastní produkční secret)
+#   ostatní → nahled live (sdílený stage secret i pro feature větve)
+# První deploy větve = source neexistuje → varování, ručně po dokončení.
+if [[ "$SLUG" == "www" ]]; then
+  CONFIG_SRC_NAME="www (vlastní)"
+  REMOTE_CONFIG_SRC="$REMOTE_LIVE/api/config.local.php"
+else
+  CONFIG_SRC_NAME="nahled"
+  REMOTE_CONFIG_SRC="$REMOTE_BASE/nahled/api/config.local.php"
+fi
+
+echo "1b   Přebírám config.local.php z '$CONFIG_SRC_NAME' …"
+# `mktemp` vytvoří prázdný soubor, ale lftp `get1 -o` odmítá přepsat
+# existující local file ("File exists"). Smažeme ho – stačí nám jen
+# unikátní cesta, lftp si soubor vytvoří sám až po úspěšném stažení.
+TMP_CFG="$(mktemp)"
+rm -f "$TMP_CFG"
+GET_LOG="$(mktemp)"
+# Pozn.: použijeme `get1` (jediný soubor) místo `get` – při neexistenci
+# selže rychleji a předvídatelně. Stderr nechytáme přes /dev/null, ať
+# vidíme reálný důvod (FTP permission denied, path neexistuje, …).
+if lftp_run "get1 -o '$TMP_CFG' '$REMOTE_CONFIG_SRC'" >"$GET_LOG" 2>&1 \
+   && [[ -s "$TMP_CFG" ]]; then
+  lftp_run "put '$TMP_CFG' -o '$REMOTE_NEXT/api/config.local.php'"
+  echo "      ✓ config.local.php převzat z $CONFIG_SRC_NAME"
+else
+  echo "      ⚠️  $REMOTE_CONFIG_SRC nedostupný:" >&2
+  sed 's/^/         /' "$GET_LOG" >&2
+  echo "         Po dokončení nahraj config.local.php do $REMOTE_LIVE/api/ ručně," >&2
+  echo "         jinak contact.php vrátí 500 (fail-closed)." >&2
+fi
+rm -f "$TMP_CFG" "$GET_LOG"
 
 # 2) <branch> → <branch>-prev (záloha staré verze)
 echo "2/4  Záloha: $REMOTE_LIVE → $REMOTE_PREV"

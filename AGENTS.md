@@ -64,18 +64,22 @@ hosting přes env neumí, proto stejný mechanismus pro lokál i produkci:
   Po `make build` ho integrace `strip-local-php-config` v
   [`astro.config.mjs`](./astro.config.mjs) smaže z `dist/api/`, takže
   secret nikdy neproletí přes deploy stream.
-- **Wedos produkce**: nahraj jednou ručně soubor `redome-config.php`
-  do dokumentového kořene hostingu (mimo `subdom/`, kam nesahá deploy
-  swap). Stejná array struktura jako `config.local.php`:
+- **Wedos produkce**: po prvním deployi nahraj ručně přes FTP soubor
+  `config.local.php` do `subdom/<branch>/api/`. Při dalších deployech
+  ho [`cli/deploy.sh`](./cli/deploy.sh) (krok 1b) sám přenese
+  z live verze do nové `<branch>-next/api/`, takže atomic swap o něj
+  nepřijde. Source bere:
 
-  ```php
-  <?php
-  return ['hcaptcha' => ['secret' => 'ES_…']];
-  ```
+  | Cílová větev | Source `config.local.php` |
+  | ------------ | ------------------------- |
+  | `www`        | vlastní live (`www/api/`) |
+  | `nahled` i ostatní feature větve | `nahled/api/` (sdílený stage secret) |
 
-  `contact.php` ho najde přes `$_SERVER['DOCUMENT_ROOT'] . '/redome-config.php'`
-  a deep-merge ho do configu. Atomic FTPS swap mění jen
-  `subdom/<branch>/`, takže `redome-config.php` v `/www/` přežívá deploy.
+  Alternativa pro speciální případy: stejná array struktura jde nahrát
+  i jako `redome-config.php` do dokumentového kořene hostingu (mimo
+  `subdom/`), `contact.php` ho najde přes
+  `$_SERVER['DOCUMENT_ROOT'] . '/redome-config.php'` a deep-merge ho
+  poslední do configu (tj. přebije i `config.local.php`).
 
 Pokud secret chybí v obou cestách, `contact.php` vrátí HTTP 500
 (fail-closed – raději odmítnout než pustit spam).
