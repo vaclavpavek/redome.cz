@@ -76,11 +76,20 @@ export const SOCIAL = {
 
 /**
  * hCaptcha invisible – ochrana kontaktního formuláře.
- * Site key je veřejný (vystavuje se v HTML), secret žije jen na backendu
- * (env `HCAPTCHA_SECRET` v dev, soubor mimo deploy na produkci).
+ * Site key je veřejný (vystavuje se v HTML jako `data-sitekey`), ale jeho
+ * dvojice s `secret` se vydává v hCaptcha dashboardu samostatně pro každou
+ * doménu. Volíme podle SITE_URL při buildu:
+ *   - https://www.redome.cz   → produkční site key (jen tato doména)
+ *   - https://nahled.redome.cz → stage site key (i feature větve, lokál)
+ * Backendová strana (PHP) si stejnou hodnotu hlídá v `config.local.php`
+ * pro každé prostředí zvlášť – musí matchovat, jinak siteverify vrátí
+ * `sitekey-secret-mismatch`.
  * Docs: https://docs.hcaptcha.com/invisible
  */
-export const HCAPTCHA_SITE_KEY = 'cb2063a0-9696-4074-afce-f292e2d80b68';
+const HCAPTCHA_SITE_KEY_WWW = 'cb2063a0-9696-4074-afce-f292e2d80b68';
+const HCAPTCHA_SITE_KEY_NAHLED = 'c3449c18-93ae-4916-bc68-6b76d634046c';
+
+export const HCAPTCHA_SITE_KEY = IS_PRODUCTION ? HCAPTCHA_SITE_KEY_WWW : HCAPTCHA_SITE_KEY_NAHLED;
 
 export type NavItem = { href: string; label: string };
 

@@ -70,16 +70,10 @@ hosting přes env neumí, proto stejný mechanismus pro lokál i produkci:
   z live verze do nové `<branch>-next/api/`, takže atomic swap o něj
   nepřijde. Source bere:
 
-  | Cílová větev | Source `config.local.php` |
-  | ------------ | ------------------------- |
-  | `www`        | vlastní live (`www/api/`) |
+  | Cílová větev                     | Source `config.local.php`            |
+  | -------------------------------- | ------------------------------------ |
+  | `www`                            | vlastní live (`www/api/`)            |
   | `nahled` i ostatní feature větve | `nahled/api/` (sdílený stage secret) |
-
-  Alternativa pro speciální případy: stejná array struktura jde nahrát
-  i jako `redome-config.php` do dokumentového kořene hostingu (mimo
-  `subdom/`), `contact.php` ho najde přes
-  `$_SERVER['DOCUMENT_ROOT'] . '/redome-config.php'` a deep-merge ho
-  poslední do configu (tj. přebije i `config.local.php`).
 
 Pokud secret chybí v obou cestách, `contact.php` vrátí HTTP 500
 (fail-closed – raději odmítnout než pustit spam).

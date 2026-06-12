@@ -200,10 +200,10 @@ ServerSignature Off
   Require all denied
 </FilesMatch>
 
-# Konfigurační PHP soubory – `config.php`, `config.local.php`,
-# `redome-config.php` apod. nesmí být přístupné zvenku. `contact.php`
-# je includuje server-side, externí GET musí dostat 403.
-<FilesMatch "(^|/)(config|config\.local|redome-config|redome-secret|\.secret)\.php$">
+# Konfigurační PHP soubory – `config.php`, `config.local.php` apod.
+# nesmí být přístupné zvenku. `contact.php` je includuje server-side,
+# externí GET musí dostat 403.
+<FilesMatch "(^|/)(config|config\.local)\.php$">
   Require all denied
 </FilesMatch>
 

@@ -2,27 +2,22 @@
 /**
  * Kontaktní formulář – odešle zprávu e-mailem.
  *
- * Vývoj: PHP CLI server v Dockeru, mail() přes msmtp → Mailpit
- * Produkce: stejný PHP soubor v dist/api/, hosting Apache + PHP
+ * Anti-spam: honeypot `website` + hCaptcha invisible (`h-captcha-response`
+ * → ověření přes api.hcaptcha.com/siteverify).
  *
- * Konfigurace je v sousedním `config.php` (public defaults), secrety
- * v `config.local.php` (lokál, gitignored) nebo `redome-config.php`
- * v dokumentovém kořeni hostingu (Wedos, mimo deploy stream).
- *
- * Anti-spam vrstvy:
- *   1) Honeypot pole `website` – pokud robot vyplní, dropujeme s 200 OK
- *   2) hCaptcha invisible – frontend vloží `h-captcha-response`, my ověříme
- *      přes https://api.hcaptcha.com/siteverify
- *
- * Response formáty:
- *   - Accept obsahuje `application/json` (AJAX) → JSON s polem `errors`
- *     (per-field zprávy) a/nebo `message` (obecné). 422 pro validační
- *     chyby, 500 pro server, 200 + `{ok:true}` pro úspěch.
- *   - jinak (no-JS fallback / přímý form POST) → text/plain s jedinou
- *     zprávou. Při úspěchu + `Accept: text/html` redirect na /odeslano.
+ * Response: pro `Accept: application/json` (AJAX) JSON s `errors`
+ * (per-field) a `message` (obecné). Jinak text/plain pro no-JS fallback,
+ * při úspěchu + `Accept: text/html` redirect na /odeslano.
  */
 
 declare(strict_types=1);
+
+// Marker, podle kterého config.php / config.local.php pozná, že jsou
+// načítány legitimně přes `require` z tohoto souboru. Kdyby někdo
+// obešel .htaccess a sáhl na config přímo přes URL, die() ho zastaví.
+define('REDOME_CONTACT_BOOT', true);
+
+define('IS_PRODUCTION', $_SERVER['SERVER_NAME'] === 'www.redome.cz');
 
 $wantsJson = str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json');
 
@@ -60,11 +55,6 @@ $config = require __DIR__ . '/config.php';
 $localOverride = __DIR__ . '/config.local.php';
 if (is_file($localOverride)) {
     $config = array_replace_recursive($config, require $localOverride);
-}
-
-$wedosOverride = ($_SERVER['DOCUMENT_ROOT'] ?? '') . '/redome-config.php';
-if (is_file($wedosOverride)) {
-    $config = array_replace_recursive($config, require $wedosOverride);
 }
 
 $hcaptchaSiteKey = (string)($config['hcaptcha']['site_key'] ?? '');
@@ -111,6 +101,7 @@ function verifyHCaptcha(string $token, string $secret, string $siteKey, string $
         'remoteip' => $ip,
         'sitekey'  => $siteKey,
     ]);
+
     $ctx = stream_context_create([
         'http' => [
             'method'        => 'POST',
@@ -125,6 +116,7 @@ function verifyHCaptcha(string $token, string $secret, string $siteKey, string $
         return [false, ['siteverify-unreachable']];
     }
     $json = json_decode($raw, true);
+//    echo print_r($json, true);die();
     if (!is_array($json)) {
         return [false, ['siteverify-invalid-response']];
     }
