@@ -165,10 +165,13 @@ screenshot:
 ### Release
 
 ## build: Sestaví produkční verzi do dist/ (vč. sitemap, llms.txt, MD variant)
-# SITE_URL se odvodí z aktuální git větve (subdoména = slugify(branch)).
+# SITE_URL a build metadata se odvozují z aktuální git větve / commitu.
 # Override: SITE_URL=https://… make build
 build:
-	@SITE_URL=$$(bash cli/site-url.sh) $(RUN) npm run build
+	@GIT_SHA=$$(git rev-parse --short HEAD 2>/dev/null || echo local-dev); \
+	GIT_BRANCH=$$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo ${GITHUB_REF_NAME:-unknown}); \
+	PUBLIC_GIT_SHA="$$GIT_SHA" PUBLIC_GIT_BRANCH="$$GIT_BRANCH" \
+	SITE_URL=$$(bash cli/site-url.sh) $(RUN) npm run build
 
 ## deploy: Atomic FTPS deploy podle aktuální větve (cli/deploy.sh)
 # Nahraje dist/ jako <branch>-next, prohodí se <branch>, smaže prev.

@@ -62,9 +62,9 @@ jobs:
           fi
 
       - name: Build
-        # SITE_URL odvodí helper cli/site-url.sh z BRANCH (stejný kód
-        # používá `make build` lokálně, tedy DRY napříč prostředími).
-        run: SITE_URL=$(bash cli/site-url.sh) npm run build
+        # SITE_URL a build metadata odvodí helper cli/site-url.sh z BRANCH
+        # (stejný kód používá `make build` lokálně, tedy DRY napříč prostředími).
+        run: PUBLIC_GIT_SHA=${{ github.sha }} PUBLIC_GIT_BRANCH=${{ github.ref_name }} SITE_URL=$(bash cli/site-url.sh) npm run build
         env:
           # Když deploy target existuje, použij ho (= cílová subdoména).
           # Jinak PR base.ref (PR scénář) nebo github.ref_name (push).
