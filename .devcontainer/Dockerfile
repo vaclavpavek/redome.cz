@@ -31,7 +31,12 @@ ENV IN_CONTAINER=1 \
     CHOKIDAR_USEPOLLING=true \
     WATCHPACK_POLLING=true \
     ASTRO_TELEMETRY_DISABLED=1 \
-    PATH=/home/node/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    PATH=/home/node/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    # Compose CLI běží v kontejneru, BuildKit démon na hostiteli
+    # (docker-outside-of-docker) – zápis --metadata-file do defaultního
+    # /tmp kontejneru končí "permission denied". TMPDIR přesměruje
+    # dočasné soubory Docker CLI do adresáře, který node reálně vlastní.
+    TMPDIR=/home/node/.cache/tmp
 
 WORKDIR /workspace
 
@@ -42,8 +47,10 @@ WORKDIR /workspace
 # ownership, aby docker při mountu nevytvořil root-owned dir.
 RUN mkdir -p /workspace/node_modules /home/node/.local/bin \
         /home/node/.claude /home/node/.copilot /commandhistory \
+        /home/node/.cache/tmp \
     && chown -R node:node /workspace /home/node/.local \
-        /home/node/.claude /home/node/.copilot /commandhistory
+        /home/node/.claude /home/node/.copilot /commandhistory \
+        /home/node/.cache/tmp
 
 # Bash history – symlink ~/.bash_history → /commandhistory/.bash_history
 # (default HISTFILE bashe, žádný explicit export není potřeba).
@@ -53,6 +60,14 @@ RUN mkdir -p /workspace/node_modules /home/node/.local/bin \
 RUN ln -sf /commandhistory/.bash_history /home/node/.bash_history \
     && chown -h node:node /home/node/.bash_history \
     && echo "export PROMPT_COMMAND='history -a'" >> /etc/bash.bashrc
+
+# V Codespaces je /var/run/docker.sock symlink na /var/run/docker-host.sock,
+# který vlastní root:800 (GID 800 = hostitelská `docker` skupina, uvnitř
+# kontejneru bez jména). Bez členství v této skupině `docker` z devcontaineru
+# hlásí permission denied. Přidání i do skupiny 0 (root) pokrývá případy,
+# kdy je sock vlastněn root:root (jiné prostředí než Codespaces).
+RUN groupadd -f -g 800 docker-host \
+    && usermod -aG root,docker-host node
 
 USER node
 
