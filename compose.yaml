@@ -6,13 +6,17 @@ services:
     user: node
     working_dir: /workspace
     init: true
+    depends_on:
+      - mailpit
+      - php
+    restart: unless-stopped
     volumes:
       - .:/workspace:cached
       # Anonymní volume drží node_modules uvnitř kontejneru kvůli rychlosti
       # (jinak je sdílení přes bind mount na macOS/Windows velmi pomalé)
       - node_modules:/workspace/node_modules
     ports:
-      - "4321:4321"
+      - '4321:4321'
     environment:
       - HOST=0.0.0.0
       - IN_CONTAINER=1
@@ -21,23 +25,20 @@ services:
       # Zákaz Astro telemetrie (https://astro.build/telemetry) – nesbíráme
       # anonymní statistiky používání, vývoj je čistě lokální.
       - ASTRO_TELEMETRY_DISABLED=1
-      # Absolutní URL webu (canonical, OG, sitemap, robots).
-      # CI nastaví (jméno větve = subdoména):
-      #   nahled → SITE_URL=https://nahled.redome.cz (stage)
-      #   www    → SITE_URL=https://www.redome.cz (default, dá se vynechat)
-      # Lokálně přepiš: `SITE_URL=http://localhost:4321 make build`
-      - SITE_URL=${SITE_URL:-https://www.redome.cz}
+      # Lokální vývoj defaultně používá hostitelský dev server.
+      # CI/branch build přepíše hodnotu přes `SITE_URL` v shellu nebo workflow.
+      - SITE_URL=${SITE_URL:-http://localhost:4321}
 
   # Mailpit – zachytává všechny e-maily během vývoje (SMTP + webové UI)
   mailpit:
     image: axllent/mailpit:v1.21
     restart: unless-stopped
     ports:
-      - "8025:8025" # webové UI: http://localhost:8025
+      - '8025:8025' # webové UI: http://localhost:8025
     environment:
-      MP_MAX_MESSAGES: "1000"
-      MP_SMTP_AUTH_ACCEPT_ANY: "1"
-      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
+      MP_MAX_MESSAGES: '1000'
+      MP_SMTP_AUTH_ACCEPT_ANY: '1'
+      MP_SMTP_AUTH_ALLOW_INSECURE: '1'
 
   # PHP-CLI server pro lehké backend endpointy (kontaktní formulář).
   # `mail()` posílá přes msmtp na mailpit:1025; v produkci jde to samé
@@ -62,12 +63,12 @@ services:
     build:
       context: .
       dockerfile: .devcontainer/browser.Dockerfile
-    profiles: ["tools"]
+    profiles: ['tools']
     # host.docker.internal funguje napříč Mac/Win Docker Desktop, Linuxem
     # (host-gateway) i GitHub Codespaces – browser tedy vždy míří na
     # http://host.docker.internal:4321, kde je vystavený dev server.
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     volumes:
       - ./screenshots:/work/screenshots
       - browser_cache:/home/node/.cache/agent-browser

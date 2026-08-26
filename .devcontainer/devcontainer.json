@@ -10,7 +10,10 @@
     // (docker-outside-of-docker) – zápis --metadata-file do defaultního
     // /tmp kontejneru končí "permission denied". Přesměruj dočasné
     // soubory Docker CLI do adresáře, který `node` reálně vlastní.
-    "TMPDIR": "/home/node/.cache/tmp"
+    "TMPDIR": "/home/node/.cache/tmp",
+    // Lokální dev a Codespaces mají výchozí URL na dev server. Produkční/
+    // branch build přepisuje hodnotu v shellu nebo workflow.
+    "SITE_URL": "http://localhost:4321"
   },
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
